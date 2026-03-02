@@ -53,10 +53,33 @@ export const TIMEZONE_OPTIONS = [
 
 const DEFAULT_TIMEZONE = "Europe/Bucharest";
 
+export type DateFormatType = 
+  | "full"           // Sunday, March 2, 2026 at 10:00
+  | "long"           // March 2, 2026 at 10:00
+  | "medium"         // Mar 2, 2026 at 10:00
+  | "short"          // 3/2/2026 10:00
+  | "day-month"      // Sunday, March 2 at 10:00
+  | "relative";      // Tomorrow at 10:00 / Today at 10:00
+
+export const DATE_FORMAT_OPTIONS: { value: DateFormatType; label: string; example: string }[] = [
+  { value: "full", label: "Full", example: "Sunday, March 2, 2026 at 10:00" },
+  { value: "long", label: "Long", example: "March 2, 2026 at 10:00" },
+  { value: "medium", label: "Medium", example: "Mar 2, 2026 at 10:00" },
+  { value: "short", label: "Short", example: "3/2/2026 10:00" },
+  { value: "day-month", label: "Day & Month", example: "Sunday, March 2 at 10:00" },
+  { value: "relative", label: "Relative", example: "Tomorrow at 10:00" },
+];
+
 export interface CountdownConfig {
   icon: string;
   iconColor: string;
   headerLabel: string;
+  liveLabel: string;
+  dateFormat: DateFormatType;
+  labelDays: string;
+  labelHours: string;
+  labelMinutes: string;
+  labelSeconds: string;
   schedules: ServiceSchedule[];
   specialEvents: SpecialEvent[];
   bgColor: string;
@@ -72,6 +95,12 @@ export const defaultCountdownConfig: CountdownConfig = {
   icon: "Church",
   iconColor: "#6366f1",
   headerLabel: "Next Event",
+  liveLabel: "Happening Now",
+  dateFormat: "full",
+  labelDays: "Days",
+  labelHours: "Hours",
+  labelMinutes: "Minutes",
+  labelSeconds: "Seconds",
   schedules: [
     { recurrenceType: "weekly", day: 0, hour: 10, minute: 0, title: "Sunday Morning Worship", timezone: "America/New_York", duration: 90 },
     { recurrenceType: "weekly", day: 0, hour: 18, minute: 0, title: "Sunday Evening Youth Service", timezone: "America/New_York", duration: 60 },
@@ -131,8 +160,37 @@ function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Dat
   return new Date(fakeUtc.getTime() + offsetMs);
 }
 
-function formatDateStr(target: Date, hour: number, minute: number): string {
-  return `${dayNames[target.getDay()]}, ${monthNames[target.getMonth()]} ${target.getDate()}, ${target.getFullYear()} at ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "full"): string {
+  const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+  const dow = dayNames[target.getDay()];
+  const mon = monthNames[target.getMonth()];
+  const monShort = mon.slice(0, 3);
+  const day = target.getDate();
+  const year = target.getFullYear();
+
+  switch (format) {
+    case "long":
+      return `${mon} ${day}, ${year} at ${timeStr}`;
+    case "medium":
+      return `${monShort} ${day}, ${year} at ${timeStr}`;
+    case "short":
+      return `${target.getMonth() + 1}/${day}/${year} ${timeStr}`;
+    case "day-month":
+      return `${dow}, ${mon} ${day} at ${timeStr}`;
+    case "relative": {
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const targetStart = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+      const diffDays = Math.round((targetStart.getTime() - todayStart.getTime()) / 86400000);
+      if (diffDays === 0) return `Today at ${timeStr}`;
+      if (diffDays === 1) return `Tomorrow at ${timeStr}`;
+      if (diffDays < 7 && diffDays > 0) return `${dow} at ${timeStr}`;
+      return `${mon} ${day} at ${timeStr}`;
+    }
+    case "full":
+    default:
+      return `${dow}, ${mon} ${day}, ${year} at ${timeStr}`;
+  }
 }
 
 /** Get Nth occurrence of a day-of-week in a given month/year. week=-1 means last. */
@@ -217,7 +275,7 @@ function getScheduleCandidates(s: ServiceSchedule, now: Date, count: number = 3)
   return candidates;
 }
 
-function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[]): NextServiceInfo {
+function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[], dateFormat: DateFormatType = "full"): NextServiceInfo {
   const now = new Date();
   const nowMs = now.getTime();
 
@@ -228,7 +286,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     for (const target of candidates) {
       const elapsed = nowMs - target.getTime();
       if (elapsed >= 0 && elapsed < durationMs) {
-        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute), title: s.title, isLive: true };
+        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat), title: s.title, isLive: true };
       }
     }
   }
@@ -242,7 +300,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
     if (elapsed >= 0 && elapsed < durationMs) {
-      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute), title: ev.title, isLive: true };
+      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat), title: ev.title, isLive: true };
     }
   }
 
@@ -259,7 +317,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const ms = target.getTime() - nowMs;
     if (ms > 0 && ms < nearest) {
       nearest = ms;
-      nearestDate = formatDateStr(target, ev.hour, ev.minute);
+      nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat);
       nearestTitle = ev.title;
     }
   }
@@ -270,7 +328,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
       const ms = target.getTime() - nowMs;
       if (ms > 0 && ms < nearest) {
         nearest = ms;
-        nearestDate = formatDateStr(target, s.hour, s.minute);
+        nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat);
         nearestTitle = s.title;
       }
     }
@@ -291,18 +349,18 @@ function msToTime(ms: number) {
 
 function useCountdown(config: CountdownConfig) {
   const [state, setState] = useState(() => {
-    const n = getNextService(config.schedules, config.specialEvents);
+    const n = getNextService(config.schedules, config.specialEvents, config.dateFormat);
     return { ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
   });
   useEffect(() => {
     const tick = () => {
-      const n = getNextService(config.schedules, config.specialEvents);
+      const n = getNextService(config.schedules, config.specialEvents, config.dateFormat);
       setState({ ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents]);
+  }, [config.schedules, config.specialEvents, config.dateFormat]);
   return state;
 }
 
@@ -315,10 +373,10 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const hs = config.headerScale ?? 1;
 
   const units = [
-    { v: t.days, l: "Days" },
-    { v: t.hours, l: "Hours" },
-    { v: t.minutes, l: "Minutes" },
-    { v: t.seconds, l: "Seconds" },
+    { v: t.days, l: config.labelDays || "Days" },
+    { v: t.hours, l: config.labelHours || "Hours" },
+    { v: t.minutes, l: config.labelMinutes || "Minutes" },
+    { v: t.seconds, l: config.labelSeconds || "Seconds" },
   ];
 
   return (
@@ -330,7 +388,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
       <div className="flex items-center justify-center flex-wrap" style={{ gap: `${Math.round(10 * hs)}px`, marginBottom: '6px' }}>
         <Icon style={{ color: config.iconColor, width: `${Math.round(28 * hs)}px`, height: `${Math.round(28 * hs)}px` }} />
         <span className="font-semibold" style={{ color: config.textColor, fontSize: `${Math.round(18 * hs)}px` }}>
-          {t.isLive ? "Happening Now:" : `${config.headerLabel}:`}
+          {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
         </span>
         <span style={{ color: config.labelColor, fontSize: `${Math.round(18 * hs)}px` }}>
           {t.fullDate}

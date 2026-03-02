@@ -1,22 +1,34 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { FileText, ExternalLink, Upload, Image, Palette, Maximize2, Settings2, ChevronRight, LayoutGrid, Settings, ChevronDown, Check, Star, Type, FileType } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import pdfPlaceholder from '@/assets/thumbnail-placeholder.png';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLicense } from '@/hooks/useLicense';
 import ProBanner from '@/components/ProBanner';
+import {
+  CountdownConfig,
+  defaultCountdownConfig,
+  ICON_OPTIONS,
+  DATE_FORMAT_OPTIONS,
+  DateFormatType,
+} from '@/components/ServiceCountdownWidget';
 
 // Custom Layers icon component with customizable layer colors
 const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className = "" }: { 
@@ -25,7 +37,7 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
   className?: string;
 }) => {
   const greenColor = "hsl(142, 76%, 36%)";
-  const grayColor = "hsl(215, 14%, 70%)"; // Light grey for inactive layers
+  const grayColor = "hsl(215, 14%, 70%)";
   const defaultColor = "currentColor";
   
   return (
@@ -40,17 +52,14 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
       strokeLinejoin="round"
       className={className}
     >
-      {/* Top layer - green when firstLayerGreen or allLayersGreen */}
       <path 
         d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" 
         stroke={allLayersGreen || firstLayerGreen ? greenColor : defaultColor}
       />
-      {/* Bottom layer - green when allLayersGreen, grey when firstLayerGreen only */}
       <path 
         d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" 
         stroke={allLayersGreen ? greenColor : (firstLayerGreen ? grayColor : defaultColor)}
       />
-      {/* Middle layer - green when allLayersGreen, grey when firstLayerGreen only */}
       <path 
         d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" 
         stroke={allLayersGreen ? greenColor : (firstLayerGreen ? grayColor : defaultColor)}
@@ -68,7 +77,7 @@ interface SettingsProposal2Props {
     pdfIconPosition: string;
     defaultPlaceholder: string;
     thumbnailSize?: string;
-    gapSize?: number; // 1-5, default 3
+    gapSize?: number;
     settingsScope?: string;
     enableThumbnailCache?: boolean;
     autoRefreshCache?: boolean;
@@ -79,33 +88,25 @@ interface SettingsProposal2Props {
     showTitlesSubtitles?: boolean;
   };
   onSettingsChange: (settings: any) => void;
+  countdownConfig?: CountdownConfig;
+  onCountdownConfigChange?: (config: CountdownConfig) => void;
 }
 
-const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: SettingsProposal2Props) => {
-  const [localSettings, setLocalSettings] = useState({
-    ...settings,
-    thumbnailSize: settings.thumbnailSize || 'four-rows',
-    thumbnailShape: settings.thumbnailShape || '3:2',
-    accentColor: settings.accentColor || '#7FB3DC',
-    gapSize: settings.gapSize ?? 3,
-  });
-  const [activeSection, setActiveSection] = useState('style');
+const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, countdownConfig, onCountdownConfigChange }: SettingsProposal2Props) => {
+  const config = countdownConfig || defaultCountdownConfig;
+  const [localConfig, setLocalConfig] = useState<CountdownConfig>(config);
+  const [activeSection, setActiveSection] = useState('labels');
   const [saveScope, setSaveScope] = useState<'current' | 'all'>('current');
   const { toast } = useToast();
   const license = useLicense();
 
   useEffect(() => {
-    setLocalSettings({
-      ...settings,
-      thumbnailSize: settings.thumbnailSize || 'four-rows',
-      thumbnailShape: settings.thumbnailShape || '3:2',
-      accentColor: settings.accentColor || '#7FB3DC',
-      gapSize: settings.gapSize ?? 3,
-    });
-  }, [settings]);
+    setLocalConfig(countdownConfig || defaultCountdownConfig);
+  }, [countdownConfig]);
 
   const handleSave = async () => {
-    onSettingsChange(localSettings);
+    onCountdownConfigChange?.(localConfig);
+    onSettingsChange(settings);
     try {
       const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
       const urlParams = new URLSearchParams(window.location.search);
@@ -117,7 +118,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
         form.append('action', 'kindpdfg_action');
         form.append('action_type', 'save_settings');
         form.append('nonce', nonce);
-        form.append('settings', JSON.stringify(localSettings));
+        form.append('settings', JSON.stringify({ ...settings, countdownConfig: localConfig }));
         form.append('save_scope', saveScope);
         if (saveScope === 'current' && currentGalleryId) {
           form.append('gallery_id', currentGalleryId);
@@ -134,651 +135,232 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
     }
   };
 
+  const updateConfig = (partial: Partial<CountdownConfig>) => {
+    setLocalConfig(prev => ({ ...prev, ...partial }));
+  };
+
   const sidebarItems = [
-    { id: 'style', label: 'Thumbnail Style', icon: LayoutGrid },
-    { id: 'placeholder', label: 'Placeholder Image', icon: Image },
-    { id: 'color', label: 'Accent Color', icon: Palette },
-    { id: 'size', label: 'Thumbnail Shape & Size', icon: Maximize2 },
+    { id: 'labels', label: 'Labels', icon: Type },
+    { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'other', label: 'Other Settings', icon: Settings },
   ];
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'placeholder':
+      case 'labels':
         return (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Image className="w-5 h-5" />
-                Default Placeholder Image
+                <Type className="w-5 h-5" />
+                Countdown Labels
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Configure the default image shown for documents without thumbnails</p>
+              <p className="text-sm text-muted-foreground">Customize all text displayed on the countdown widget</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-5">
-                <div className="space-y-3">
-                  <Label>Current placeholder</Label>
-                  <div className="flex justify-start">
-                    <img 
-                      src={localSettings.defaultPlaceholder === 'default' ? pdfPlaceholder : localSettings.defaultPlaceholder}
-                      alt="Current placeholder" 
-                      className="w-72 h-40 object-cover rounded-lg border border-border shadow-sm"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <Label>Upload new placeholder</Label>
-                  <Label
-                    htmlFor="placeholderFile2"
-                    className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-primary/50 transition-colors block h-40 flex flex-col justify-center w-full"
-                  >
-                    <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                    <span className="text-sm font-medium text-primary hover:underline block mb-1">
-                      Click to upload new image
-                    </span>
-                    <p className="text-xs text-muted-foreground">
-                      PNG, JPG up to 2MB
-                    </p>
+              {/* Header Labels */}
+              <div className="space-y-4">
+                <Label className="text-base font-medium">Header Labels</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="headerLabel" className="text-sm">Before Event (countdown)</Label>
                     <Input
-                      id="placeholderFile2"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            setLocalSettings(prev => ({ 
-                              ...prev, 
-                              defaultPlaceholder: event.target?.result as string 
-                            }));
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+                      id="headerLabel"
+                      value={localConfig.headerLabel}
+                      onChange={(e) => updateConfig({ headerLabel: e.target.value })}
+                      placeholder="Next Event"
                     />
-                  </Label>
+                    <p className="text-xs text-muted-foreground">Shown while counting down to the next event</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="liveLabel" className="text-sm">During Event (live)</Label>
+                    <Input
+                      id="liveLabel"
+                      value={localConfig.liveLabel}
+                      onChange={(e) => updateConfig({ liveLabel: e.target.value })}
+                      placeholder="Happening Now"
+                    />
+                    <p className="text-xs text-muted-foreground">Shown when an event is currently live</p>
+                  </div>
                 </div>
+              </div>
+
+              {/* Date Format */}
+              <div className="space-y-3 pt-4 border-t border-border">
+                <Label className="text-base font-medium">Date Format</Label>
+                <p className="text-sm text-muted-foreground">Choose how the event date is displayed</p>
+                <Select
+                  value={localConfig.dateFormat || "full"}
+                  onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DATE_FORMAT_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{opt.label}</span>
+                          <span className="text-xs text-muted-foreground">{opt.example}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Unit Labels */}
+              <div className="space-y-4 pt-4 border-t border-border">
+                <Label className="text-base font-medium">Countdown Unit Labels</Label>
+                <p className="text-sm text-muted-foreground">Customize the text below each digit group</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="labelDays" className="text-sm">Days</Label>
+                    <Input
+                      id="labelDays"
+                      value={localConfig.labelDays}
+                      onChange={(e) => updateConfig({ labelDays: e.target.value })}
+                      placeholder="Days"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="labelHours" className="text-sm">Hours</Label>
+                    <Input
+                      id="labelHours"
+                      value={localConfig.labelHours}
+                      onChange={(e) => updateConfig({ labelHours: e.target.value })}
+                      placeholder="Hours"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="labelMinutes" className="text-sm">Minutes</Label>
+                    <Input
+                      id="labelMinutes"
+                      value={localConfig.labelMinutes}
+                      onChange={(e) => updateConfig({ labelMinutes: e.target.value })}
+                      placeholder="Minutes"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="labelSeconds" className="text-sm">Seconds</Label>
+                    <Input
+                      id="labelSeconds"
+                      value={localConfig.labelSeconds}
+                      onChange={(e) => updateConfig({ labelSeconds: e.target.value })}
+                      placeholder="Seconds"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Header Scale */}
+              <div className="space-y-3 pt-4 border-t border-border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-base font-medium">Header Size</Label>
+                    <p className="text-sm text-muted-foreground">Scale the header text and icon</p>
+                  </div>
+                  <span className="text-sm font-medium text-primary">{Math.round((localConfig.headerScale ?? 1) * 100)}%</span>
+                </div>
+                <Slider
+                  value={[(localConfig.headerScale ?? 1) * 100]}
+                  onValueChange={(v) => updateConfig({ headerScale: v[0] / 100 })}
+                  min={50}
+                  max={200}
+                  step={5}
+                  className="w-full"
+                />
               </div>
             </CardContent>
           </Card>
         );
 
-      case 'style':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LayoutGrid className="w-5 h-5" />
-                Thumbnail Styles
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">Choose how your document thumbnails appear in the gallery</p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6" style={{ ['--accent-color' as any]: localSettings.accentColor }}>
-                {/* Default Style */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-[var(--accent-color)]/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'default' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'default' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="default2" 
-                      checked={localSettings.thumbnailStyle === 'default'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'default' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="default2" className="text-base font-medium cursor-pointer">Default Style</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Clean and simple design with subtle hover effects</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer w-48">
-                          <div className="relative bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 border border-border">
-                            <div className="aspect-video overflow-hidden bg-muted relative">
-                              <img
-                                src={pdfPlaceholder}
-                                alt="Thumbnail preview"
-                                className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <ExternalLink className="w-8 h-8 text-white" />
-                              </div>
-                            </div>
-                            <div className="absolute top-3 right-3 bg-card/90 backdrop-blur-sm rounded-md px-2 py-1 shadow-sm">
-                              <div className="flex items-center gap-1">
-                                <FileText className="w-3 h-3 text-muted-foreground" />
-                                <span className="text-xs font-medium text-muted-foreground">PDF</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="mt-3">
-                            <h3 className="font-semibold text-sm group-hover:text-[var(--accent-color)] transition-colors truncate">Sample PDF Title That Might Be Long</h3>
-                            <p className="text-xs text-muted-foreground truncate">April 2025 Description</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Elevated Card */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'elevated-card' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'elevated-card' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="elevated-card2" 
-                      checked={localSettings.thumbnailStyle === 'elevated-card'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'elevated-card' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="elevated-card2" className="text-base font-medium cursor-pointer">Elevated Card</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Modern card design with shadow effects and hover animations</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer w-48">
-                          <div className="relative bg-card rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2 border border-border">
-                            <div className="aspect-[4/3] overflow-hidden bg-muted">
-                              <img
-                                src={pdfPlaceholder}
-                                alt="Thumbnail preview"
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/40"></div>
-                            </div>
-                            <div className="absolute bottom-3 right-3">
-                              <div className="bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg group-hover:bg-[var(--accent-color)] group-hover:text-white transition-all duration-300" style={{ ['--accent-color' as any]: localSettings.accentColor }}>
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3" />
-                                </svg>
-                              </div>
-                            </div>
-                            <div className="p-3 bg-gradient-to-t from-card to-transparent">
-                              <p className="text-xs text-muted-foreground mb-1 truncate">April 2025 Description</p>
-                              <h3 className="font-semibold text-xs text-foreground group-hover:text-[var(--accent-color)] transition-colors truncate" style={{ ['--accent-color' as any]: localSettings.accentColor }}>Sample PDF Title That Might Be Long</h3>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Slide Up Text Style */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'slide-up-text' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'slide-up-text' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="slide-up-text2" 
-                      checked={localSettings.thumbnailStyle === 'slide-up-text'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'slide-up-text' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="slide-up-text2" className="text-base font-medium cursor-pointer">Slide Up Text</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Text slides up on hover with smooth animations</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer overflow-hidden rounded-xl w-48">
-                          <div className="relative bg-card border border-border rounded-xl overflow-hidden">
-                            <div className="aspect-video overflow-hidden bg-muted">
-                              <img
-                                src={pdfPlaceholder}
-                                alt="Thumbnail preview"
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                            </div>
-                            <div className="absolute inset-0 pointer-events-none">
-                              <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-t from-black/95 via-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            </div>
-                            <div className="absolute bottom-4 left-0 right-0 px-4 pb-2 text-white translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                              <h3 className="font-bold text-sm leading-tight truncate text-white">Sample PDF Title That Might Be Long</h3>
-                              <p className="text-xs opacity-90 mt-1 truncate text-white">April 2025 Description</p>
-                            </div>
-                            <div className="absolute top-3 left-3 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                              <div className="bg-white/90 rounded px-2 py-1">
-                                <span className="text-xs font-medium text-gray-700">PDF</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Gradient Zoom Style */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'gradient-zoom' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'gradient-zoom' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="gradient-zoom2" 
-                      checked={localSettings.thumbnailStyle === 'gradient-zoom'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'gradient-zoom' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="gradient-zoom2" className="text-base font-medium cursor-pointer">Gradient Zoom</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Colorful gradient borders with zoom effects</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer w-48">
-                          <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--accent-color)]/20 via-[var(--accent-color)]/10 to-[var(--accent-color)]/20 p-1 group-hover:from-[var(--accent-color)]/40 group-hover:via-[var(--accent-color)]/30 group-hover:to-[var(--accent-color)]/40 transition-all duration-300">
-                            <div className="relative bg-card rounded-xl overflow-hidden">
-                              <div className="aspect-video overflow-hidden bg-muted">
-                                <img
-                                  src={pdfPlaceholder}
-                                  alt="Thumbnail preview"
-                                  className="w-full h-full object-cover transition-all duration-500 group-hover:scale-125"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-tr from-[var(--accent-color)]/30 via-transparent to-[var(--accent-color)]/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                              </div>
-                            </div>
-                          </div>
-                           <div className="mt-1 text-center" style={{ ['--accent-color' as any]: localSettings.accentColor }}>
-                            <h3 className="font-semibold text-xs text-foreground group-hover:text-[var(--accent-color)] transition-colors truncate">Sample PDF Title That Might Be Long</h3>
-                            <p className="text-xs text-muted-foreground mb-1 group-hover:text-[var(--accent-color)] transition-colors truncate">April 2025 Description...</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Split Layout Style */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-[var(--accent-color)]/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'split-layout' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'split-layout' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="split-layout2" 
-                      checked={localSettings.thumbnailStyle === 'split-layout'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'split-layout' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="split-layout2" className="text-base font-medium cursor-pointer">Split Layout</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Horizontal layout with small thumbnail and text side by side</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer">
-                          <div className="flex items-center gap-3 bg-card p-3 rounded-lg border border-border group-hover:border-[var(--accent-color)] transition-all duration-300 group-hover:shadow-md w-56">
-                            <div className="flex-shrink-0">
-                              <div className="w-12 h-16 rounded overflow-hidden bg-muted relative">
-                                <img
-                                  src={pdfPlaceholder}
-                                  alt="Thumbnail preview"
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                />
-                                <div className="absolute top-1 right-1">
-                                  <div className="w-2 h-2 bg-[var(--accent-color)] rounded-full"></div>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h3 className="font-semibold text-xs text-foreground mb-1 group-hover:text-[var(--accent-color)] transition-colors truncate">Sample PDF Title...</h3>
-                              <p className="text-xs text-muted-foreground mb-1 group-hover:text-[var(--accent-color)] transition-colors truncate">April 2025 Description...</p>
-                              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <svg className="w-3 h-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3" />
-                                </svg>
-                                <span className="text-xs text-muted-foreground">Download PDF</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Minimal Underline Style */}
-                <div 
-                  className={`border rounded-lg p-4 hover:border-[var(--accent-color)]/50 transition-colors cursor-pointer ${localSettings.thumbnailStyle === 'minimal-underline' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'minimal-underline' }))}
-                >
-                  <div className="flex items-start gap-4">
-                    <Checkbox 
-                      id="minimal-underline2" 
-                      checked={localSettings.thumbnailStyle === 'minimal-underline'}
-                      onCheckedChange={(checked) => 
-                        checked && setLocalSettings(prev => ({ ...prev, thumbnailStyle: 'minimal-underline' }))
-                      }
-                      className="mt-1"
-                    />
-                    <div className="flex-1">
-                      <Label htmlFor="minimal-underline2" className="text-base font-medium cursor-pointer">Minimal Underline</Label>
-                      <p className="text-sm text-muted-foreground mt-1 mb-3">Clean design with animated underline on hover</p>
-                      <div className="flex justify-center">
-                        <div className="group cursor-pointer w-48">
-                          <div className="space-y-2">
-                            <div className="relative aspect-video bg-muted overflow-hidden">
-                              <img
-                                src={pdfPlaceholder}
-                                alt="Thumbnail preview"
-                                className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                              />
-                              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <div className="w-4 h-4 bg-white/90 rounded-full flex items-center justify-center">
-                                  <svg className="w-2 h-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6" />
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                            <div>
-                              <h3 className="font-medium text-xs text-foreground relative inline-block truncate">
-                                Sample PDF Title...
-                                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--accent-color)] group-hover:w-full transition-all duration-300"></span>
-                              </h3>
-                              <p className="text-xs text-muted-foreground mb-1 truncate">April 2025 Description...</p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 'color':
+      case 'colors':
         return (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Palette className="w-5 h-5" />
-                Accent Color Configuration
+                Colors & Icon
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Customize the primary color used throughout your gallery</p>
+              <p className="text-sm text-muted-foreground">Customize the visual appearance of your countdown</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <Label>Current Color</Label>
-                  <div className="flex items-center gap-3">
-                    <div 
-                      className="w-16 h-16 rounded-lg border border-border shadow-sm"
-                      style={{ backgroundColor: localSettings.accentColor }}
-                    />
-                    <div>
-                      <span className="text-lg font-mono font-medium">{localSettings.accentColor}</span>
-                      <p className="text-sm text-muted-foreground">HEX Color Code</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <Label htmlFor="color-picker2">Choose New Color</Label>
-                  <div className="space-y-3">
-                    <Input
-                      id="color-picker2"
-                      type="color"
-                      value={localSettings.accentColor}
-                      onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
-                      className="w-full h-16 rounded-lg"
-                    />
-                    <Input
-                      value={localSettings.accentColor}
-                      onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
-                      placeholder="#7FB3DC"
-                      className="font-mono text-center"
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-
-      case 'size':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Maximize2 className="w-5 h-5" />
-                Thumbnail Shape & Size
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">Configure the aspect ratio and column layout of your thumbnails</p>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Thumbnail Shape Section */}
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-base font-medium">Thumbnail Shape</Label>
-                  <p className="text-sm text-muted-foreground">Choose the aspect ratio for your thumbnails</p>
-                </div>
-                <RadioGroup 
-                  value={localSettings.thumbnailShape || '3:2'}
-                  onValueChange={(value) => setLocalSettings(prev => ({ ...prev, thumbnailShape: value }))}
-                  className="grid grid-cols-2 md:grid-cols-3 gap-3"
-                  defaultValue="3:2"
-                >
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${(localSettings.thumbnailShape === '3:2' || !localSettings.thumbnailShape) ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: '3:2' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="3:2" id="shape-3-2" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-3-2" className="text-sm font-medium cursor-pointer">3:2 (Default)</Label>
-                        <div className="mt-2 mx-auto w-12 h-8 bg-muted rounded border border-border"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailShape === '1:1' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: '1:1' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="1:1" id="shape-1-1" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-1-1" className="text-sm font-medium cursor-pointer">1:1</Label>
-                        <div className="mt-2 mx-auto w-10 h-10 bg-muted rounded border border-border"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailShape === '16:9' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: '16:9' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="16:9" id="shape-16-9" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-16-9" className="text-sm font-medium cursor-pointer">16:9</Label>
-                        <div className="mt-2 mx-auto w-16 h-9 bg-muted rounded border border-border"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailShape === '2:3' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: '2:3' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="2:3" id="shape-2-3" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-2-3" className="text-sm font-medium cursor-pointer">2:3</Label>
-                        <div className="mt-2 mx-auto w-8 h-12 bg-muted rounded border border-border"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailShape === '9:16' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: '9:16' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="9:16" id="shape-9-16" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-9-16" className="text-sm font-medium cursor-pointer">9:16</Label>
-                        <div className="mt-2 mx-auto w-6 h-11 bg-muted rounded border border-border"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className={`border rounded-lg p-3 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailShape === 'auto' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                    onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailShape: 'auto' }))}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="auto" id="shape-auto" />
-                      <div className="flex-1">
-                        <Label htmlFor="shape-auto" className="text-sm font-medium cursor-pointer">Auto (Masonry)</Label>
-                        <div className="mt-2 mx-auto flex gap-1 justify-center">
-                          <div className="w-3 h-8 bg-muted rounded border border-border"></div>
-                          <div className="w-3 h-5 bg-muted rounded border border-border"></div>
-                          <div className="w-3 h-10 bg-muted rounded border border-border"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-              </RadioGroup>
-              </div>
-
-              {/* Gap Size */}
+              {/* Icon Selection */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-base font-medium">Gap Size</Label>
-                    <p className="text-sm text-muted-foreground">Spacing between thumbnails (default is the middle)</p>
-                  </div>
-                  <span className="text-sm font-medium text-primary">
-                    {(() => {
-                      const v = localSettings.gapSize ?? 3;
-                      return v === 1
-                        ? 'Extra Small (12px)'
-                        : v === 2
-                          ? 'Small (18px)'
-                          : v === 3
-                            ? 'Medium (24px)'
-                            : v === 4
-                              ? 'Large (32px)'
-                              : 'Extra Large (40px)';
-                    })()}
-                  </span>
+                <Label className="text-base font-medium">Icon</Label>
+                <p className="text-sm text-muted-foreground">Choose an icon displayed in the countdown header</p>
+                <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-9 gap-2">
+                  {ICON_OPTIONS.map((opt) => {
+                    const IconComp = opt.icon;
+                    const isSelected = localConfig.icon === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => updateConfig({ icon: opt.value })}
+                        className={`flex flex-col items-center gap-1 p-3 rounded-lg border transition-colors ${
+                          isSelected
+                            ? 'border-primary bg-primary/10'
+                            : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                        }`}
+                      >
+                        <IconComp className="w-5 h-5" style={{ color: isSelected ? localConfig.iconColor : undefined }} />
+                        <span className="text-[10px] text-muted-foreground">{opt.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
 
+              {/* Icon Color */}
+              <div className="space-y-3 pt-4 border-t border-border">
+                <Label className="text-base font-medium">Icon Color</Label>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground">Tight</span>
-                  <Slider
-                    value={[localSettings.gapSize ?? 3]}
-                    onValueChange={(value) =>
-                      setLocalSettings((prev) => ({ ...prev, gapSize: value[0] }))
-                    }
-                    min={1}
-                    max={5}
-                    step={1}
-                    className="flex-1"
+                  <Input
+                    type="color"
+                    value={localConfig.iconColor}
+                    onChange={(e) => updateConfig({ iconColor: e.target.value })}
+                    className="w-14 h-10"
                   />
-                  <span className="text-xs text-muted-foreground">Spacious</span>
+                  <Input
+                    value={localConfig.iconColor}
+                    onChange={(e) => updateConfig({ iconColor: e.target.value })}
+                    placeholder="#6366f1"
+                    className="font-mono flex-1"
+                  />
                 </div>
               </div>
 
-              {/* Thumbnail Size Section */}
-              <div className="space-y-4">
-                <div>
-                  <Label className="text-base font-medium">Thumbnail Size</Label>
-                  <p className="text-sm text-muted-foreground">Set how many columns of thumbnails to display</p>
-                </div>
-                <RadioGroup 
-                  value={localSettings.thumbnailSize || 'four-rows'}
-                  onValueChange={(value) => setLocalSettings(prev => ({ ...prev, thumbnailSize: value }))}
-                  className="space-y-4"
-                >
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailSize === 'three-rows' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailSize: 'three-rows' }))}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="three-rows" id="three-rows2" />
-                      <div>
-                        <Label htmlFor="three-rows2" className="text-base font-medium cursor-pointer">3 Columns</Label>
-                        <p className="text-sm text-muted-foreground">Larger thumbnails with more detail</p>
+              {/* Color Pickers Grid */}
+              <div className="space-y-4 pt-4 border-t border-border">
+                <Label className="text-base font-medium">Widget Colors</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[
+                    { key: 'bgColor', label: 'Background', placeholder: '#ffffff' },
+                    { key: 'textColor', label: 'Header Text', placeholder: '#1a1a1a' },
+                    { key: 'digitColor', label: 'Countdown Digits', placeholder: '#1a1a1a' },
+                    { key: 'separatorColor', label: 'Separator (:)', placeholder: '#d4d4d4' },
+                    { key: 'labelColor', label: 'Unit Labels & Date', placeholder: '#737373' },
+                  ].map(({ key, label, placeholder }) => (
+                    <div key={key} className="space-y-2">
+                      <Label className="text-sm">{label}</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="color"
+                          value={(localConfig as any)[key] || placeholder}
+                          onChange={(e) => updateConfig({ [key]: e.target.value } as any)}
+                          className="w-10 h-10 p-1"
+                        />
+                        <Input
+                          value={(localConfig as any)[key] || ''}
+                          onChange={(e) => updateConfig({ [key]: e.target.value } as any)}
+                          placeholder={placeholder}
+                          className="font-mono flex-1"
+                        />
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-1 w-16">
-                      <div className="w-4 h-6 bg-muted rounded-[2px]"></div>
-                      <div className="w-4 h-6 bg-muted rounded-[2px]"></div>
-                      <div className="w-4 h-6 bg-muted rounded-[2px]"></div>
-                      <div className="w-4 h-6 bg-muted rounded-[2px]"></div>
-                      <div className="w-4 h-6 bg-muted rounded-[2px]"></div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailSize === 'four-rows' || !localSettings.thumbnailSize ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailSize: 'four-rows' }))}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="four-rows" id="four-rows2" />
-                      <div>
-                        <Label htmlFor="four-rows2" className="text-base font-medium cursor-pointer">4 Columns</Label>
-                        <p className="text-sm text-muted-foreground">Balanced layout (recommended)</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-4 gap-1 w-16">
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                      <div className="w-3 h-5 bg-muted rounded-[2px]"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`border rounded-lg p-4 hover:border-primary/50 transition-colors cursor-pointer ${localSettings.thumbnailSize === 'five-rows' ? 'border-primary bg-primary/5' : 'border-border'}`}
-                  onClick={() => setLocalSettings(prev => ({ ...prev, thumbnailSize: 'five-rows' }))}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <RadioGroupItem value="five-rows" id="five-rows2" />
-                      <div>
-                        <Label htmlFor="five-rows2" className="text-base font-medium cursor-pointer">5 Columns</Label>
-                        <p className="text-sm text-muted-foreground">Compact layout for many documents</p>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-5 gap-1 w-16">
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                      <div className="w-2 h-4 bg-muted rounded-[1px]"></div>
-                    </div>
-                  </div>
-                </div>
-              </RadioGroup>
-              </div>
-
-              <div className="text-xs text-muted-foreground p-3 bg-muted/30 rounded border-l-4 border-primary/50">
-                <strong>Mobile Note:</strong> On mobile devices, thumbnails automatically display in a single column for optimal viewing experience.
               </div>
             </CardContent>
           </Card>
@@ -792,117 +374,22 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
                 <Settings className="w-5 h-5" />
                 Other Settings
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Additional configuration options</p>
+              <p className="text-sm text-muted-foreground">Additional display options for the countdown</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Gallery Display Options */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">Countdown Display Options</Label>
-                <p className="text-sm text-muted-foreground">Configure how documents are displayed in countdowns</p>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Star className="w-4 h-4 text-yellow-500" />
-                      <div className="space-y-0.5">
-                        <Label className="text-sm font-medium">Enable Ratings</Label>
-                        <p className="text-xs text-muted-foreground">Allow visitors to rate documents in the gallery</p>
-                      </div>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.ratingsEnabled === true}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, ratingsEnabled: checked === true }))}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Maximize2 className="w-4 h-4 text-blue-500" />
-                      <div className="space-y-0.5">
-                        <Label className="text-sm font-medium">Enable Lightbox</Label>
-                        <p className="text-xs text-muted-foreground">Open documents in fullscreen lightbox instead of new tab (desktop only)</p>
-                      </div>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.lightboxEnabled === true}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, lightboxEnabled: checked === true }))}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <FileType className="w-4 h-4 text-green-500" />
-                      <div className="space-y-0.5">
-                        <Label className="text-sm font-medium">Show File Type Badges</Label>
-                        <p className="text-xs text-muted-foreground">Display file type indicators (PDF, JPG, etc.) on thumbnails</p>
-                      </div>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.showFileTypeBadges !== false}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, showFileTypeBadges: checked === true }))}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Type className="w-4 h-4 text-purple-500" />
-                      <div className="space-y-0.5">
-                        <Label className="text-sm font-medium">Show Titles & Subtitles</Label>
-                        <p className="text-xs text-muted-foreground">Display document titles and subtitles below thumbnails</p>
-                      </div>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.showTitlesSubtitles !== false}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, showTitlesSubtitles: checked === true }))}
-                    />
+              {/* Border Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Frame className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Show Outer Frame</Label>
+                    <p className="text-xs text-muted-foreground">Display a border around the countdown widget</p>
                   </div>
                 </div>
-              </div>
-
-              {/* Thumbnail Caching Section */}
-              <div className="space-y-3">
-                <Label className="text-base font-medium">Thumbnail Caching</Label>
-                <p className="text-sm text-muted-foreground">Control how thumbnails are cached for better performance</p>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium">Enable thumbnail caching</Label>
-                      <p className="text-xs text-muted-foreground">Cache generated thumbnails to improve loading speed</p>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.enableThumbnailCache !== false}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, enableThumbnailCache: checked === true }))}
-                    />
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium">Auto-refresh cache</Label>
-                      <p className="text-xs text-muted-foreground">Automatically refresh thumbnails when PDFs are updated</p>
-                    </div>
-                    <Checkbox 
-                      checked={localSettings.autoRefreshCache !== false}
-                      onCheckedChange={(checked) => setLocalSettings(prev => ({ ...prev, autoRefreshCache: checked === true }))}
-                    />
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label className="text-sm font-medium">Cache duration</Label>
-                      <span className="text-sm font-medium text-primary">{localSettings.cacheDuration || '30'} days</span>
-                    </div>
-                    <Slider
-                      value={[parseInt(localSettings.cacheDuration || '30')]}
-                      onValueChange={(value) => setLocalSettings(prev => ({ ...prev, cacheDuration: value[0].toString() }))}
-                      min={1}
-                      max={365}
-                      step={1}
-                      className="w-full"
-                    />
-                    <p className="text-xs text-muted-foreground">How long to keep cached thumbnails (1-365 days)</p>
-                  </div>
-                </div>
+                <Checkbox 
+                  checked={localConfig.showBorder}
+                  onCheckedChange={(checked) => updateConfig({ showBorder: checked === true })}
+                />
               </div>
             </CardContent>
           </Card>
@@ -915,6 +402,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
 
   return (
     <div className="space-y-6">
+      {license.checked && license.status === 'free' ? (<ProBanner className="mb-6" />) : null}
+
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Settings2 className="w-6 h-6 text-primary" />
@@ -989,13 +478,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
                       onClick={() => setActiveSection(item.id)}
                       className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/50 ${
                         isActive 
-                          ? 'bg-primary/10 text-primary border-r-2 border-primary' 
-                          : 'text-muted-foreground hover:text-foreground'
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary' 
+                          : 'text-muted-foreground'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
                       <span className="text-sm font-medium">{item.label}</span>
-                      {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
                     </button>
                   );
                 })}
