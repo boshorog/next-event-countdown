@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +15,7 @@ import {
   TIMEZONE_OPTIONS,
   type ServiceSchedule,
   type SpecialEvent,
+  type RecurrenceType,
 } from "./ServiceCountdownWidget";
 
 const DAY_OPTIONS = [
@@ -26,6 +26,22 @@ const DAY_OPTIONS = [
   { value: "4", label: "Thursday" },
   { value: "5", label: "Friday" },
   { value: "6", label: "Saturday" },
+];
+
+const RECURRENCE_OPTIONS: { value: RecurrenceType; label: string; description: string }[] = [
+  { value: "weekly", label: "Weekly", description: "Every week on a specific day" },
+  { value: "biweekly", label: "Bi-weekly", description: "Every two weeks" },
+  { value: "monthly-dow", label: "Monthly (by day)", description: "E.g. 1st Sunday of each month" },
+  { value: "monthly-date", label: "Monthly (by date)", description: "E.g. the 15th of each month" },
+  { value: "daily", label: "Daily", description: "Every day at the same time" },
+];
+
+const MONTHLY_WEEK_OPTIONS = [
+  { value: "1", label: "1st" },
+  { value: "2", label: "2nd" },
+  { value: "3", label: "3rd" },
+  { value: "4", label: "4th" },
+  { value: "-1", label: "Last" },
 ];
 
 interface EventScheduleManagerProps {
@@ -45,7 +61,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const removeSchedule = (idx: number) => update("schedules", config.schedules.filter((_, i) => i !== idx));
 
   const addSchedule = () =>
-    update("schedules", [...config.schedules, { day: 0, hour: 10, minute: 0, title: "New event", timezone: "Europe/Bucharest" }]);
+    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York" }]);
 
   const updateSpecial = (idx: number, patch: Partial<SpecialEvent>) => {
     const next = config.specialEvents.map((e, i) => (i === idx ? { ...e, ...patch } : e));
@@ -58,7 +74,139 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
-    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special event", timezone: "Europe/Bucharest" }]);
+    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York" }]);
+  };
+
+  const renderRecurrenceFields = (s: ServiceSchedule, i: number) => {
+    const type = s.recurrenceType || "weekly";
+
+    return (
+      <>
+        {/* Recurrence type */}
+        <div className="space-y-1.5">
+          <Label className="text-xs font-medium text-muted-foreground">Recurrence</Label>
+          <Select value={type} onValueChange={(v) => updateSchedule(i, { recurrenceType: v as RecurrenceType })}>
+            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {RECURRENCE_OPTIONS.map((r) => (
+                <SelectItem key={r.value} value={r.value}>
+                  <span>{r.label}</span>
+                  <span className="text-muted-foreground ml-1 text-xs">— {r.description}</span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Conditional fields based on recurrence type */}
+        {type === "daily" && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+              <Select value={s.timezone || "America/New_York"} onValueChange={(v) => updateSchedule(i, { timezone: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div />
+          </div>
+        )}
+
+        {(type === "weekly" || type === "biweekly") && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Day</Label>
+              <Select value={String(s.day)} onValueChange={(v) => updateSchedule(i, { day: parseInt(v) })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {DAY_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+              <Select value={s.timezone || "America/New_York"} onValueChange={(v) => updateSchedule(i, { timezone: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {type === "biweekly" && (
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Starting from (anchor date)</Label>
+            <Input type="date" value={s.biweeklyStart || ""} onChange={(e) => updateSchedule(i, { biweeklyStart: e.target.value })} className="h-8 text-sm" />
+          </div>
+        )}
+
+        {type === "monthly-dow" && (
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Week</Label>
+              <Select value={String(s.monthlyWeek || 1)} onValueChange={(v) => updateSchedule(i, { monthlyWeek: parseInt(v) })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {MONTHLY_WEEK_OPTIONS.map((w) => <SelectItem key={w.value} value={w.value}>{w.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Day</Label>
+              <Select value={String(s.day)} onValueChange={(v) => updateSchedule(i, { day: parseInt(v) })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {DAY_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+              <Select value={s.timezone || "America/New_York"} onValueChange={(v) => updateSchedule(i, { timezone: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {type === "monthly-date" && (
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Day of Month</Label>
+              <Input type="number" min={1} max={31} value={s.monthlyDay || 1} onChange={(e) => updateSchedule(i, { monthlyDay: parseInt(e.target.value) || 1 })} className="h-8 text-sm" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+              <Select value={s.timezone || "America/New_York"} onValueChange={(v) => updateSchedule(i, { timezone: v })}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+
+        {/* Time fields (always shown) */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
+            <Input type="number" min={0} max={23} value={s.hour} onChange={(e) => updateSchedule(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
+            <Input type="number" min={0} max={59} value={s.minute} onChange={(e) => updateSchedule(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+          </div>
+        </div>
+      </>
+    );
   };
 
   return (
@@ -72,7 +220,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
               <Plus className="w-3 h-3" /> Add
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">Events that repeat every week on the same day and time.</p>
+          <p className="text-xs text-muted-foreground">Events that repeat on a regular schedule.</p>
         </CardHeader>
         <CardContent className="space-y-3">
           {config.schedules.length === 0 && (
@@ -86,40 +234,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                   <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Day</Label>
-                  <Select value={String(s.day)} onValueChange={(v) => updateSchedule(i, { day: parseInt(v) })}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {DAY_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
-                  <Select value={s.timezone || "Europe/Bucharest"} onValueChange={(v) => updateSchedule(i, { timezone: v })}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
-                  <Input type="number" min={0} max={23} value={s.hour} onChange={(e) => updateSchedule(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
-                  <Input type="number" min={0} max={59} value={s.minute} onChange={(e) => updateSchedule(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
-                </div>
-              </div>
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
                 <Input value={s.title} onChange={(v) => updateSchedule(i, { title: v.target.value })} className="h-8 text-sm" />
               </div>
+              {renderRecurrenceFields(s, i)}
             </div>
           ))}
         </CardContent>
@@ -148,6 +267,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                   <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
+                <Input value={ev.title} onChange={(v) => updateSpecial(i, { title: v.target.value })} className="h-8 text-sm" />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Date</Label>
@@ -155,7 +278,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
-                  <Select value={ev.timezone || "Europe/Bucharest"} onValueChange={(v) => updateSpecial(i, { timezone: v })}>
+                  <Select value={ev.timezone || "America/New_York"} onValueChange={(v) => updateSpecial(i, { timezone: v })}>
                     <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
@@ -172,10 +295,6 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                   <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
                   <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => updateSpecial(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
                 </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
-                <Input value={ev.title} onChange={(v) => updateSpecial(i, { title: v.target.value })} className="h-8 text-sm" />
               </div>
             </div>
           ))}
