@@ -2,7 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Copy, FileImage, Layers, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
+import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
 import PDFAdmin from '@/components/PDFAdmin';
 import PDFGallery from '@/components/PDFGallery';
 import ServiceCountdownWidget from '@/components/ServiceCountdownWidget';
@@ -181,7 +181,7 @@ const Index = () => {
                   // Ensure galleries have proper structure with names
                   const restoredGalleries = backup.map((gallery: any) => ({
                     id: gallery.id || 'main',
-                    name: gallery.name || 'Main Gallery',
+                name: gallery.name || 'Main Countdown',
                     items: Array.isArray(gallery.items) ? gallery.items : [],
                     createdAt: gallery.createdAt || new Date().toISOString(),
                   }));
@@ -205,7 +205,7 @@ const Index = () => {
               // Create test gallery with sample data
               const testGallery: Gallery = {
                 id: 'test',
-                name: 'Test Gallery',
+            name: 'Test Countdown',
                 items: [
                   { id: 'div-1', type: 'divider', text: 'First Section' },
                   { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
@@ -268,7 +268,7 @@ const Index = () => {
             // Create test gallery for development
             const testGallery: Gallery = {
               id: 'test',
-              name: 'Test Gallery',
+            name: 'Test Countdown',
               items: [
                 { id: 'div-1', type: 'divider', text: 'First Section' },
                 { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
@@ -300,7 +300,7 @@ const Index = () => {
             if (Array.isArray(backup) && backup.length > 0) {
               const restoredGalleries = backup.map((gallery: any) => ({
                 id: gallery.id || 'main',
-                name: gallery.name || 'Main Gallery',
+                name: gallery.name || 'Main Countdown',
                 items: Array.isArray(gallery.items) ? gallery.items : [],
                 createdAt: gallery.createdAt || new Date().toISOString(),
               }));
@@ -315,7 +315,7 @@ const Index = () => {
           // Create test gallery for development if no backup exists
           const testGallery: Gallery = {
             id: 'test',
-            name: 'Test Gallery',
+          name: 'Test Countdown',
             items: [
               { id: 'div-1', type: 'divider', text: 'First Section' },
               { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
@@ -363,7 +363,7 @@ const Index = () => {
       // Fallback test galleries for development or when no config is provided
       const testGallery: Gallery = {
         id: 'test',
-        name: 'Test Gallery',
+        name: 'Test Countdown',
         items: [
           { id: 'div-1', type: 'divider', text: 'First Section' },
           { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
@@ -547,7 +547,7 @@ const Index = () => {
                 value="gallery"
                 className="flex-1 px-6 py-4 text-sm font-medium border-b-2 -mb-px flex items-center justify-center gap-2 transition-colors rounded-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-primary/5 data-[state=inactive]:border-transparent data-[state=inactive]:text-slate-500 hover:text-slate-700 hover:bg-slate-50 data-[state=active]:shadow-none"
               >
-                <Layers className="w-4 h-4" />
+                <Timer className="w-4 h-4" />
                 Counters
               </TabsTrigger>
               <TabsTrigger 

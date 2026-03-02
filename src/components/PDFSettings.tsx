@@ -158,7 +158,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
 
       toast({
         title: "Settings Saved",
-        description: "Your gallery settings have been updated successfully",
+        description: "Your countdown settings have been updated successfully",
       });
     } catch (e) {
       toast({ title: "Saved locally", description: "Could not reach WordPress AJAX." });
@@ -181,7 +181,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
       {license.checked && license.status === 'free' ? (<ProBanner className="mb-6" />) : null}
       
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Settings</h2>
+        <h2 className="text-2xl font-bold">Countdown Settings</h2>
         <div className={`flex items-center ${!license.isPro ? "opacity-50 pointer-events-none" : ""}`}>
           <Button 
             onClick={() => { if (license.isPro) handleSave(); }}
@@ -208,7 +208,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon firstLayerGreen className="flex-shrink-0" />
-                  <span>Current Gallery</span>
+                  <span>Current Countdown</span>
                 </div>
                 {saveScope === 'current' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
@@ -218,7 +218,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon allLayersGreen className="flex-shrink-0" />
-                  <span>All Galleries</span>
+                  <span>All Countdowns</span>
                 </div>
                 {saveScope === 'all' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
