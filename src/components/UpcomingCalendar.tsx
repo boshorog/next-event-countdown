@@ -96,6 +96,11 @@ const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
                       {format(day, 'EEE')}
                     </span>
                     <span className="text-sm font-bold">{format(day, 'd')}</span>
+                    {dayIsToday && (
+                      <span className={`text-[8px] font-semibold uppercase tracking-wide ${dayIsToday ? 'opacity-70' : 'text-primary'}`}>
+                        Today
+                      </span>
+                    )}
                     {hasEvent && (
                       <span className={`text-[9px] mt-0.5 truncate max-w-[56px] ${dayIsToday ? 'opacity-80' : 'text-primary'}`}>
                         {events[0].title.length > 8 ? events[0].title.slice(0, 8) + '…' : events[0].title}
