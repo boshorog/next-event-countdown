@@ -15,8 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ChevronDown, Check, RotateCcw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useLicense } from "@/hooks/useLicense";
-import ProBanner from "@/components/ProBanner";
 import {
   CountdownConfig,
   defaultCountdownConfig,
@@ -139,7 +137,7 @@ interface CountdownSettingsProps {
 const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
   const [saveScope, setSaveScope] = useState<"current" | "all">("current");
   const { toast } = useToast();
-  const license = useLicense();
+  
 
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
@@ -173,7 +171,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
 
   return (
     <div className="space-y-6">
-      {license.checked && license.status === "free" ? <ProBanner className="mb-6" /> : null}
+      
 
       {/* Header with Save + Scope */}
       <div className="flex justify-between items-center">
@@ -182,11 +180,10 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
           <Button variant="outline" size="sm" onClick={handleReset} className="h-9 gap-1.5 text-xs text-muted-foreground">
             <RotateCcw className="w-3.5 h-3.5" /> Reset
           </Button>
-          <div className={`flex items-center ${!license.isPro ? "opacity-50 pointer-events-none" : ""}`}>
+          <div className="flex items-center">
             <Button
-              onClick={() => { if (license.isPro) handleSave(); }}
+              onClick={handleSave}
               className="rounded-r-none bg-primary hover:bg-primary/90"
-              disabled={!license.isPro}
             >
               Save Settings
             </Button>
@@ -195,7 +192,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
                 <Button
                   variant="default"
                   className="rounded-l-none border-l border-primary-foreground/20 px-2 bg-primary hover:bg-primary/90"
-                  disabled={!license.isPro}
+                  disabled={false}
                 >
                   <ChevronDown className="h-4 w-4" />
                 </Button>
@@ -228,7 +225,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
       </div>
 
       {/* Icon Section */}
-      <Card className={!license.isPro ? "opacity-50 pointer-events-none" : ""}>
+      <Card>
         <CardHeader>
           <CardTitle>Icon</CardTitle>
         </CardHeader>
@@ -260,7 +257,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
       </Card>
 
       {/* Labels Section */}
-      <Card className={!license.isPro ? "opacity-50 pointer-events-none" : ""}>
+      <Card>
         <CardHeader>
           <CardTitle>Labels</CardTitle>
         </CardHeader>
@@ -280,7 +277,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
       </Card>
 
       {/* Header Size Section */}
-      <Card className={!license.isPro ? "opacity-50 pointer-events-none" : ""}>
+      <Card>
         <CardHeader>
           <CardTitle>Header Size</CardTitle>
         </CardHeader>
@@ -312,7 +309,7 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
       </Card>
 
       {/* Colors Section */}
-      <Card className={!license.isPro ? "opacity-50 pointer-events-none" : ""}>
+      <Card>
         <CardHeader>
           <CardTitle>Colors</CardTitle>
         </CardHeader>
@@ -334,9 +331,8 @@ const CountdownSettings = ({ config, onChange }: CountdownSettingsProps) => {
       {/* Bottom Save */}
       <div className="flex justify-end">
         <Button
-          onClick={() => { if (license.isPro) handleSave(); }}
-          className={!license.isPro ? "opacity-50 cursor-not-allowed pointer-events-none" : "bg-primary hover:bg-primary/90"}
-          disabled={!license.isPro}
+          onClick={handleSave}
+          className="bg-primary hover:bg-primary/90"
         >
           Save Settings
         </Button>
