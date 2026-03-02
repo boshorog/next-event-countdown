@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Check, Copy, FileImage, Layers, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
 import PDFAdmin from '@/components/PDFAdmin';
 import PDFGallery from '@/components/PDFGallery';
+import ServiceCountdownWidget from '@/components/ServiceCountdownWidget';
 import PDFSettings from '@/components/PDFSettings';
 import SettingsProposal2 from '@/components/SettingsProposal2';
 import PluginDocumentation from '@/components/PluginDocumentation';
@@ -515,9 +516,9 @@ const Index = () => {
         {/* Logo Header */}
         <div className="px-6 pt-6 pb-6">
           <div className="flex items-center gap-3">
-            <img src={pdfGalleryLogo} alt={license.isPro ? "PDF Gallery Pro" : "PDF Gallery"} className="w-7 h-7" />
+            <img src={pdfGalleryLogo} alt={license.isPro ? "Next Event Countdown Pro" : "Next Event Countdown"} className="w-7 h-7" />
             <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl text-slate-800"><span className="font-bold">{license.isPro ? 'PDF Gallery Pro' : 'PDF Gallery'}</span></h1>
+              <h1 className="text-2xl text-slate-800"><span className="font-bold">{license.isPro ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
               <span className="text-xs text-slate-400">v{PLUGIN_VERSION}</span>
             </div>
           </div>
@@ -547,7 +548,7 @@ const Index = () => {
                 className="flex-1 px-6 py-4 text-sm font-medium border-b-2 -mb-px flex items-center justify-center gap-2 transition-colors rounded-none data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:bg-primary/5 data-[state=inactive]:border-transparent data-[state=inactive]:text-slate-500 hover:text-slate-700 hover:bg-slate-50 data-[state=active]:shadow-none"
               >
                 <Layers className="w-4 h-4" />
-                Galleries
+                Counters
               </TabsTrigger>
               <TabsTrigger 
                 value="settings"
@@ -607,13 +608,7 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <PDFGallery 
-                items={currentItems} 
-                settings={settings}
-                showRatings={galleryRatingsEnabled}
-                lightboxEnabled={galleryLightboxEnabled}
-                galleryId={currentGallery?.id || 'default'}
-              />
+              <ServiceCountdownWidget />
             </TabsContent>
             
             <TabsContent value="gallery" className="mt-0">
