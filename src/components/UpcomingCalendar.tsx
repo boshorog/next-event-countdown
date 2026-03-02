@@ -1,32 +1,78 @@
-import { useState } from 'react';
-import { format, addDays, isSameDay, isToday } from 'date-fns';
-import { ChevronRight } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { format, addDays, isSameDay, isToday, startOfDay } from 'date-fns';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { CountdownConfig, getScheduleCandidates } from './ServiceCountdownWidget';
 
-// Sample events for demo
-const baseDate = new Date();
-const sampleEvents = [
-  { date: baseDate, title: 'Morning Prayer', time: '10:00 AM', duration: 60 },
-  { date: addDays(baseDate, 1), title: 'Bible Study', time: '7:00 PM', duration: 90 },
-  { date: addDays(baseDate, 3), title: 'Sunday Service', time: '10:00 AM', duration: 120 },
-  { date: addDays(baseDate, 3), title: 'Youth Group', time: '5:00 PM', duration: 60 },
-  { date: addDays(baseDate, 5), title: 'Choir Practice', time: '6:30 PM', duration: 90 },
-  { date: addDays(baseDate, 7), title: 'Sunday Service', time: '10:00 AM', duration: 120 },
-  { date: addDays(baseDate, 9), title: 'Community Dinner', time: '6:00 PM', duration: 120 },
-  { date: addDays(baseDate, 12), title: 'Prayer Meeting', time: '7:00 PM', duration: 60 },
-  { date: addDays(baseDate, 15), title: 'Worship Night', time: '6:00 PM', duration: 120 },
-];
+interface CalendarEvent {
+  date: Date;
+  title: string;
+  time: string;
+  duration: number;
+}
 
-const getEventsForDay = (date: Date) => sampleEvents.filter(e => isSameDay(e.date, date));
+interface UpcomingCalendarProps {
+  countdownConfig: CountdownConfig;
+}
 
-const UpcomingCalendar = () => {
+function getEventsForRange(config: CountdownConfig, startDate: Date, days: number): CalendarEvent[] {
+  const events: CalendarEvent[] = [];
+  const endDate = addDays(startDate, days);
+
+  // From recurring schedules
+  for (const s of config.schedules) {
+    const candidates = getScheduleCandidates(s, startDate, days + 4);
+    for (const d of candidates) {
+      if (d >= startOfDay(startDate) && d < startOfDay(endDate)) {
+        events.push({
+          date: d,
+          title: s.title,
+          time: `${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')}`,
+          duration: s.duration || 60,
+        });
+      }
+    }
+  }
+
+  // From special events
+  for (const ev of config.specialEvents) {
+    const [y, m, d] = ev.date.split('-').map(Number);
+    const evDate = new Date(y, m - 1, d, ev.hour, ev.minute);
+    if (evDate >= startOfDay(startDate) && evDate < startOfDay(endDate)) {
+      events.push({
+        date: evDate,
+        title: ev.title,
+        time: `${String(ev.hour).padStart(2, '0')}:${String(ev.minute).padStart(2, '0')}`,
+        duration: ev.duration || 60,
+      });
+    }
+  }
+
+  return events;
+}
+
+const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
   const [offset, setOffset] = useState(0);
   const VISIBLE_DAYS = 11;
   const startDate = addDays(new Date(), offset);
   const days = Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(startDate, i));
 
+  const allEvents = useMemo(
+    () => getEventsForRange(countdownConfig, startDate, VISIBLE_DAYS),
+    [countdownConfig, offset]
+  );
+
+  const getEventsForDay = (date: Date) => allEvents.filter(e => isSameDay(e.date, date));
+
   return (
     <div className="flex items-center gap-1 w-full">
+      <button
+        onClick={() => setOffset(prev => prev - VISIBLE_DAYS)}
+        className="flex-shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+        aria-label="Show previous days"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
       <div className="flex gap-1 flex-1 min-w-0">
         {days.map((day) => {
           const events = getEventsForDay(day);

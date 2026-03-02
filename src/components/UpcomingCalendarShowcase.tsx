@@ -326,17 +326,18 @@ const Variant6 = () => {
 
 // ─── Showcase Container ─────────────────────────────────────────────────────────
 import UpcomingCalendar from './UpcomingCalendar';
+import { defaultCountdownConfig } from './ServiceCountdownWidget';
 
 const UpcomingCalendarShowcase = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Upcoming Days Calendar — Showcase</h1>
-        <p className="text-muted-foreground mt-1">Final design: Underline Accent with highlighted today, full width, and forward arrow.</p>
+        <p className="text-muted-foreground mt-1">Mini Agenda with real events, rewind &amp; forward arrows.</p>
       </div>
       <Card>
         <CardContent className="pt-4 pb-3 px-3">
-          <UpcomingCalendar />
+          <UpcomingCalendar countdownConfig={defaultCountdownConfig} />
         </CardContent>
       </Card>
     </div>

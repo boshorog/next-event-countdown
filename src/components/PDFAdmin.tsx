@@ -44,6 +44,7 @@ interface PDFAdminProps {
   currentGalleryId: string;
   onGalleriesChange: (galleries: Gallery[]) => void;
   onCurrentGalleryChange: (galleryId: string) => void;
+  countdownConfig?: import('./ServiceCountdownWidget').CountdownConfig;
 }
 
 interface SortableItemProps {
@@ -256,7 +257,7 @@ const SortableItem = ({ item, onEdit, onDelete, onRefresh, isSelected, onSelect,
   );
 };
 
-const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGalleryChange }: PDFAdminProps) => {
+const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGalleryChange, countdownConfig }: PDFAdminProps) => {
   const currentGallery = galleries.find(g => g.id === currentGalleryId);
   const items = currentGallery?.items || [];
 
@@ -1408,8 +1409,23 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       {/* Navigation removed: top-level tabs now control sections */}
 
       <>
-          {/* Top Row: Action Buttons only */}
-          <div className="flex justify-end items-center">
+          {/* Top Row: Breadcrumb left, Save right */}
+          <div className="flex items-center justify-between">
+            {/* Left: Gallery Selector breadcrumb */}
+            <div className="flex items-center gap-1.5 text-sm">
+              <span className="text-muted-foreground">Counters</span>
+              <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
+              <GallerySelector
+                galleries={galleries}
+                currentGalleryId={currentGalleryId}
+                isPro={license.isPro}
+                onGalleryChange={onCurrentGalleryChange}
+                onGalleryCreate={handleGalleryCreate}
+                onGalleryRename={handleGalleryRename}
+                onGalleryDelete={handleGalleryDelete}
+              />
+            </div>
+            {/* Right: Action buttons */}
             <div className="flex gap-2">
               {selectedItems.size > 0 && (
                 <Button 
@@ -1430,129 +1446,11 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 <Check className="w-4 h-4 mr-2" />
                 Save
               </Button>
-              <Button 
-                onClick={() => setIsAddingDivider(true)}
-                variant="outline"
-              >
-                <Separator className="w-4 h-0.5" />
-                Add Divider
-              </Button>
             </div>
           </div>
 
-          {/* Second Row: Select All | Gallery Selector | Sorting - above dotted line */}
-          {(() => {
-            const gallerySettings = (currentGallery as any)?.settings || {};
-            const sortOrder = gallerySettings.sortOrder || 'newest';
-            
-            const updateSortOrder = (value: string) => {
-              if (!currentGallery) return;
-              const updatedGalleries = galleries.map(gallery => 
-                gallery.id === currentGalleryId 
-                  ? { ...gallery, settings: { ...((gallery as any).settings || {}), sortOrder: value } }
-                  : gallery
-              );
-              onGalleriesChange(updatedGalleries);
-              saveGalleriesToWP(updatedGalleries);
-              
-              toast({
-                title: "Sort Order Updated",
-                description: value === 'newest' 
-                  ? "Showing newest documents first" 
-                  : value === 'oldest'
-                  ? "Showing oldest documents first"
-                  : "Sorting alphabetically A-Z",
-              });
-            };
-
-            // Gallery Selector - Breadcrumb style
-            const renderGallerySelector = () => (
-              <div className="flex items-center gap-1.5 text-sm">
-                <span className="text-muted-foreground">Counters</span>
-                <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
-                <GallerySelector
-                  galleries={galleries}
-                  currentGalleryId={currentGalleryId}
-                  isPro={license.isPro}
-                  onGalleryChange={onCurrentGalleryChange}
-                  onGalleryCreate={handleGalleryCreate}
-                  onGalleryRename={handleGalleryRename}
-                  onGalleryDelete={handleGalleryDelete}
-                />
-              </div>
-            );
-
-            return (
-              <div className="flex items-center justify-between border-b border-dashed pb-2">
-                {/* Left: Select All (only show if there are items) */}
-                <div className="flex items-center space-x-3 ml-[22px]">
-                  {items.length > 0 ? (
-                    <>
-                      <Checkbox 
-                        checked={selectedItems.size === items.length && items.length > 0}
-                        onCheckedChange={handleSelectAll}
-                        aria-label="Select all"
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {selectedItems.size > 0 ? `${selectedItems.size} selected` : 'Select all'}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">No documents yet</span>
-                  )}
-                </div>
-                
-                {/* Center: Gallery Selector */}
-                {renderGallerySelector()}
-                
-                {/* Right: Sorting Dropdown (only show if there are items) */}
-                {items.length > 0 && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <ArrowUpDown className="h-3.5 w-3.5" />
-                        <span>{sortOrder === 'newest' ? 'Newest first' : sortOrder === 'oldest' ? 'Oldest first' : 'A-Z'}</span>
-                        <ChevronDown className="h-3 w-3" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem 
-                        onClick={() => updateSortOrder('newest')}
-                        className="flex items-center justify-between gap-4 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <ArrowDown className="h-4 w-4" />
-                          <span>Newest first</span>
-                        </div>
-                        {sortOrder === 'newest' && <Check className="h-4 w-4 text-primary" />}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => updateSortOrder('oldest')}
-                        className="flex items-center justify-between gap-4 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <ArrowUp className="h-4 w-4" />
-                          <span>Oldest first</span>
-                        </div>
-                        {sortOrder === 'oldest' && <Check className="h-4 w-4 text-primary" />}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => updateSortOrder('alphabetical')}
-                        className="flex items-center justify-between gap-4 cursor-pointer"
-                      >
-                        <div className="flex items-center gap-2">
-                          <ArrowUpDown className="h-4 w-4" />
-                          <span>Alphabetical (A-Z)</span>
-                        </div>
-                        {sortOrder === 'alphabetical' && <Check className="h-4 w-4 text-primary" />}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-                {items.length === 0 && <div />}
-              </div>
-            );
-          })()}
+          {/* Dotted divider */}
+          <div className="border-b border-dashed" />
 
           {/* Rename Warning Message */}
           {showRenameWarning && (
@@ -2013,9 +1911,9 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
 
 
-          {!isAddingDocument && !isAddingDivider && (
+          {!isAddingDocument && !isAddingDivider && countdownConfig && (
             <div className="mt-4">
-              <UpcomingCalendar />
+              <UpcomingCalendar countdownConfig={countdownConfig} />
             </div>
           )}
         </>
