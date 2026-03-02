@@ -263,7 +263,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">Recurring Events</CardTitle>
-            <Button variant="outline" size="sm" onClick={addSchedule} className="h-7 text-xs gap-1">
+            <Button size="sm" onClick={addSchedule} className="h-7 text-xs gap-1 bg-accent text-accent-foreground hover:bg-accent/80">
               <Plus className="w-3 h-3" /> Add
             </Button>
           </div>
@@ -296,7 +296,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="text-base">Special Events</CardTitle>
-            <Button variant="outline" size="sm" onClick={addSpecial} className="h-7 text-xs gap-1">
+            <Button size="sm" onClick={addSpecial} className="h-7 text-xs gap-1 bg-accent text-accent-foreground hover:bg-accent/80">
               <Plus className="w-3 h-3" /> Add
             </Button>
           </div>
