@@ -16,6 +16,7 @@ import GalleryNotFoundShowcase from '@/components/GalleryNotFoundShowcase';
 import UpdateNoticeShowcase from '@/components/UpdateNoticeShowcase';
 import GalleryNotFound from '@/components/GalleryNotFound';
 import CalendarShowcase from '@/components/CalendarShowcase';
+import UpcomingCalendarShowcase from '@/components/UpcomingCalendarShowcase';
 import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorShowcase';
 import LightboxShowcase from '@/components/LightboxShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
@@ -172,15 +173,10 @@ const Index = () => {
                 }
               } catch {}
 
-              // Create test gallery with sample data
               const testGallery: Gallery = {
                 id: 'test',
-            name: 'Test Countdown',
-                items: [
-                  { id: 'div-1', type: 'divider', text: 'First Section' },
-                  { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
-                  { id: 'pdf-2', title: 'Sample Document 2', date: 'February 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2502_De-La-Februs-La-Hristos.pdf', thumbnail: '', fileType: 'pdf' },
-                ] as GalleryItem[],
+                name: 'Test Countdown',
+                items: [] as GalleryItem[],
                 createdAt: new Date().toISOString(),
               };
               setGalleryState({
@@ -228,12 +224,8 @@ const Index = () => {
             // Create test gallery for development
             const testGallery: Gallery = {
               id: 'test',
-            name: 'Test Countdown',
-              items: [
-                { id: 'div-1', type: 'divider', text: 'First Section' },
-                { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
-                { id: 'pdf-2', title: 'Sample Document 2', date: 'February 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2502_De-La-Februs-La-Hristos.pdf', thumbnail: '', fileType: 'pdf' },
-              ] as GalleryItem[],
+              name: 'Test Countdown',
+              items: [] as GalleryItem[],
               createdAt: new Date().toISOString(),
             };
             setGalleryState({
@@ -265,12 +257,8 @@ const Index = () => {
           // Create test gallery for development if no backup exists
           const testGallery: Gallery = {
             id: 'test',
-          name: 'Test Countdown',
-            items: [
-              { id: 'div-1', type: 'divider', text: 'First Section' },
-              { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
-              { id: 'pdf-2', title: 'Sample Document 2', date: 'February 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2502_De-La-Februs-La-Hristos.pdf', thumbnail: '', fileType: 'pdf' },
-            ] as GalleryItem[],
+            name: 'Test Countdown',
+            items: [] as GalleryItem[],
             createdAt: new Date().toISOString(),
           };
           setGalleryState({
@@ -304,11 +292,7 @@ const Index = () => {
       const testGallery: Gallery = {
         id: 'test',
         name: 'Test Countdown',
-        items: [
-          { id: 'div-1', type: 'divider', text: 'First Section' },
-          { id: 'pdf-1', title: 'Sample Document 1', date: 'January 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2501_Ce-Ne-Rezerva-Viitorul.pdf', thumbnail: '', fileType: 'pdf' },
-          { id: 'pdf-2', title: 'Sample Document 2', date: 'February 2025', pdfUrl: 'https://www.antiohia.ro/wp-content/uploads/2025/09/newsletter2502_De-La-Februs-La-Hristos.pdf', thumbnail: '', fileType: 'pdf' },
-        ] as GalleryItem[],
+        items: [] as GalleryItem[],
         createdAt: new Date().toISOString(),
       };
       setGalleryState({
@@ -421,6 +405,12 @@ const Index = () => {
   const showCalendarShowcase = urlParams.get('showcase') === 'calendar';
   if (showCalendarShowcase) {
     return <CalendarShowcase />;
+  }
+
+  // DEV: Show showcase for upcoming calendar designs
+  const showUpcomingCalendarShowcase = urlParams.get('showcase') === 'upcoming-calendar';
+  if (showUpcomingCalendarShowcase) {
+    return <UpcomingCalendarShowcase />;
   }
 
   if (!showAdmin) {
