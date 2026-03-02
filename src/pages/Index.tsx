@@ -15,6 +15,7 @@ import ProWelcome from '@/components/ProWelcome';
 import GalleryNotFoundShowcase from '@/components/GalleryNotFoundShowcase';
 import UpdateNoticeShowcase from '@/components/UpdateNoticeShowcase';
 import GalleryNotFound from '@/components/GalleryNotFound';
+import CalendarShowcase from '@/components/CalendarShowcase';
 import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorShowcase';
 import LightboxShowcase from '@/components/LightboxShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
@@ -447,6 +448,12 @@ const Index = () => {
   const showUpdateNoticeShowcase = urlParams.get('showcase') === 'update-notice';
   if (showUpdateNoticeShowcase) {
     return <UpdateNoticeShowcase />;
+  }
+
+  // DEV: Show showcase for calendar designs
+  const showCalendarShowcase = urlParams.get('showcase') === 'calendar';
+  if (showCalendarShowcase) {
+    return <CalendarShowcase />;
   }
 
   if (!showAdmin) {

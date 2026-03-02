@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link } from 'lucide-react';
+import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link, Save } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1420,11 +1420,14 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 </Button>
               )}
               <Button 
-                onClick={() => setIsAddingDocument(true)}
+                onClick={() => {
+                  saveGalleriesToWP(galleries);
+                  toast({ title: 'Saved', description: 'Schedules saved successfully.' });
+                }}
                 className="bg-primary hover:bg-primary/90"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Add File(s)
+                <Check className="w-4 h-4 mr-2" />
+                Save
               </Button>
               <Button 
                 onClick={() => setIsAddingDivider(true)}
@@ -2019,17 +2022,13 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 )}
                 <Button 
                   onClick={() => {
-                    setIsAddingDocument(true);
-                    setTimeout(() => {
-                      const editSection = document.querySelector('.edit-section');
-                      if (editSection) editSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      else window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }, 50);
+                    saveGalleriesToWP(galleries);
+                    toast({ title: 'Saved', description: 'Schedules saved successfully.' });
                   }}
                   className="bg-primary hover:bg-primary/90"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add File(s)
+                  <Check className="w-4 h-4 mr-2" />
+                  Save
                 </Button>
                 <Button 
                   onClick={() => { setIsAddingDivider(true); setTimeout(() => { const editSection = document.querySelector('.edit-section'); if (editSection) editSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); else window.scrollTo({ top: 0, behavior: 'smooth' }); }, 50); }}
@@ -2052,9 +2051,12 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                   Start by adding your first document or divider.
                 </p>
                 <div className="flex gap-2 justify-center">
-                  <Button onClick={() => setIsAddingDocument(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add File(s)
+                  <Button onClick={() => {
+                    saveGalleriesToWP(galleries);
+                    toast({ title: 'Saved', description: 'Schedules saved successfully.' });
+                  }}>
+                    <Check className="w-4 h-4 mr-2" />
+                    Save
                   </Button>
                   <Button variant="outline" onClick={() => setIsAddingDivider(true)}>
                     <Separator className="w-4 h-0.5" />
