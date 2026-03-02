@@ -797,8 +797,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
             <CardContent className="space-y-6">
               {/* Gallery Display Options */}
               <div className="space-y-3">
-                <Label className="text-base font-medium">Gallery Display Options</Label>
-                <p className="text-sm text-muted-foreground">Configure how documents are displayed in galleries</p>
+                <Label className="text-base font-medium">Countdown Display Options</Label>
+                <p className="text-sm text-muted-foreground">Configure how documents are displayed in countdowns</p>
                 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">

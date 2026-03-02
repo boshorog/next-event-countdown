@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
 import PDFAdmin from '@/components/PDFAdmin';
 import PDFGallery from '@/components/PDFGallery';
-import ServiceCountdownWidget from '@/components/ServiceCountdownWidget';
+import ServiceCountdownWidget, { defaultCountdownConfig, CountdownConfig } from '@/components/ServiceCountdownWidget';
+import EventScheduleManager from '@/components/EventScheduleManager';
 import PDFSettings from '@/components/PDFSettings';
 import SettingsProposal2 from '@/components/SettingsProposal2';
 import PluginDocumentation from '@/components/PluginDocumentation';
@@ -106,6 +107,7 @@ const Index = () => {
   });
   const [shortcodeCopied, setShortcodeCopied] = useState(false);
   const [galleryNotFound, setGalleryNotFound] = useState(false);
+  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(defaultCountdownConfig);
 
   useEffect(() => {
     const wp = (typeof window !== 'undefined' && ((window as any).kindpdfgData || (window as any).wpPDFGallery)) ? ((window as any).kindpdfgData || (window as any).wpPDFGallery) : null;
@@ -568,7 +570,7 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <ServiceCountdownWidget />
+              <ServiceCountdownWidget config={countdownConfig} />
             </TabsContent>
             
             <TabsContent value="gallery" className="mt-0">
@@ -577,6 +579,10 @@ const Index = () => {
                 currentGalleryId={galleryState.currentGalleryId}
                 onGalleriesChange={(galleries) => setGalleryState(prev => ({ ...prev, galleries }))}
                 onCurrentGalleryChange={(galleryId) => setGalleryState(prev => ({ ...prev, currentGalleryId: galleryId }))}
+              />
+              <EventScheduleManager 
+                config={countdownConfig}
+                onChange={setCountdownConfig}
               />
             </TabsContent>
             

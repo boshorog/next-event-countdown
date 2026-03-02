@@ -461,7 +461,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   const handleFiles = useCallback((fileList: FileList) => {
     // Prevent actions before galleries are loaded to avoid accidental overwrites
     if (galleries.length === 0 || !currentGalleryId) {
-      toast({ title: 'Please wait', description: 'Galleries are loading. Try again in a moment.' });
+      toast({ title: 'Please wait', description: 'Countdowns are loading. Try again in a moment.' });
       return;
     }
 
@@ -1277,7 +1277,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
       // Prevent actions before galleries are loaded
       if (galleries.length === 0 || !currentGalleryId) {
-        toast({ title: 'Please wait', description: 'Galleries are loading. Try again in a moment.' });
+        toast({ title: 'Please wait', description: 'Countdowns are loading. Try again in a moment.' });
         return;
       }
 
@@ -1464,7 +1464,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             // Gallery Selector - Breadcrumb style
             const renderGallerySelector = () => (
               <div className="flex items-center gap-1.5 text-sm">
-                <span className="text-muted-foreground">Galleries</span>
+                <span className="text-muted-foreground">Countdowns</span>
                 <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
                 <GallerySelector
                   galleries={galleries}
