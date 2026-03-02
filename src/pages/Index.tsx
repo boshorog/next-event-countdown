@@ -8,7 +8,7 @@ import PDFGallery from '@/components/PDFGallery';
 import ServiceCountdownWidget, { defaultCountdownConfig, CountdownConfig } from '@/components/ServiceCountdownWidget';
 import EventScheduleManager from '@/components/EventScheduleManager';
 import PDFSettings from '@/components/PDFSettings';
-import SettingsProposal2 from '@/components/SettingsProposal2';
+import CountdownSettings from '@/components/CountdownSettings';
 import PluginDocumentation from '@/components/PluginDocumentation';
 import ProBanner from '@/components/ProBanner';
 import ProWelcome from '@/components/ProWelcome';
@@ -594,9 +594,9 @@ const Index = () => {
             </TabsContent>
             
             <TabsContent value="settings" className="mt-0">
-              <SettingsProposal2 
-                settings={settings} 
-                onSettingsChange={setSettings} 
+              <CountdownSettings 
+                config={countdownConfig}
+                onChange={setCountdownConfig}
                 currentGalleryId={galleryState.currentGalleryId}
               />
             </TabsContent>
