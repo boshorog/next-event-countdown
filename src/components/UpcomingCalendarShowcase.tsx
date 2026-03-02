@@ -325,19 +325,20 @@ const Variant6 = () => {
 };
 
 // ─── Showcase Container ─────────────────────────────────────────────────────────
+import UpcomingCalendar from './UpcomingCalendar';
+
 const UpcomingCalendarShowcase = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Upcoming Days Calendar — Showcase</h1>
-        <p className="text-muted-foreground mt-1">6 horizontal calendar variants showing today + next 10 days. Hover over colored days to see event details.</p>
+        <p className="text-muted-foreground mt-1">Final design: Underline Accent with highlighted today, full width, and forward arrow.</p>
       </div>
-      <Variant1 />
-      <Variant2 />
-      <Variant3 />
-      <Variant4 />
-      <Variant5 />
-      <Variant6 />
+      <Card>
+        <CardContent className="pt-4 pb-3 px-3">
+          <UpcomingCalendar />
+        </CardContent>
+      </Card>
     </div>
   );
 };
