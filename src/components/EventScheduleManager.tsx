@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, CalendarIcon } from "lucide-react";
+import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   CountdownConfig,
   TIMEZONE_OPTIONS,
@@ -33,6 +38,8 @@ const DAY_OPTIONS = [
   { value: "6", label: "Saturday" },
 ];
 
+const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 const RECURRENCE_OPTIONS: { value: RecurrenceType; label: string; description: string }[] = [
   { value: "weekly", label: "Weekly", description: "Every week on a specific day" },
   { value: "biweekly", label: "Bi-weekly", description: "Every two weeks" },
@@ -40,6 +47,14 @@ const RECURRENCE_OPTIONS: { value: RecurrenceType; label: string; description: s
   { value: "monthly-date", label: "Monthly (by date)", description: "E.g. the 15th of each month" },
   { value: "daily", label: "Daily", description: "Every day at the same time" },
 ];
+
+const RECURRENCE_SHORT: Record<RecurrenceType, string> = {
+  weekly: "Weekly",
+  biweekly: "Bi-weekly",
+  "monthly-dow": "Monthly",
+  "monthly-date": "Monthly",
+  daily: "Daily",
+};
 
 const MONTHLY_WEEK_OPTIONS = [
   { value: "1", label: "1st" },
@@ -87,7 +102,34 @@ interface EventScheduleManagerProps {
   onChange: (config: CountdownConfig) => void;
 }
 
+/** Build a human-readable summary for a recurring schedule */
+function scheduleSummary(s: ServiceSchedule): string {
+  const time = `${String(s.hour).padStart(2, '0')}:${String(s.minute).padStart(2, '0')}`;
+  const dur = s.duration ? `${s.duration} min` : '60 min';
+  const type = s.recurrenceType || 'weekly';
+
+  if (type === 'daily') return `Daily · ${time} · ${dur}`;
+  if (type === 'weekly') return `${DAY_SHORT[s.day]}s · ${time} · ${dur}`;
+  if (type === 'biweekly') return `Every 2 wks · ${DAY_SHORT[s.day]}s · ${time}`;
+  if (type === 'monthly-dow') {
+    const w = MONTHLY_WEEK_OPTIONS.find(o => o.value === String(s.monthlyWeek || 1))?.label || '1st';
+    return `${w} ${DAY_SHORT[s.day]} monthly · ${time}`;
+  }
+  if (type === 'monthly-date') return `${s.monthlyDay || 1}th monthly · ${time}`;
+  return `${time} · ${dur}`;
+}
+
+/** Build a human-readable summary for a special event */
+function specialSummary(ev: SpecialEvent): string {
+  const time = `${String(ev.hour).padStart(2, '0')}:${String(ev.minute).padStart(2, '0')}`;
+  const dur = ev.duration ? `${ev.duration} min` : '60 min';
+  return `${ev.date} · ${time} · ${dur}`;
+}
+
 const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) => {
+  const [openRecurring, setOpenRecurring] = useState<number | null>(null);
+  const [openSpecial, setOpenSpecial] = useState<number | null>(null);
+
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
 
@@ -96,23 +138,32 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     update("schedules", next);
   };
 
-  const removeSchedule = (idx: number) => update("schedules", config.schedules.filter((_, i) => i !== idx));
+  const removeSchedule = (idx: number) => {
+    update("schedules", config.schedules.filter((_, i) => i !== idx));
+    if (openRecurring === idx) setOpenRecurring(null);
+  };
 
-  const addSchedule = () =>
+  const addSchedule = () => {
     update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York", duration: 60 }]);
+    setOpenRecurring(config.schedules.length); // auto-expand new
+  };
 
   const updateSpecial = (idx: number, patch: Partial<SpecialEvent>) => {
     const next = config.specialEvents.map((e, i) => (i === idx ? { ...e, ...patch } : e));
     update("specialEvents", next);
   };
 
-  const removeSpecial = (idx: number) => update("specialEvents", config.specialEvents.filter((_, i) => i !== idx));
+  const removeSpecial = (idx: number) => {
+    update("specialEvents", config.specialEvents.filter((_, i) => i !== idx));
+    if (openSpecial === idx) setOpenSpecial(null);
+  };
 
   const addSpecial = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
     update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York", duration: 60 }]);
+    setOpenSpecial(config.specialEvents.length); // auto-expand new
   };
 
   const renderRecurrenceFields = (s: ServiceSchedule, i: number) => {
@@ -136,7 +187,6 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           </Select>
         </div>
 
-        {/* Conditional fields based on recurrence type */}
         {type === "daily" && (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
@@ -232,7 +282,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           </div>
         )}
 
-        {/* Time + Duration fields (always shown) */}
+        {/* Time + Duration fields */}
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
@@ -257,106 +307,143 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
       {/* Recurring Events */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Recurring Events</CardTitle>
-            <Button size="sm" onClick={addSchedule} className="h-7 text-xs gap-1 bg-accent text-accent-foreground hover:bg-accent/80">
+            <CardTitle className="text-sm">Recurring Events</CardTitle>
+            <Button size="sm" onClick={addSchedule} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">Events that repeat on a regular schedule.</p>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-1.5">
           {config.schedules.length === 0 && (
             <p className="text-xs text-muted-foreground italic">No recurring events added.</p>
           )}
-          {config.schedules.map((s, i) => (
-            <div key={i} className="p-3 border border-border rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Event {i + 1}</span>
-                <Button variant="ghost" size="sm" onClick={() => removeSchedule(i)} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
-                <Input value={s.title} onChange={(v) => updateSchedule(i, { title: v.target.value })} className="h-8 text-sm" />
-              </div>
-              {renderRecurrenceFields(s, i)}
-            </div>
-          ))}
+          {config.schedules.map((s, i) => {
+            const isOpen = openRecurring === i;
+            return (
+              <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenRecurring(open ? i : null)}>
+                <div className="border border-border rounded-lg overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-muted/30 transition-colors text-left">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{s.title}</p>
+                          <p className="text-xs text-muted-foreground truncate">{scheduleSummary(s)}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost" size="sm"
+                        onClick={(e) => { e.stopPropagation(); removeSchedule(i); }}
+                        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
+                        <Input value={s.title} onChange={(v) => updateSchedule(i, { title: v.target.value })} className="h-8 text-sm" />
+                      </div>
+                      {renderRecurrenceFields(s, i)}
+                    </div>
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
+            );
+          })}
         </CardContent>
       </Card>
 
-      {/* Special (Non-Recurring) Events */}
+      {/* Special Events */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base">Special Events</CardTitle>
-            <Button size="sm" onClick={addSpecial} className="h-7 text-xs gap-1 bg-accent text-accent-foreground hover:bg-accent/80">
+            <CardTitle className="text-sm">Special Events</CardTitle>
+            <Button size="sm" onClick={addSpecial} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">One-time events on a specific date that won't repeat.</p>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-1.5">
           {config.specialEvents.length === 0 && (
             <p className="text-xs text-muted-foreground italic">No special events added.</p>
           )}
-          {config.specialEvents.map((ev, i) => (
-            <div key={i} className="p-3 border border-border rounded-lg space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">Event {i + 1}</span>
-                <Button variant="ghost" size="sm" onClick={() => removeSpecial(i)} className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive">
-                  <Trash2 className="w-3 h-3" />
-                </Button>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
-                <Input value={ev.title} onChange={(v) => updateSpecial(i, { title: v.target.value })} className="h-8 text-sm" />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Date</Label>
-                  <DatePickerField
-                    value={ev.date}
-                    onChange={(date) => updateSpecial(i, { date })}
-                  />
+          {config.specialEvents.map((ev, i) => {
+            const isOpen = openSpecial === i;
+            return (
+              <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenSpecial(open ? i : null)}>
+                <div className="border border-border rounded-lg overflow-hidden">
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-muted/30 transition-colors text-left">
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{ev.title}</p>
+                          <p className="text-xs text-muted-foreground truncate">{specialSummary(ev)}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost" size="sm"
+                        onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
+                        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
+                        <Input value={ev.title} onChange={(v) => updateSpecial(i, { title: v.target.value })} className="h-8 text-sm" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Date</Label>
+                          <DatePickerField value={ev.date} onChange={(date) => updateSpecial(i, { date })} />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+                          <Select value={ev.timezone || "America/New_York"} onValueChange={(v) => updateSpecial(i, { timezone: v })}>
+                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
+                          <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => updateSpecial(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
+                          <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => updateSpecial(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
+                          <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(i, { duration: parseInt(v) })}>
+                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                            <SelectContent>
+                              {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </CollapsibleContent>
                 </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
-                  <Select value={ev.timezone || "America/New_York"} onValueChange={(v) => updateSpecial(i, { timezone: v })}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
-                  <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => updateSpecial(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
-                  <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => updateSpecial(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
-                  <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(i, { duration: parseInt(v) })}>
-                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          ))}
+              </Collapsible>
+            );
+          })}
         </CardContent>
       </Card>
     </div>
