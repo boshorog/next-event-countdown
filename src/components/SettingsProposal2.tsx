@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLicense } from '@/hooks/useLicense';
-import ProBanner from '@/components/ProBanner';
 import {
   CountdownConfig,
   defaultCountdownConfig,
@@ -402,7 +401,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
 
   return (
     <div className="space-y-6">
-      {license.checked && license.status === 'free' ? (<ProBanner className="mb-6" />) : null}
+      
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
