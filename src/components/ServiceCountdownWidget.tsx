@@ -1,13 +1,22 @@
 import { useState, useEffect } from "react";
 import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Flame, Cross, Star } from "lucide-react";
 
-// ─── Config ───
+// ─── Recurrence Types ───
+export type RecurrenceType = "weekly" | "biweekly" | "monthly-dow" | "monthly-date" | "daily";
+
 export interface ServiceSchedule {
-  day: number; // 0=Sun … 6=Sat
+  recurrenceType: RecurrenceType;
+  day: number; // 0=Sun … 6=Sat (used for weekly, biweekly, monthly-dow)
   hour: number;
   minute: number;
   title: string;
-  timezone?: string; // IANA timezone, default Europe/Bucharest
+  timezone?: string;
+  // biweekly: anchor date (ISO yyyy-mm-dd) to calculate odd/even weeks
+  biweeklyStart?: string;
+  // monthly-dow: which occurrence in month (1=first, 2=second, 3=third, 4=fourth, -1=last)
+  monthlyWeek?: number;
+  // monthly-date: day of month (1-31)
+  monthlyDay?: number;
 }
 
 export interface SpecialEvent {
@@ -15,7 +24,7 @@ export interface SpecialEvent {
   hour: number;
   minute: number;
   title: string;
-  timezone?: string; // IANA timezone, default Europe/Bucharest
+  timezone?: string;
 }
 
 export const TIMEZONE_OPTIONS = [
@@ -26,12 +35,12 @@ export const TIMEZONE_OPTIONS = [
   { value: "America/Chicago", label: "Chicago (UTC-6)", offset: -6 },
   { value: "America/New_York", label: "New York (UTC-5)", offset: -5 },
   { value: "America/Sao_Paulo", label: "São Paulo (UTC-3)", offset: -3 },
-  { value: "Atlantic/Azores", label: "Azore (UTC-1)", offset: -1 },
+  { value: "Atlantic/Azores", label: "Azores (UTC-1)", offset: -1 },
   { value: "UTC", label: "UTC (UTC+0)", offset: 0 },
-  { value: "Europe/London", label: "Londra (UTC+0/+1)", offset: 0 },
+  { value: "Europe/London", label: "London (UTC+0/+1)", offset: 0 },
   { value: "Europe/Paris", label: "Paris (UTC+1)", offset: 1 },
-  { value: "Europe/Bucharest", label: "București (UTC+2)", offset: 2 },
-  { value: "Europe/Moscow", label: "Moscova (UTC+3)", offset: 3 },
+  { value: "Europe/Bucharest", label: "Bucharest (UTC+2)", offset: 2 },
+  { value: "Europe/Moscow", label: "Moscow (UTC+3)", offset: 3 },
   { value: "Asia/Dubai", label: "Dubai (UTC+4)", offset: 4 },
   { value: "Asia/Kolkata", label: "India (UTC+5:30)", offset: 5.5 },
   { value: "Asia/Shanghai", label: "Shanghai (UTC+8)", offset: 8 },
@@ -58,13 +67,13 @@ export interface CountdownConfig {
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
-  icon: "CalendarDays",
+  icon: "Church",
   iconColor: "#6366f1",
-  headerLabel: "Următorul serviciu",
+  headerLabel: "Next Service",
   schedules: [
-    { day: 0, hour: 10, minute: 0, title: "Slujba de duminică dimineața cu Masa Domnului", timezone: "Europe/Bucharest" },
-    { day: 0, hour: 18, minute: 0, title: "Slujba de duminică seara", timezone: "Europe/Bucharest" },
-    { day: 4, hour: 18, minute: 0, title: "Slujba de joi seara", timezone: "Europe/Bucharest" },
+    { recurrenceType: "weekly", day: 0, hour: 10, minute: 0, title: "Sunday Morning Worship", timezone: "America/New_York" },
+    { recurrenceType: "weekly", day: 0, hour: 18, minute: 0, title: "Sunday Evening Youth Service", timezone: "America/New_York" },
+    { recurrenceType: "weekly", day: 4, hour: 19, minute: 0, title: "Thursday Prayer Meeting", timezone: "America/New_York" },
   ],
   specialEvents: [],
   bgColor: "#ffffff",
@@ -79,14 +88,14 @@ export const defaultCountdownConfig: CountdownConfig = {
 // ─── Icon map ───
 export const ICON_OPTIONS: { value: string; label: string; icon: React.ComponentType<any> }[] = [
   { value: "CalendarDays", label: "Calendar", icon: CalendarDays },
-  { value: "Church", label: "Biserică", icon: Church },
-  { value: "Clock", label: "Ceas", icon: Clock },
-  { value: "Heart", label: "Inimă", icon: Heart },
-  { value: "BookOpen", label: "Carte", icon: BookOpen },
-  { value: "Bell", label: "Clopot", icon: Bell },
-  { value: "Flame", label: "Flacără", icon: Flame },
-  { value: "Cross", label: "Cruce", icon: Cross },
-  { value: "Star", label: "Stea", icon: Star },
+  { value: "Church", label: "Church", icon: Church },
+  { value: "Clock", label: "Clock", icon: Clock },
+  { value: "Heart", label: "Heart", icon: Heart },
+  { value: "BookOpen", label: "Book", icon: BookOpen },
+  { value: "Bell", label: "Bell", icon: Bell },
+  { value: "Flame", label: "Flame", icon: Flame },
+  { value: "Cross", label: "Cross", icon: Cross },
+  { value: "Star", label: "Star", icon: Star },
 ];
 
 function getIconComponent(name: string) {
@@ -94,8 +103,8 @@ function getIconComponent(name: string) {
 }
 
 // ─── Date helpers ───
-const dayNames = ["Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"];
-const monthNames = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie", "Octombrie", "Noiembrie", "Decembrie"];
+const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 interface NextServiceInfo {
   ms: number;
@@ -120,26 +129,104 @@ function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Dat
   return new Date(fakeUtc.getTime() + offsetMs);
 }
 
+function formatDateStr(target: Date, hour: number, minute: number): string {
+  return `${dayNames[target.getDay()]}, ${monthNames[target.getMonth()]} ${target.getDate()}, ${target.getFullYear()} at ${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}
+
+/** Get Nth occurrence of a day-of-week in a given month/year. week=-1 means last. */
+function getNthDowInMonth(year: number, month: number, dow: number, week: number): Date | null {
+  if (week === -1) {
+    // Last occurrence
+    const lastDay = new Date(year, month + 1, 0);
+    for (let d = lastDay.getDate(); d >= 1; d--) {
+      const dt = new Date(year, month, d);
+      if (dt.getDay() === dow) return dt;
+    }
+    return null;
+  }
+  let count = 0;
+  for (let d = 1; d <= 31; d++) {
+    const dt = new Date(year, month, d);
+    if (dt.getMonth() !== month) break;
+    if (dt.getDay() === dow) {
+      count++;
+      if (count === week) return dt;
+    }
+  }
+  return null;
+}
+
+/** Generate upcoming candidate dates for a schedule. Returns up to `count` future dates. */
+function getScheduleCandidates(s: ServiceSchedule, now: Date, count: number = 3): Date[] {
+  const tz = s.timezone || DEFAULT_TIMEZONE;
+  const candidates: Date[] = [];
+
+  if (s.recurrenceType === "daily") {
+    for (let offset = -1; offset < count + 1; offset++) {
+      const d = new Date(now);
+      d.setDate(d.getDate() + offset);
+      d.setHours(0, 0, 0, 0);
+      candidates.push(dateInTz(d, s.hour, s.minute, tz));
+    }
+  } else if (s.recurrenceType === "weekly") {
+    for (let weekOffset = -1; weekOffset <= count; weekOffset++) {
+      const d = new Date(now);
+      const diff = ((s.day - d.getDay() + 7) % 7) + weekOffset * 7;
+      d.setDate(d.getDate() + diff);
+      d.setHours(0, 0, 0, 0);
+      candidates.push(dateInTz(d, s.hour, s.minute, tz));
+    }
+  } else if (s.recurrenceType === "biweekly") {
+    const anchor = s.biweeklyStart ? new Date(s.biweeklyStart) : new Date("2025-01-05"); // default anchor
+    for (let weekOffset = -2; weekOffset <= count * 2 + 2; weekOffset++) {
+      const d = new Date(now);
+      const diff = ((s.day - d.getDay() + 7) % 7) + weekOffset * 7;
+      d.setDate(d.getDate() + diff);
+      d.setHours(0, 0, 0, 0);
+      // Check if this week aligns with the biweekly cycle
+      const daysDiff = Math.round((d.getTime() - anchor.getTime()) / (1000 * 60 * 60 * 24));
+      const weeksDiff = Math.floor(daysDiff / 7);
+      if (weeksDiff % 2 === 0) {
+        candidates.push(dateInTz(d, s.hour, s.minute, tz));
+      }
+    }
+  } else if (s.recurrenceType === "monthly-dow") {
+    const week = s.monthlyWeek || 1;
+    for (let monthOffset = -1; monthOffset <= count; monthOffset++) {
+      const y = now.getFullYear();
+      const m = now.getMonth() + monthOffset;
+      const dt = getNthDowInMonth(y + Math.floor(m / 12), ((m % 12) + 12) % 12, s.day, week);
+      if (dt) candidates.push(dateInTz(dt, s.hour, s.minute, tz));
+    }
+  } else if (s.recurrenceType === "monthly-date") {
+    const dayOfMonth = s.monthlyDay || 1;
+    for (let monthOffset = -1; monthOffset <= count; monthOffset++) {
+      const y = now.getFullYear();
+      const m = now.getMonth() + monthOffset;
+      const actualYear = y + Math.floor(m / 12);
+      const actualMonth = ((m % 12) + 12) % 12;
+      const lastDay = new Date(actualYear, actualMonth + 1, 0).getDate();
+      const clampedDay = Math.min(dayOfMonth, lastDay);
+      const dt = new Date(actualYear, actualMonth, clampedDay);
+      candidates.push(dateInTz(dt, s.hour, s.minute, tz));
+    }
+  }
+
+  return candidates;
+}
+
 function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[]): NextServiceInfo {
   const now = new Date();
   const nowMs = now.getTime();
 
-  // Check recurring schedules for live status
+  // Check all schedules for live status
   for (const s of schedules) {
-    const tz = s.timezone || DEFAULT_TIMEZONE;
-    const candidate = new Date(now);
-    const dayDiff = ((s.day - candidate.getDay() + 7) % 7);
-    candidate.setDate(candidate.getDate() + dayDiff);
-    candidate.setHours(0, 0, 0, 0);
-    let target = dateInTz(candidate, s.hour, s.minute, tz);
-    if (target > now) {
-      candidate.setDate(candidate.getDate() - 7);
-      target = dateInTz(candidate, s.hour, s.minute, tz);
-    }
-    const elapsed = nowMs - target.getTime();
-    if (elapsed >= 0 && elapsed < LIVE_DURATION_MS) {
-      const dateStr = `${dayNames[target.getDay()]}, ${target.getDate()} ${monthNames[target.getMonth()]} ${target.getFullYear()}, Ora ${String(s.hour).padStart(2, "0")}:${String(s.minute).padStart(2, "0")}`;
-      return { ms: 0, fullDate: dateStr, title: s.title, isLive: true };
+    const candidates = getScheduleCandidates(s, now, 2);
+    for (const target of candidates) {
+      const elapsed = nowMs - target.getTime();
+      if (elapsed >= 0 && elapsed < LIVE_DURATION_MS) {
+        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute), title: s.title, isLive: true };
+      }
     }
   }
 
@@ -151,12 +238,11 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
     if (elapsed >= 0 && elapsed < LIVE_DURATION_MS) {
-      const dateStr = `${dayNames[target.getDay()]}, ${target.getDate()} ${monthNames[target.getMonth()]} ${target.getFullYear()}, Ora ${String(ev.hour).padStart(2, "0")}:${String(ev.minute).padStart(2, "0")}`;
-      return { ms: 0, fullDate: dateStr, title: ev.title, isLive: true };
+      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute), title: ev.title, isLive: true };
     }
   }
 
-  // No live service — find next upcoming
+  // Find next upcoming
   let nearest = Infinity;
   let nearestDate = "";
   let nearestTitle = "";
@@ -169,27 +255,20 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const ms = target.getTime() - nowMs;
     if (ms > 0 && ms < nearest) {
       nearest = ms;
-      nearestDate = `${dayNames[target.getDay()]}, ${target.getDate()} ${monthNames[target.getMonth()]} ${target.getFullYear()}, Ora ${String(ev.hour).padStart(2, "0")}:${String(ev.minute).padStart(2, "0")}`;
+      nearestDate = formatDateStr(target, ev.hour, ev.minute);
       nearestTitle = ev.title;
     }
   }
 
   for (const s of schedules) {
-    const tz = s.timezone || DEFAULT_TIMEZONE;
-    const candidate = new Date(now);
-    const diff = ((s.day - candidate.getDay() + 7) % 7);
-    candidate.setDate(candidate.getDate() + diff);
-    candidate.setHours(0, 0, 0, 0);
-    let target = dateInTz(candidate, s.hour, s.minute, tz);
-    if (target.getTime() <= nowMs) {
-      candidate.setDate(candidate.getDate() + 7);
-      target = dateInTz(candidate, s.hour, s.minute, tz);
-    }
-    const ms = target.getTime() - nowMs;
-    if (ms > 0 && ms < nearest) {
-      nearest = ms;
-      nearestDate = `${dayNames[target.getDay()]}, ${target.getDate()} ${monthNames[target.getMonth()]} ${target.getFullYear()}, Ora ${String(s.hour).padStart(2, "0")}:${String(s.minute).padStart(2, "0")}`;
-      nearestTitle = s.title;
+    const candidates = getScheduleCandidates(s, now, 4);
+    for (const target of candidates) {
+      const ms = target.getTime() - nowMs;
+      if (ms > 0 && ms < nearest) {
+        nearest = ms;
+        nearestDate = formatDateStr(target, s.hour, s.minute);
+        nearestTitle = s.title;
+      }
     }
   }
 
@@ -225,17 +304,17 @@ function useCountdown(config: CountdownConfig) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-// ─── Main Widget (Design 3 – Separator Style, fixed width) ───
+// ─── Main Widget ───
 const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: CountdownConfig }) => {
   const t = useCountdown(config);
   const Icon = getIconComponent(config.icon);
   const hs = config.headerScale ?? 1;
 
   const units = [
-    { v: t.days, l: "Zile" },
-    { v: t.hours, l: "Ore" },
-    { v: t.minutes, l: "Minute" },
-    { v: t.seconds, l: "Secunde" },
+    { v: t.days, l: "Days" },
+    { v: t.hours, l: "Hours" },
+    { v: t.minutes, l: "Minutes" },
+    { v: t.seconds, l: "Seconds" },
   ];
 
   return (
@@ -247,7 +326,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
       <div className="flex items-center justify-center flex-wrap" style={{ gap: `${Math.round(10 * hs)}px`, marginBottom: '6px' }}>
         <Icon style={{ color: config.iconColor, width: `${Math.round(28 * hs)}px`, height: `${Math.round(28 * hs)}px` }} />
         <span className="font-semibold" style={{ color: config.textColor, fontSize: `${Math.round(18 * hs)}px` }}>
-          {t.isLive ? "Acum:" : `${config.headerLabel}:`}
+          {t.isLive ? "Now:" : `${config.headerLabel}:`}
         </span>
         <span style={{ color: config.labelColor, fontSize: `${Math.round(18 * hs)}px` }}>
           {t.fullDate}
@@ -261,7 +340,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
         </p>
       )}
 
-      {/* Countdown digits – fixed width to prevent shifting */}
+      {/* Countdown digits */}
       <div className="flex justify-center items-center">
         {units.map((u, i) => (
           <div key={u.l} className="flex items-center">
