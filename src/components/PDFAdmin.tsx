@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link, Save } from 'lucide-react';
+import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link, Save, CalendarDays } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -1449,8 +1449,18 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             </div>
           </div>
 
-          {/* Dotted divider */}
-          <div className="border-b border-dashed" />
+          {/* Calendar Hero Card */}
+          {!isAddingDocument && !isAddingDivider && countdownConfig && (
+            <Card className="border-primary/20">
+              <CardContent className="pt-4 pb-3 px-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <CalendarDays className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-semibold">Upcoming Schedule</span>
+                </div>
+                <UpcomingCalendar countdownConfig={countdownConfig} />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Rename Warning Message */}
           {showRenameWarning && (
@@ -1911,11 +1921,6 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
 
 
-          {!isAddingDocument && !isAddingDivider && countdownConfig && (
-            <div className="mt-4">
-              <UpcomingCalendar countdownConfig={countdownConfig} />
-            </div>
-          )}
         </>
 
 
