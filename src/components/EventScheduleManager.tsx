@@ -313,7 +313,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><RefreshCw className="w-4 h-4 text-primary" /> Recurring Events</CardTitle>
+            <div>
+              <CardTitle className="text-sm flex items-center gap-2"><RefreshCw className="w-4 h-4 text-primary" /> Recurring Events</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">Weekly, bi-weekly, and monthly schedules</p>
+            </div>
             <Button size="sm" onClick={addSchedule} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>
@@ -366,7 +369,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Special Events</CardTitle>
+            <div>
+              <CardTitle className="text-sm flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Special Events</CardTitle>
+              <p className="text-xs text-muted-foreground mt-1">One-time events on specific dates</p>
+            </div>
             <Button size="sm" onClick={addSpecial} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>

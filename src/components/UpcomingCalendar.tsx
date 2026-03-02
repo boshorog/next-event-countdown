@@ -123,13 +123,17 @@ const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
                     </button>
                   </TooltipTrigger>
                   {hasEvent && (
-                    <TooltipContent side="bottom">
-                      <div className="space-y-1.5">
+                    <TooltipContent side="bottom" className="p-3 max-w-[220px]">
+                      <p className="text-xs font-semibold mb-1.5">{format(day, 'EEEE, MMM d')}</p>
+                      <div className="space-y-2">
                         {events.map((e, i) => (
                           <div key={i} className="text-xs">
-                            <span className="font-semibold">{e.title}</span>
-                            <br />
-                            <span className="opacity-75">{e.time} · {e.duration} min</span>
+                            <span className="font-medium">{e.title}</span>
+                            <div className="text-muted-foreground mt-0.5">
+                              <span>{e.time}</span>
+                              <span className="mx-1">·</span>
+                              <span>{e.duration} min</span>
+                            </div>
                           </div>
                         ))}
                       </div>
