@@ -29,26 +29,26 @@
  * WordPress plugin slug (folder name, shortcode prefix, option names)
  * Example: 'kindpixels-pdf-gallery' → [kindpdfg_gallery] shortcode
  */
-export const PLUGIN_SLUG = 'kindpixels-pdf-gallery';
+export const PLUGIN_SLUG = 'next-event-countdown';
 
 /**
  * Short prefix for PHP functions, AJAX actions, DB options, CSS classes
  * Should be 6-10 chars, lowercase, no hyphens
- * Example: 'kindpdfg' → kindpdfg_action, kindpdfg_settings
+ * Example: 'nxevtcd' → nxevtcd_action, nxevtcd_settings
  */
-export const PLUGIN_PREFIX = 'kindpdfg';
+export const PLUGIN_PREFIX = 'nxevtcd';
 
 /**
  * JavaScript global object name (set via wp_localize_script)
- * Example: 'kindpdfgData' → window.kindpdfgData
+ * Example: 'nxevtcdData' → window.nxevtcdData
  */
-export const JS_GLOBAL_NAME = 'kindpdfgData';
+export const JS_GLOBAL_NAME = 'nxevtcdData';
 
 /**
  * Legacy global name for backwards compatibility
  * Set to null if not needed
  */
-export const JS_GLOBAL_LEGACY = 'wpPDFGallery';
+export const JS_GLOBAL_LEGACY = null;
 
 // =============================================================================
 // DISPLAY NAMES
@@ -57,23 +57,23 @@ export const JS_GLOBAL_LEGACY = 'wpPDFGallery';
 /**
  * Plugin display name in WordPress admin (Free version)
  */
-export const PLUGIN_NAME = 'PDF Gallery';
+export const PLUGIN_NAME = 'Next Event Countdown';
 
 /**
  * Plugin display name for Pro version
  */
-export const PRO_NAME = 'PDF Gallery Pro';
+export const PRO_NAME = 'Next Event Countdown Pro';
 
 /**
  * Plugin version - update this for each release
- * Also update in: kindpixels-pdf-gallery.php, readme.txt
+ * Also update in: next-event-countdown.php, readme.txt
  */
-export const PLUGIN_VERSION = '2.4.12';
+export const PLUGIN_VERSION = '1.0.0';
 
 /**
  * Short description for meta/SEO
  */
-export const PLUGIN_DESCRIPTION = 'Beautiful document gallery with lightbox viewer for WordPress';
+export const PLUGIN_DESCRIPTION = 'Beautiful countdown timer widget for WordPress events and services';
 
 // =============================================================================
 // FREEMIUS LICENSING (Pro features)
