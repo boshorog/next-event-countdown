@@ -329,7 +329,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
               <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenRecurring(open ? i : null)}>
                 <div className="border border-border rounded-lg overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <button className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-muted/30 transition-colors text-left">
+                    <button className="w-full flex items-center justify-between px-3 py-2.5 bg-primary/5 hover:bg-primary/10 transition-colors text-left">
                       <div className="flex items-center gap-2.5 min-w-0">
                         {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                         <div className="min-w-0">
@@ -382,7 +382,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
               <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenSpecial(open ? i : null)}>
                 <div className="border border-border rounded-lg overflow-hidden">
                   <CollapsibleTrigger asChild>
-                    <button className="w-full flex items-center justify-between px-3 py-2.5 hover:bg-muted/30 transition-colors text-left">
+                    <button className="w-full flex items-center justify-between px-3 py-2.5 bg-primary/5 hover:bg-primary/10 transition-colors text-left">
                       <div className="flex items-center gap-2.5 min-w-0">
                         {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                         <div className="min-w-0">
