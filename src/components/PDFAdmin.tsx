@@ -1467,7 +1467,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             // Gallery Selector - Breadcrumb style
             const renderGallerySelector = () => (
               <div className="flex items-center gap-1.5 text-sm">
-                <span className="text-muted-foreground">Countdowns</span>
+                <span className="text-muted-foreground">Counters</span>
                 <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
                 <GallerySelector
                   galleries={galleries}
@@ -2010,36 +2010,6 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             </DndContext>
           </div>
 
-          {/* Action Buttons - below gallery */}
-          {items.length > 0 && (
-            <div className="flex items-center justify-end pt-2">
-              <div className="flex gap-2">
-                {selectedItems.size > 0 && (
-                  <Button onClick={handleDeleteSelected} variant="destructive">
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''}
-                  </Button>
-                )}
-                <Button 
-                  onClick={() => {
-                    saveGalleriesToWP(galleries);
-                    toast({ title: 'Saved', description: 'Schedules saved successfully.' });
-                  }}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <Check className="w-4 h-4 mr-2" />
-                  Save
-                </Button>
-                <Button 
-                  onClick={() => { setIsAddingDivider(true); setTimeout(() => { const editSection = document.querySelector('.edit-section'); if (editSection) editSection.scrollIntoView({ behavior: 'smooth', block: 'start' }); else window.scrollTo({ top: 0, behavior: 'smooth' }); }, 50); }}
-                  variant="outline"
-                >
-                  <Separator className="w-4 h-0.5" />
-                  Add Divider
-                </Button>
-              </div>
-            </div>
-          )}
 
 
           {items.length === 0 && !isAddingDocument && !isAddingDivider && (

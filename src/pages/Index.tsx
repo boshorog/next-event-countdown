@@ -55,40 +55,7 @@ const KindPixelsLogo = ({ className, style }: { className?: string; style?: Reac
 );
 
 // Initial PDF data (fallback for development)
-const initialPDFs: GalleryItem[] = [
-  {
-    id: '1',
-    title: 'Newsletter January 2024',
-    date: 'January 2024',
-    pdfUrl: '/src/assets/newsletter-thumbnail-1.jpg',
-    thumbnail: '/src/assets/newsletter-thumbnail-1.jpg',
-    fileType: 'pdf'
-  },
-  {
-    id: '2',
-    title: 'Newsletter February 2024',
-    date: 'February 2024',
-    pdfUrl: '/src/assets/newsletter-thumbnail-2.jpg',
-    thumbnail: '/src/assets/newsletter-thumbnail-2.jpg',
-    fileType: 'pdf'
-  },
-  {
-    id: '3',
-    title: 'Newsletter March 2024',
-    date: 'March 2024',
-    pdfUrl: '/src/assets/newsletter-thumbnail-3.jpg',
-    thumbnail: '/src/assets/newsletter-thumbnail-3.jpg',
-    fileType: 'pdf'
-  },
-  {
-    id: '4',
-    title: 'Newsletter April 2024',
-    date: 'April 2024',
-    pdfUrl: '/src/assets/newsletter-thumbnail-4.jpg',
-    thumbnail: '/src/assets/newsletter-thumbnail-4.jpg',
-    fileType: 'pdf'
-  }
-];
+const initialPDFs: GalleryItem[] = [];
 
 const Index = () => {
   // IMPORTANT: useLicense must be called unconditionally at the top
