@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,8 @@ const DAY_OPTIONS = [
   { value: "6", label: "Saturday" },
 ];
 
-const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAY_FULL = ['Sundays', 'Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays'];
+const DAY_FULL_SINGULAR = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const RECURRENCE_OPTIONS: { value: RecurrenceType; label: string; description: string }[] = [
   { value: "weekly", label: "Weekly", description: "Every week on a specific day" },
@@ -109,11 +110,11 @@ function scheduleSummary(s: ServiceSchedule): string {
   const type = s.recurrenceType || 'weekly';
 
   if (type === 'daily') return `Daily · ${time} · ${dur}`;
-  if (type === 'weekly') return `${DAY_SHORT[s.day]}s · ${time} · ${dur}`;
-  if (type === 'biweekly') return `Every 2 wks · ${DAY_SHORT[s.day]}s · ${time}`;
+  if (type === 'weekly') return `${DAY_FULL[s.day]} · ${time} · ${dur}`;
+  if (type === 'biweekly') return `Every 2 wks · ${DAY_FULL[s.day]} · ${time}`;
   if (type === 'monthly-dow') {
     const w = MONTHLY_WEEK_OPTIONS.find(o => o.value === String(s.monthlyWeek || 1))?.label || '1st';
-    return `${w} ${DAY_SHORT[s.day]} monthly · ${time}`;
+    return `${w} ${DAY_FULL_SINGULAR[s.day]} monthly · ${time}`;
   }
   if (type === 'monthly-date') return `${s.monthlyDay || 1}th monthly · ${time}`;
   return `${time} · ${dur}`;
@@ -312,7 +313,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">Recurring Events</CardTitle>
+            <CardTitle className="text-sm flex items-center gap-2"><RefreshCw className="w-4 h-4 text-primary" /> Recurring Events</CardTitle>
             <Button size="sm" onClick={addSchedule} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>
@@ -365,7 +366,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">Special Events</CardTitle>
+            <CardTitle className="text-sm flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Special Events</CardTitle>
             <Button size="sm" onClick={addSpecial} className="h-7 text-xs gap-1 bg-primary text-primary-foreground hover:bg-primary/90">
               <Plus className="w-3 h-3" /> Add
             </Button>
