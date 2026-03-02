@@ -87,7 +87,7 @@ export const GallerySelector = ({
     if (!BUILD_FLAGS.MULTI_GALLERY_UI || (!isPro && galleries.length >= 1)) {
       toast({
         title: "Pro Feature Required",
-        description: "Multiple galleries require the Pro addon. Upgrade to Pro for unlimited galleries.",
+        description: "Multiple countdowns require the Pro addon. Upgrade to Pro for unlimited countdowns.",
         variant: "destructive",
       });
       return;
@@ -96,7 +96,7 @@ export const GallerySelector = ({
     if (!newGalleryName.trim()) {
       toast({
         title: "Error",
-        description: "Gallery name is required",
+        description: "Countdown name is required",
         variant: "destructive",
       });
       return;
@@ -105,7 +105,7 @@ export const GallerySelector = ({
     if (galleries.some(g => g.name.toLowerCase() === newGalleryName.trim().toLowerCase())) {
       toast({
         title: "Error",
-        description: "A gallery with this name already exists",
+        description: "A countdown with this name already exists",
         variant: "destructive",
       });
       return;
@@ -116,7 +116,7 @@ export const GallerySelector = ({
     setIsCreateDialogOpen(false);
     toast({
       title: "Success",
-      description: "Gallery created successfully",
+      description: "Countdown created successfully",
     });
   };
 
@@ -124,7 +124,7 @@ export const GallerySelector = ({
     if (!renameGalleryName.trim()) {
       toast({
         title: "Error",
-        description: "Gallery name is required",
+        description: "Countdown name is required",
         variant: "destructive",
       });
       return;
@@ -133,7 +133,7 @@ export const GallerySelector = ({
     if (galleries.some(g => g.id !== currentGalleryId && g.name.toLowerCase() === renameGalleryName.trim().toLowerCase())) {
       toast({
         title: "Error",
-        description: "A gallery with this name already exists",
+        description: "A countdown with this name already exists",
         variant: "destructive",
       });
       return;
@@ -144,7 +144,7 @@ export const GallerySelector = ({
     setIsRenameDialogOpen(false);
     toast({
       title: "Success",
-      description: "Gallery renamed successfully",
+      description: "Countdown renamed successfully",
     });
   };
 
@@ -152,7 +152,7 @@ export const GallerySelector = ({
     if (galleries.length <= 1) {
       toast({
         title: "Error",
-        description: "Cannot delete the last gallery",
+        description: "Cannot delete the last countdown",
         variant: "destructive",
       });
       return;
@@ -161,7 +161,7 @@ export const GallerySelector = ({
     onGalleryDelete(currentGalleryId);
     toast({
       title: "Success",
-      description: "Gallery deleted successfully",
+      description: "Countdown deleted successfully",
     });
   };
 
@@ -195,8 +195,8 @@ export const GallerySelector = ({
             variant="ghost"
             size="sm"
             className="h-8 w-8 p-0"
-            aria-label="Rename Gallery"
-            title="Rename Gallery"
+            aria-label="Rename Countdown"
+            title="Rename Countdown"
             onClick={() => setRenameGalleryName(currentGallery?.name || '')}
           >
             <Edit2 className="h-3 w-3" />
@@ -204,16 +204,16 @@ export const GallerySelector = ({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Rename Gallery</DialogTitle>
+            <DialogTitle>Rename Countdown</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-3">
-              <Label htmlFor="rename-gallery">Gallery Name</Label>
+              <Label htmlFor="rename-gallery">Countdown Name</Label>
               <Input
                 id="rename-gallery"
                 value={renameGalleryName}
                 onChange={(e) => setRenameGalleryName(e.target.value)}
-                placeholder="Enter gallery name"
+                placeholder="Enter countdown name"
                 onKeyDown={(e) => e.key === 'Enter' && handleRenameGallery()}
               />
             </div>
@@ -263,24 +263,24 @@ export const GallerySelector = ({
               variant="ghost"
               size="sm"
               className="h-8 w-8 p-0"
-              aria-label="Add Gallery"
-              title="Add Gallery"
+              aria-label="Add Countdown"
+              title="Add Countdown"
             >
               <Plus className="h-3 w-3" />
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Create New Gallery</DialogTitle>
+              <DialogTitle>Create New Countdown</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-3">
-                <Label htmlFor="new-gallery">Gallery Name</Label>
+                <Label htmlFor="new-gallery">Countdown Name</Label>
                 <Input
                   id="new-gallery"
                   value={newGalleryName}
                   onChange={(e) => setNewGalleryName(e.target.value)}
-                  placeholder="Enter gallery name"
+                  placeholder="Enter countdown name"
                   onKeyDown={(e) => e.key === 'Enter' && handleCreateGallery()}
                 />
               </div>
@@ -289,7 +289,7 @@ export const GallerySelector = ({
                   Cancel
                 </Button>
                 <Button onClick={handleCreateGallery}>
-                  Create Gallery
+                  Create Countdown
                 </Button>
               </div>
             </div>
@@ -304,7 +304,7 @@ export const GallerySelector = ({
     return (
       <>
         <div className="flex items-center gap-2">
-          <span className="font-medium text-foreground">{currentGallery?.name || 'Main Gallery'}</span>
+          <span className="font-medium text-foreground">{currentGallery?.name || 'Main Countdown'}</span>
           <div className="flex items-center gap-1">
             {renderManagementButtons()}
           </div>
@@ -353,23 +353,23 @@ export const GallerySelector = ({
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-                aria-label="Delete Gallery"
-                title="Delete Gallery"
+                aria-label="Delete Countdown"
+                title="Delete Countdown"
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete Gallery</AlertDialogTitle>
+                <AlertDialogTitle>Delete Countdown</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Are you sure you want to delete the gallery "{currentGallery?.name}"? This action cannot be undone and will permanently delete all documents in this gallery.
+                  Are you sure you want to delete the countdown "{currentGallery?.name}"? This action cannot be undone and will permanently delete all data in this countdown.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter className="flex items-center gap-2">
                 <AlertDialogCancel className="h-9 mt-0">Cancel</AlertDialogCancel>
                 <AlertDialogAction onClick={handleDeleteGallery} className="h-9 bg-destructive text-destructive-foreground hover:bg-destructive/90 mt-0">
-                  Delete Gallery
+                  Delete Countdown
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

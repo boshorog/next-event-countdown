@@ -127,7 +127,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
 
       toast({
         title: "Settings Saved",
-        description: "Your gallery settings have been updated successfully",
+        description: "Your countdown settings have been updated successfully",
       });
     } catch (e) {
       toast({ title: "Saved locally", description: "Could not reach WordPress AJAX." });
@@ -918,7 +918,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Settings2 className="w-6 h-6 text-primary" />
-          <h2 className="text-2xl font-bold">Gallery Settings</h2>
+          <h2 className="text-2xl font-bold">Countdown Settings</h2>
         </div>
         <div className="flex items-center">
           <DropdownMenu>
@@ -927,12 +927,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
                 {saveScope === 'current' ? (
                   <>
                     <LayersIcon firstLayerGreen className="mr-2" />
-                    Current Gallery
+                    Current Countdown
                   </>
                 ) : (
                   <>
                     <LayersIcon allLayersGreen className="mr-2" />
-                    All Galleries
+                    All Countdowns
                   </>
                 )}
                 <ChevronDown className="w-4 h-4 ml-2" />
@@ -945,7 +945,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon firstLayerGreen className="flex-shrink-0" />
-                  <span>Current Gallery</span>
+                  <span>Current Countdown</span>
                 </div>
                 {saveScope === 'current' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
@@ -955,7 +955,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId }: Set
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon allLayersGreen className="flex-shrink-0" />
-                  <span>All Galleries</span>
+                  <span>All Countdowns</span>
                 </div>
                 {saveScope === 'all' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
