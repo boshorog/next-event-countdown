@@ -1409,22 +1409,23 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       {/* Navigation removed: top-level tabs now control sections */}
 
       <>
-          {/* Top Row: Breadcrumb + actions centered */}
-          <div className="flex flex-col items-center gap-2 mb-1">
-            <div className="flex items-center gap-1.5 text-sm">
-              <span className="text-muted-foreground">Counters</span>
-              <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
-              <GallerySelector
-                galleries={galleries}
-                currentGalleryId={currentGalleryId}
-                isPro={license.isPro}
-                onGalleryChange={onCurrentGalleryChange}
-                onGalleryCreate={handleGalleryCreate}
-                onGalleryRename={handleGalleryRename}
-                onGalleryDelete={handleGalleryDelete}
-              />
-            </div>
-            <div className="flex gap-2">
+          {/* Top Row: Breadcrumb centered + Save aligned right */}
+          <div className="flex items-end justify-between mb-1">
+            <div className="flex-1" />
+            <div className="flex flex-col items-center gap-2">
+              <div className="flex items-center gap-1.5 text-sm">
+                <span className="text-muted-foreground">Counters</span>
+                <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
+                <GallerySelector
+                  galleries={galleries}
+                  currentGalleryId={currentGalleryId}
+                  isPro={license.isPro}
+                  onGalleryChange={onCurrentGalleryChange}
+                  onGalleryCreate={handleGalleryCreate}
+                  onGalleryRename={handleGalleryRename}
+                  onGalleryDelete={handleGalleryDelete}
+                />
+              </div>
               {selectedItems.size > 0 && (
                 <Button 
                   onClick={handleDeleteSelected}
@@ -1434,6 +1435,8 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                   Delete {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''}
                 </Button>
               )}
+            </div>
+            <div className="flex-1 flex justify-end">
               <Button 
                 onClick={() => {
                   saveGalleriesToWP(galleries);
@@ -1451,7 +1454,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
           {!isAddingDocument && !isAddingDivider && countdownConfig && (
             <Card className="border-primary/20">
               <CardContent className="pt-4 pb-3 px-3">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3 ml-1">
                   <CalendarDays className="w-4 h-4 text-primary" />
                   <span className="text-sm font-semibold">Upcoming Schedule</span>
                 </div>
