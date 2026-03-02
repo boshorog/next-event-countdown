@@ -37,6 +37,7 @@ import PDFGallery from './PDFGallery';
 import { PDFThumbnailGenerator } from '@/utils/pdfThumbnailGenerator';
 import { GallerySelector } from './GallerySelector';
 import { Gallery, GalleryItem, PDF, Divider } from '@/types/gallery';
+import UpcomingCalendar from './UpcomingCalendar';
 
 interface PDFAdminProps {
   galleries: Gallery[];
@@ -2012,29 +2013,10 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
 
 
-          {items.length === 0 && !isAddingDocument && !isAddingDivider && (
-            <Card>
-              <CardContent className="text-center py-8">
-                <Upload className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No items yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Start by adding your first document or divider.
-                </p>
-                <div className="flex gap-2 justify-center">
-                  <Button onClick={() => {
-                    saveGalleriesToWP(galleries);
-                    toast({ title: 'Saved', description: 'Schedules saved successfully.' });
-                  }}>
-                    <Check className="w-4 h-4 mr-2" />
-                    Save
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsAddingDivider(true)}>
-                    <Separator className="w-4 h-0.5" />
-                    Add Divider
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          {!isAddingDocument && !isAddingDivider && (
+            <div className="mt-4">
+              <UpcomingCalendar />
+            </div>
           )}
         </>
 

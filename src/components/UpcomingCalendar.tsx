@@ -27,7 +27,7 @@ const UpcomingCalendar = () => {
 
   return (
     <div className="flex items-center gap-1 w-full">
-      <div className="flex gap-0.5 flex-1 min-w-0">
+      <div className="flex gap-1 flex-1 min-w-0">
         {days.map((day) => {
           const events = getEventsForDay(day);
           const hasEvent = events.length > 0;
@@ -37,20 +37,24 @@ const UpcomingCalendar = () => {
             <TooltipProvider key={day.toISOString()} delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button className={`flex flex-col items-center flex-1 min-w-0 py-2 group transition-all rounded-lg
-                    ${dayIsToday ? 'bg-primary text-primary-foreground' : ''}`}
+                  <button
+                    className={`flex flex-col items-center flex-1 min-w-0 px-1.5 py-2 rounded-lg transition-all border
+                      ${dayIsToday
+                        ? 'bg-primary text-primary-foreground border-primary'
+                        : hasEvent
+                          ? 'bg-primary/5 border-primary/20 hover:border-primary/40'
+                          : 'border-transparent hover:bg-muted/30'
+                      }`}
                   >
-                    <span className={`text-[10px] uppercase font-medium ${dayIsToday ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
+                    <span className={`text-[10px] uppercase ${dayIsToday ? 'opacity-80' : 'opacity-70'}`}>
                       {format(day, 'EEE')}
                     </span>
-                    <span className={`text-sm font-bold my-0.5 ${dayIsToday ? 'text-primary-foreground' : 'text-foreground'}`}>
-                      {format(day, 'd')}
-                    </span>
-                    <div className={`w-8 h-1 rounded-full transition-all ${
-                      hasEvent
-                        ? dayIsToday ? 'bg-primary-foreground/70' : 'bg-primary/40 group-hover:bg-primary/70'
-                        : 'bg-transparent'
-                    }`} />
+                    <span className="text-sm font-bold">{format(day, 'd')}</span>
+                    {hasEvent && (
+                      <span className={`text-[9px] mt-0.5 truncate max-w-[56px] ${dayIsToday ? 'opacity-80' : 'text-primary'}`}>
+                        {events[0].title.length > 8 ? events[0].title.slice(0, 8) + '…' : events[0].title}
+                      </span>
+                    )}
                   </button>
                 </TooltipTrigger>
                 {hasEvent && (
