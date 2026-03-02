@@ -1409,9 +1409,8 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       {/* Navigation removed: top-level tabs now control sections */}
 
       <>
-          {/* Top Row: Breadcrumb left, Save right */}
-          <div className="flex items-center justify-between">
-            {/* Left: Gallery Selector breadcrumb */}
+          {/* Top Row: Breadcrumb + actions centered */}
+          <div className="flex flex-col items-center gap-2 mb-1">
             <div className="flex items-center gap-1.5 text-sm">
               <span className="text-muted-foreground">Counters</span>
               <ChevronDown className="h-3 w-3 text-muted-foreground/60 rotate-[-90deg]" />
@@ -1425,7 +1424,6 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 onGalleryDelete={handleGalleryDelete}
               />
             </div>
-            {/* Right: Action buttons */}
             <div className="flex gap-2">
               {selectedItems.size > 0 && (
                 <Button 
