@@ -11,6 +11,7 @@ export interface ServiceSchedule {
   minute: number;
   title: string;
   timezone?: string;
+  duration?: number; // duration in minutes
   // biweekly: anchor date (ISO yyyy-mm-dd) to calculate odd/even weeks
   biweeklyStart?: string;
   // monthly-dow: which occurrence in month (1=first, 2=second, 3=third, 4=fourth, -1=last)
@@ -25,6 +26,7 @@ export interface SpecialEvent {
   minute: number;
   title: string;
   timezone?: string;
+  duration?: number; // duration in minutes
 }
 
 export const TIMEZONE_OPTIONS = [
@@ -69,11 +71,11 @@ export interface CountdownConfig {
 export const defaultCountdownConfig: CountdownConfig = {
   icon: "Church",
   iconColor: "#6366f1",
-  headerLabel: "Next Service",
+  headerLabel: "Next Event",
   schedules: [
-    { recurrenceType: "weekly", day: 0, hour: 10, minute: 0, title: "Sunday Morning Worship", timezone: "America/New_York" },
-    { recurrenceType: "weekly", day: 0, hour: 18, minute: 0, title: "Sunday Evening Youth Service", timezone: "America/New_York" },
-    { recurrenceType: "weekly", day: 4, hour: 19, minute: 0, title: "Thursday Prayer Meeting", timezone: "America/New_York" },
+    { recurrenceType: "weekly", day: 0, hour: 10, minute: 0, title: "Sunday Morning Worship", timezone: "America/New_York", duration: 90 },
+    { recurrenceType: "weekly", day: 0, hour: 18, minute: 0, title: "Sunday Evening Youth Service", timezone: "America/New_York", duration: 60 },
+    { recurrenceType: "weekly", day: 4, hour: 19, minute: 0, title: "Thursday Prayer Meeting", timezone: "America/New_York", duration: 60 },
   ],
   specialEvents: [],
   bgColor: "#ffffff",
@@ -113,7 +115,7 @@ interface NextServiceInfo {
   isLive: boolean;
 }
 
-const LIVE_DURATION_MS = 3 * 60 * 60 * 1000; // 3 hours
+const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1 hour fallback
 
 /** Build a Date object representing `hour:minute` on a given date, in the specified IANA timezone. */
 function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Date {
@@ -221,10 +223,11 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
 
   // Check all schedules for live status
   for (const s of schedules) {
+    const durationMs = (s.duration || 60) * 60 * 1000;
     const candidates = getScheduleCandidates(s, now, 2);
     for (const target of candidates) {
       const elapsed = nowMs - target.getTime();
-      if (elapsed >= 0 && elapsed < LIVE_DURATION_MS) {
+      if (elapsed >= 0 && elapsed < durationMs) {
         return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute), title: s.title, isLive: true };
       }
     }
@@ -235,9 +238,10 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const tz = ev.timezone || DEFAULT_TIMEZONE;
     const [y, m, d] = ev.date.split("-").map(Number);
     const base = new Date(y, m - 1, d);
+    const durationMs = (ev.duration || 60) * 60 * 1000;
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
-    if (elapsed >= 0 && elapsed < LIVE_DURATION_MS) {
+    if (elapsed >= 0 && elapsed < durationMs) {
       return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute), title: ev.title, isLive: true };
     }
   }
@@ -326,7 +330,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
       <div className="flex items-center justify-center flex-wrap" style={{ gap: `${Math.round(10 * hs)}px`, marginBottom: '6px' }}>
         <Icon style={{ color: config.iconColor, width: `${Math.round(28 * hs)}px`, height: `${Math.round(28 * hs)}px` }} />
         <span className="font-semibold" style={{ color: config.textColor, fontSize: `${Math.round(18 * hs)}px` }}>
-          {t.isLive ? "Now:" : `${config.headerLabel}:`}
+          {t.isLive ? "Happening Now:" : `${config.headerLabel}:`}
         </span>
         <span style={{ color: config.labelColor, fontSize: `${Math.round(18 * hs)}px` }}>
           {t.fullDate}

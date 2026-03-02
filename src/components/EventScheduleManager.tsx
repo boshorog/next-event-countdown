@@ -1,8 +1,13 @@
-import { Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { Plus, Trash2, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -44,6 +49,39 @@ const MONTHLY_WEEK_OPTIONS = [
   { value: "-1", label: "Last" },
 ];
 
+const DURATION_OPTIONS = [
+  { value: "30", label: "30 min" },
+  { value: "45", label: "45 min" },
+  { value: "60", label: "1 hour" },
+  { value: "90", label: "1.5 hours" },
+  { value: "120", label: "2 hours" },
+  { value: "180", label: "3 hours" },
+  { value: "240", label: "4 hours" },
+];
+
+const minimalCalendarClassNames = {
+  months: "flex flex-col",
+  month: "space-y-4",
+  caption: "flex justify-center pt-1 relative items-center",
+  caption_label: "text-sm font-semibold tracking-tight",
+  nav: "space-x-1 flex items-center",
+  nav_button: "h-8 w-8 bg-transparent p-0 opacity-50 hover:opacity-100 hover:bg-accent rounded-lg transition-colors inline-flex items-center justify-center",
+  nav_button_previous: "absolute left-1",
+  nav_button_next: "absolute right-1",
+  table: "w-full border-collapse",
+  head_row: "flex",
+  head_cell: "text-muted-foreground rounded-md w-10 font-medium text-[0.75rem] uppercase tracking-wider",
+  row: "flex w-full mt-1",
+  cell: "h-10 w-10 text-center text-sm p-0 relative rounded-lg focus-within:relative focus-within:z-20",
+  day: "h-10 w-10 p-0 font-normal rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors aria-selected:opacity-100 inline-flex items-center justify-center",
+  day_range_end: "day-range-end",
+  day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground rounded-lg",
+  day_today: "bg-accent text-accent-foreground font-semibold",
+  day_outside: "text-muted-foreground opacity-40",
+  day_disabled: "text-muted-foreground opacity-50",
+  day_hidden: "invisible",
+};
+
 interface EventScheduleManagerProps {
   config: CountdownConfig;
   onChange: (config: CountdownConfig) => void;
@@ -61,7 +99,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const removeSchedule = (idx: number) => update("schedules", config.schedules.filter((_, i) => i !== idx));
 
   const addSchedule = () =>
-    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York" }]);
+    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York", duration: 60 }]);
 
   const updateSpecial = (idx: number, patch: Partial<SpecialEvent>) => {
     const next = config.specialEvents.map((e, i) => (i === idx ? { ...e, ...patch } : e));
@@ -74,7 +112,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
-    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York" }]);
+    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York", duration: 60 }]);
   };
 
   const renderRecurrenceFields = (s: ServiceSchedule, i: number) => {
@@ -194,8 +232,8 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           </div>
         )}
 
-        {/* Time fields (always shown) */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Time + Duration fields (always shown) */}
+        <div className="grid grid-cols-3 gap-3">
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
             <Input type="number" min={0} max={23} value={s.hour} onChange={(e) => updateSchedule(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
@@ -203,6 +241,15 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
             <Input type="number" min={0} max={59} value={s.minute} onChange={(e) => updateSchedule(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
+            <Select value={String(s.duration || 60)} onValueChange={(v) => updateSchedule(i, { duration: parseInt(v) })}>
+              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </>
@@ -274,7 +321,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Date</Label>
-                  <Input type="date" value={ev.date} onChange={(e) => updateSpecial(i, { date: e.target.value })} className="h-8 text-sm" />
+                  <DatePickerField
+                    value={ev.date}
+                    onChange={(date) => updateSpecial(i, { date })}
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
@@ -286,7 +336,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                   </Select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
                   <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => updateSpecial(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
@@ -295,12 +345,58 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                   <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
                   <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => updateSpecial(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
                 </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
+                  <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(i, { duration: parseInt(v) })}>
+                    <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           ))}
         </CardContent>
       </Card>
     </div>
+  );
+};
+
+/** Minimal Clean date picker using Variant 1 calendar style */
+const DatePickerField = ({ value, onChange }: { value: string; onChange: (iso: string) => void }) => {
+  const parsed = value ? new Date(value + "T00:00:00") : undefined;
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          className={cn(
+            "w-full justify-start text-left font-normal h-8 text-sm rounded-lg border-border",
+            !value && "text-muted-foreground"
+          )}
+        >
+          <CalendarIcon className="mr-2 h-3.5 w-3.5 opacity-60" />
+          {parsed ? format(parsed, "MMMM d, yyyy") : "Select a date"}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0 rounded-xl shadow-lg border-border" align="start">
+        <Calendar
+          mode="single"
+          selected={parsed}
+          onSelect={(d) => {
+            if (d) {
+              const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              onChange(iso);
+            }
+          }}
+          initialFocus
+          className="p-4 pointer-events-auto"
+          classNames={minimalCalendarClassNames}
+        />
+      </PopoverContent>
+    </Popover>
   );
 };
 
