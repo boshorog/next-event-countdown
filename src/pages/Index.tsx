@@ -543,6 +543,7 @@ const Index = () => {
                 currentGalleryId={galleryState.currentGalleryId}
                 onGalleriesChange={(galleries) => setGalleryState(prev => ({ ...prev, galleries }))}
                 onCurrentGalleryChange={(galleryId) => setGalleryState(prev => ({ ...prev, currentGalleryId: galleryId }))}
+                countdownConfig={countdownConfig}
               />
               <EventScheduleManager 
                 config={countdownConfig}

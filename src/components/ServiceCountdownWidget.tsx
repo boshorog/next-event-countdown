@@ -217,7 +217,7 @@ function getNthDowInMonth(year: number, month: number, dow: number, week: number
 }
 
 /** Generate upcoming candidate dates for a schedule. Returns up to `count` future dates. */
-function getScheduleCandidates(s: ServiceSchedule, now: Date, count: number = 3): Date[] {
+export function getScheduleCandidates(s: ServiceSchedule, now: Date, count: number = 3): Date[] {
   const tz = s.timezone || DEFAULT_TIMEZONE;
   const candidates: Date[] = [];
 
