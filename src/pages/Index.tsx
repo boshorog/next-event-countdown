@@ -598,6 +598,8 @@ const Index = () => {
                 settings={settings} 
                 onSettingsChange={setSettings} 
                 currentGalleryId={galleryState.currentGalleryId}
+                countdownConfig={countdownConfig}
+                onCountdownConfigChange={setCountdownConfig}
               />
             </TabsContent>
             
