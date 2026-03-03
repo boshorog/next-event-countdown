@@ -100,11 +100,11 @@ const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPi
           <button className="w-10 h-10 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow" style={{ backgroundColor: color }} />
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-3 space-y-3 pointer-events-auto" align="start">
+      <PopoverContent className="w-72 p-3 space-y-4 pointer-events-auto" align="start">
         {/* SL Canvas */}
         <div
           ref={canvasRef}
-          className="relative w-full h-36 rounded-lg overflow-hidden cursor-crosshair border border-border"
+          className="relative w-full h-40 rounded-xl overflow-hidden cursor-crosshair border border-border"
           style={{
             background: `
               linear-gradient(to bottom, transparent, #000),
@@ -115,7 +115,7 @@ const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPi
           onTouchStart={e => { setDragging("canvas"); handleCanvasMove(e.touches[0].clientX, e.touches[0].clientY); }}
         >
           <div
-            className="absolute w-4 h-4 rounded-full border-2 border-white shadow-lg pointer-events-none -translate-x-1/2 -translate-y-1/2"
+            className="absolute w-5 h-5 rounded-full border-2 border-white shadow-lg pointer-events-none -translate-x-1/2 -translate-y-1/2"
             style={{
               left: `${Math.max(0, Math.min(100, cursorX))}%`,
               top: `${Math.max(0, Math.min(100, cursorY))}%`,
@@ -127,23 +127,23 @@ const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPi
         {/* Hue Strip */}
         <div
           ref={hueRef}
-          className="relative h-3 rounded-full overflow-hidden cursor-pointer border border-border"
+          className="relative h-4 rounded-full overflow-hidden cursor-pointer border border-border"
           style={{ background: "linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)" }}
           onMouseDown={e => { setDragging("hue"); handleHueMove(e.clientX); }}
           onTouchStart={e => { setDragging("hue"); handleHueMove(e.touches[0].clientX); }}
         >
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 border-white shadow-lg pointer-events-none"
-            style={{ left: `calc(${(hsl.h / 360) * 100}% - 8px)`, backgroundColor: `hsl(${hsl.h}, 100%, 50%)` }}
+            className="absolute top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 border-white shadow-lg pointer-events-none"
+            style={{ left: `calc(${(hsl.h / 360) * 100}% - 10px)`, backgroundColor: `hsl(${hsl.h}, 100%, 50%)` }}
           />
         </div>
 
         {/* Output */}
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md border border-border flex-shrink-0" style={{ backgroundColor: color }} />
-          <Input value={color} onChange={e => onChange(e.target.value)} className="h-7 text-xs font-mono flex-1" />
-          <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={() => navigator.clipboard.writeText(color)}>
-            <Copy className="w-3 h-3" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg border border-border shadow-sm" style={{ backgroundColor: color }} />
+          <Input value={color} onChange={e => onChange(e.target.value)} className="h-8 text-sm font-mono flex-1" />
+          <Button variant="outline" size="sm" className="h-8 w-8 p-0 flex-shrink-0" onClick={() => navigator.clipboard.writeText(color)}>
+            <Copy className="w-3.5 h-3.5" />
           </Button>
         </div>
       </PopoverContent>
