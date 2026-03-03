@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link, Save, CalendarDays } from 'lucide-react';
 import {
   DropdownMenu,
@@ -1432,11 +1431,10 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                     saveGalleriesToWP(galleries);
                     toast({ title: 'Saved', description: 'Schedules saved successfully.' });
                   }}
-                  size="sm"
-                  className="lg:hidden bg-primary hover:bg-primary/90 h-7 px-3 text-xs"
+                  className="lg:hidden h-7 w-7 p-0 bg-primary text-primary-foreground hover:bg-primary/90"
+                  aria-label="Save"
                 >
-                  <Check className="w-3 h-3 mr-1" />
-                  Save
+                  <Check className="w-3.5 h-3.5" />
                 </Button>
               </div>
               {selectedItems.size > 0 && (

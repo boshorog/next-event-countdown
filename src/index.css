@@ -299,26 +299,15 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: fill covers card body border, arc creates seamless rounded tie */
+/* Notch connector: single rounded tie only (no extra straight connector) */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -3px;
+  bottom: -1px;
   width: var(--notch-size);
-  height: calc(var(--notch-size) + 2px);
+  height: var(--notch-size);
   background: hsl(var(--card));
-  border-bottom-left-radius: var(--notch-size);
-  z-index: 3;
-}
-
-.calendar-tab::before {
-  content: '';
-  position: absolute;
-  right: calc(-1 * var(--notch-size));
-  bottom: -2px;
-  width: var(--notch-size);
-  height: calc(var(--notch-size) + 1px);
   border-left: 1px solid var(--tab-border-color);
   border-bottom: 1px solid var(--tab-border-color);
   border-bottom-left-radius: var(--notch-size);
@@ -332,6 +321,7 @@ All colors MUST be HSL.
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   position: relative;
   z-index: 1;
+  margin-top: 1px;
 }
 
 /* Mobile: fewer days, swipeable */
