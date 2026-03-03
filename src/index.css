@@ -299,17 +299,17 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: rotated 180° (matches reference), without straight artifacts */
+/* Notch connector: rotated 180° (matches reference), tightened bottom-right junction */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  bottom: -2px;
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: hsl(var(--card));
-  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
-  z-index: 3;
+  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 100% 0%);
+  z-index: 5;
   pointer-events: none;
 }
 
@@ -317,26 +317,26 @@ All colors MUST be HSL.
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  bottom: -2px;
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: var(--tab-border-color);
   -webkit-mask: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
     #000 calc(var(--notch-size) - 1px),
     #000 var(--notch-size),
-    transparent calc(var(--notch-size) + 0.01px)
+    transparent calc(var(--notch-size) + 0.35px)
   );
   mask: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
     #000 calc(var(--notch-size) - 1px),
     #000 var(--notch-size),
-    transparent calc(var(--notch-size) + 0.01px)
+    transparent calc(var(--notch-size) + 0.35px)
   );
-  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
-  z-index: 4;
+  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 100% 0%);
+  z-index: 6;
   pointer-events: none;
 }
 
