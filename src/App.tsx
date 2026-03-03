@@ -27,6 +27,7 @@ import { POST_MESSAGE_HEIGHT } from "@/config/pluginIdentity";
 import Index from "./pages/Index";
 import ScrollOnboardingShowcase from "./components/ScrollOnboardingShowcase";
 import CountersPageShowcase from "./components/CountersPageShowcase";
+import ColorPickerShowcase from "./components/ColorPickerShowcase";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -120,6 +121,7 @@ const App = () => {
   const renderContent = () => {
     if (showcaseParam === 'scroll-onboarding') return <ScrollOnboardingShowcase />;
     if (showcaseParam === 'counters-page') return <CountersPageShowcase />;
+    if (showcaseParam === 'color-picker') return <ColorPickerShowcase />;
     return <Index />;
   };
 
