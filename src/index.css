@@ -299,35 +299,21 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: pure rounded arc only (no straight line artifacts) */
+/* Notch connector: single radial-gradient quarter-circle arc */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
   bottom: -1px;
-  width: calc(var(--notch-size) + 1px);
-  height: calc(var(--notch-size) + 1px);
-  background: hsl(var(--card));
-  clip-path: ellipse(100% 100% at 0% 100%);
-  z-index: 3;
-  pointer-events: none;
-}
-
-.calendar-tab::before {
-  content: '';
-  position: absolute;
-  right: calc(-1 * var(--notch-size));
-  bottom: -1px;
-  width: calc(var(--notch-size) + 1px);
-  height: calc(var(--notch-size) + 1px);
+  width: var(--notch-size);
+  height: var(--notch-size);
   background: radial-gradient(
-    circle at 0 100%,
-    transparent calc(var(--notch-size) - 1.25px),
+    circle at 0 0,
+    transparent calc(var(--notch-size) - 1px),
     var(--tab-border-color) calc(var(--notch-size) - 1px),
     var(--tab-border-color) var(--notch-size),
-    transparent calc(var(--notch-size) + 0.25px)
+    hsl(var(--card)) var(--notch-size)
   );
-  clip-path: ellipse(100% 100% at 0% 100%);
   z-index: 4;
   pointer-events: none;
 }
