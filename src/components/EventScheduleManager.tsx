@@ -237,7 +237,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         {type === "biweekly" && (
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Starting from (anchor date)</Label>
-            <DatePickerField value={s.biweeklyStart || ""} onChange={(date) => updateSchedule(i, { biweeklyStart: date })} />
+            <Input type="date" value={s.biweeklyStart || ""} onChange={(e) => updateSchedule(i, { biweeklyStart: e.target.value })} className="h-8 text-sm" />
           </div>
         )}
 
@@ -332,9 +332,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         </CardHeader>
         <CardContent className="space-y-1.5" ref={recurringListRef}>
           {config.schedules.length === 0 && (
-            <div className="flex items-center justify-center min-h-[120px]">
-              <p className="text-xs text-muted-foreground italic text-center">No recurring events added.</p>
-            </div>
+            <p className="text-xs text-muted-foreground italic text-center py-6">No recurring events added.</p>
           )}
           {config.schedules.map((s, i) => {
             const isOpen = openRecurring === i;
@@ -390,9 +388,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         </CardHeader>
         <CardContent className="space-y-1.5" ref={specialListRef}>
           {config.specialEvents.length === 0 && (
-            <div className="flex items-center justify-center min-h-[120px]">
-              <p className="text-xs text-muted-foreground italic text-center">No special events added.</p>
-            </div>
+            <p className="text-xs text-muted-foreground italic text-center py-6">No special events added.</p>
           )}
           {config.specialEvents.map((ev, i) => {
             const isOpen = openSpecial === i;
