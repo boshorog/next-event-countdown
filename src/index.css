@@ -304,11 +304,11 @@ All colors MUST be HSL.
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -2px;
-  width: calc(var(--notch-size) + 1px);
-  height: calc(var(--notch-size) + 1px);
+  bottom: -3px;
+  width: calc(var(--notch-size) + 2px);
+  height: calc(var(--notch-size) + 3px);
   background: hsl(var(--card));
-  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 100% 0%);
+  clip-path: ellipse(calc(var(--notch-size) + 2px) calc(var(--notch-size) + 3px) at 100% 0%);
   z-index: 5;
   pointer-events: none;
 }
