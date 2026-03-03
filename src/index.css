@@ -299,7 +299,7 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: single radial-gradient quarter-circle arc */
+/* Notch connector: keep original arc angle, but render only curved segment */
 .calendar-tab::after {
   content: '';
   position: absolute;
@@ -307,13 +307,27 @@ All colors MUST be HSL.
   bottom: -1px;
   width: var(--notch-size);
   height: var(--notch-size);
+  background: hsl(var(--card));
+  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.calendar-tab::before {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--notch-size));
+  bottom: -1px;
+  width: var(--notch-size);
+  height: var(--notch-size);
   background: radial-gradient(
-    circle at 0 0,
+    circle at 0 100%,
     transparent calc(var(--notch-size) - 1px),
     var(--tab-border-color) calc(var(--notch-size) - 1px),
     var(--tab-border-color) var(--notch-size),
-    hsl(var(--card)) var(--notch-size)
+    transparent calc(var(--notch-size) + 0.25px)
   );
+  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
   z-index: 4;
   pointer-events: none;
 }
