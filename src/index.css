@@ -304,9 +304,9 @@ All colors MUST be HSL.
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -2px;
+  bottom: -3px;
   width: var(--notch-size);
-  height: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 2px);
   background: hsl(var(--card));
   border-bottom-left-radius: var(--notch-size);
   z-index: 3;
@@ -316,9 +316,9 @@ All colors MUST be HSL.
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -1px;
+  bottom: -2px;
   width: var(--notch-size);
-  height: var(--notch-size);
+  height: calc(var(--notch-size) + 1px);
   border-left: 1px solid var(--tab-border-color);
   border-bottom: 1px solid var(--tab-border-color);
   border-bottom-left-radius: var(--notch-size);
