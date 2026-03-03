@@ -299,23 +299,30 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: inverse concave curve connecting tab right edge to card top border */
+/* Notch connector: fill + single rounded border tie (no straight duplicate) */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
   bottom: -1px;
   width: var(--notch-size);
-  height: calc(var(--notch-size) + 1px);
-  background:
-    radial-gradient(
-      circle at 0 100%,
-      transparent calc(var(--notch-size) - 1px),
-      var(--tab-border-color) calc(var(--notch-size) - 1px),
-      var(--tab-border-color) var(--notch-size),
-      hsl(var(--card)) var(--notch-size)
-    );
+  height: var(--notch-size);
+  background: hsl(var(--card));
+  border-bottom-left-radius: var(--notch-size);
   z-index: 3;
+}
+
+.calendar-tab::before {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--notch-size));
+  bottom: -1px;
+  width: var(--notch-size);
+  height: var(--notch-size);
+  border-left: 1px solid var(--tab-border-color);
+  border-bottom: 1px solid var(--tab-border-color);
+  border-bottom-left-radius: var(--notch-size);
+  z-index: 4;
 }
 
 .calendar-tab-body {
