@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { FileText, ExternalLink, Upload, Key, Eye, EyeOff, AlertCircle, CheckCircle2, ChevronDown, Check } from 'lucide-react';
+import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -545,33 +546,21 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <Label htmlFor="accent-color">Current accent color</Label>
-              <div className="flex items-center gap-2 mt-1">
-                <div 
-                  className="w-8 h-8 rounded border border-border"
-                  style={{ backgroundColor: localSettings.accentColor }}
-                />
-                <span className="text-sm font-mono">{localSettings.accentColor}</span>
-              </div>
-            </div>
-            <div className="flex-1">
-              <Label htmlFor="color-picker">Select new color</Label>
-              <div className="flex gap-2 mt-1">
-                <Input
-                  id="color-picker"
-                  type="color"
-                  value={localSettings.accentColor}
-                  onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
-                  className="w-16 h-10"
-                />
-                <Input
-                  value={localSettings.accentColor}
-                  onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
-                  placeholder="#7FB3DC"
-                  className="font-mono"
-                />
-              </div>
+            <SaturationCanvasPicker
+              color={localSettings.accentColor}
+              onChange={(c) => setLocalSettings(prev => ({ ...prev, accentColor: c }))}
+              trigger={(color) => (
+                <button className="w-12 h-12 rounded-xl border-2 border-border shadow-sm cursor-pointer hover:shadow-md hover:scale-105 transition-all" style={{ backgroundColor: color }} />
+              )}
+            />
+            <div className="flex-1 space-y-1">
+              <Label className="text-xs text-muted-foreground">Current accent color</Label>
+              <Input
+                value={localSettings.accentColor}
+                onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
+                placeholder="#7FB3DC"
+                className="font-mono h-9"
+              />
             </div>
           </div>
         </CardContent>
