@@ -278,17 +278,21 @@ All colors MUST be HSL.
 /* Calendar tab-card: folder-tab with inner rounded notch */
 .calendar-tab-card {
   position: relative;
+  --tab-radius: 10px;
+  --notch-size: 10px;
+  --tab-border-color: hsl(var(--primary) / 0.2);
 }
 
 .calendar-tab {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.375rem 1rem;
+  padding: 0.5rem 1.25rem;
+  margin-left: 1.25rem;
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--primary) / 0.2);
+  border: 1px solid var(--tab-border-color);
   border-bottom: none;
-  border-radius: var(--radius) var(--radius) 0 0;
+  border-radius: var(--tab-radius) var(--tab-radius) 0 0;
   position: relative;
   z-index: 2;
   margin-bottom: -1px;
@@ -298,18 +302,31 @@ All colors MUST be HSL.
 .calendar-tab::after {
   content: '';
   position: absolute;
-  right: -8px;
+  right: calc(-1 * var(--notch-size));
   bottom: 0;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle at 0 0, transparent 7px, hsl(var(--card)) 7px);
-  border-bottom: 1px solid hsl(var(--primary) / 0.2);
-  border-left: 1px solid transparent;
+  width: var(--notch-size);
+  height: var(--notch-size);
+  background: radial-gradient(circle at 0 0, transparent calc(var(--notch-size) - 1px), hsl(var(--card)) calc(var(--notch-size) - 1px));
 }
 
+/* Border arc for the notch */
+.calendar-tab::before {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--notch-size));
+  bottom: 0;
+  width: var(--notch-size);
+  height: var(--notch-size);
+  border-radius: 0;
+  border-bottom: 1px solid var(--tab-border-color);
+  background: radial-gradient(circle at 0 0, transparent calc(var(--notch-size) - 2px), var(--tab-border-color) calc(var(--notch-size) - 2px), var(--tab-border-color) calc(var(--notch-size) - 1px), transparent calc(var(--notch-size) - 1px));
+}
+
+/* Left inner notch where tab meets card body */
 .calendar-tab-body {
   background: hsl(var(--card));
-  border: 1px solid hsl(var(--primary) / 0.2);
-  border-radius: 0 var(--radius) var(--radius) var(--radius);
+  border: 1px solid var(--tab-border-color);
+  border-radius: 0 var(--tab-radius) var(--tab-radius) var(--tab-radius);
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  position: relative;
 }
