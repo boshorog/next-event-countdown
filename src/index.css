@@ -299,16 +299,16 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: single radial-gradient, no borders/masks/clips = no artifacts */
+/* Notch connector: single radial-gradient, overlap 1px into card-body for seamless junction */
 .calendar-tab::after {
   content: '';
   position: absolute;
-  right: calc(-1 * var(--notch-size));
-  bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  right: calc(-1 * var(--notch-size) - 1px);
+  bottom: -2px;
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: radial-gradient(
-    circle at 100% 0%,
+    circle at calc(100% - 1px) 1px,
     transparent calc(var(--notch-size) - 1px),
     var(--tab-border-color) calc(var(--notch-size) - 1px),
     var(--tab-border-color) var(--notch-size),
