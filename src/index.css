@@ -299,14 +299,14 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: keep original arc angle, but render only curved segment */
+/* Notch connector: original arc geometry, without straight artifacts */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
   bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: hsl(var(--card));
   clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
   z-index: 3;
@@ -318,14 +318,14 @@ All colors MUST be HSL.
   position: absolute;
   right: calc(-1 * var(--notch-size));
   bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: radial-gradient(
-    circle at 0 100%,
+    circle at 0% 100%,
     transparent calc(var(--notch-size) - 1px),
     var(--tab-border-color) calc(var(--notch-size) - 1px),
     var(--tab-border-color) var(--notch-size),
-    transparent calc(var(--notch-size) + 0.25px)
+    transparent calc(var(--notch-size) + 0.2px)
   );
   clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
   z-index: 4;
