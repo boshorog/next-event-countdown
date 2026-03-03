@@ -299,14 +299,14 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: fill + single rounded border tie (no straight duplicate) */
+/* Notch connector: fill covers card body border, arc creates seamless rounded tie */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -1px;
+  bottom: -2px;
   width: var(--notch-size);
-  height: var(--notch-size);
+  height: calc(var(--notch-size) + 1px);
   background: hsl(var(--card));
   border-bottom-left-radius: var(--notch-size);
   z-index: 3;
