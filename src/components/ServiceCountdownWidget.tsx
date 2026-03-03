@@ -54,20 +54,20 @@ export const TIMEZONE_OPTIONS = [
 const DEFAULT_TIMEZONE = "Europe/Bucharest";
 
 export type DateFormatType = 
-  | "full"           // Sunday, March 2, 2026 at 10:00
-  | "long"           // March 2, 2026 at 10:00
-  | "medium"         // Mar 2, 2026 at 10:00
-  | "short"          // 3/2/2026 10:00
-  | "day-month"      // Sunday, March 2 at 10:00
-  | "relative";      // Tomorrow at 10:00 / Today at 10:00
+  | "us-long"        // March 6, 2026 at 7:00 PM
+  | "us-short"       // Fri, 6 Mar 2026, 7 PM
+  | "iso-like"       // 2026-03-06 19:00
+  | "europe-long"    // Friday, 6 March 2026 at 19:00
+  | "europe-short"   // Fri, 6 Mar 2026, 19:00
+  | "social";        // Fri, Mar 6 @ 19:00
 
 export const DATE_FORMAT_OPTIONS: { value: DateFormatType; label: string; example: string }[] = [
-  { value: "full", label: "Full", example: "Sunday, March 2, 2026 at 10:00" },
-  { value: "long", label: "Long", example: "March 2, 2026 at 10:00" },
-  { value: "medium", label: "Medium", example: "Mar 2, 2026 at 10:00" },
-  { value: "short", label: "Short", example: "3/2/2026 10:00" },
-  { value: "day-month", label: "Day & Month", example: "Sunday, March 2 at 10:00" },
-  { value: "relative", label: "Relative", example: "Tomorrow at 10:00" },
+  { value: "us-long", label: "US Long", example: "March 6, 2026 at 7:00 PM" },
+  { value: "us-short", label: "US Short", example: "Fri, 6 Mar 2026, 7 PM" },
+  { value: "iso-like", label: "ISO-like", example: "2026-03-06 19:00" },
+  { value: "europe-long", label: "Europe Long", example: "Friday, 6 March 2026 at 19:00" },
+  { value: "europe-short", label: "Europe Short", example: "Fri, 6 Mar 2026, 19:00" },
+  { value: "social", label: "Social", example: "Fri, Mar 6 @ 19:00" },
 ];
 
 export interface CountdownConfig {
@@ -96,7 +96,7 @@ export const defaultCountdownConfig: CountdownConfig = {
   iconColor: "#6366f1",
   headerLabel: "Next Event",
   liveLabel: "Happening Now",
-  dateFormat: "full",
+  dateFormat: "us-long",
   labelDays: "Days",
   labelHours: "Hours",
   labelMinutes: "Minutes",
@@ -160,36 +160,32 @@ function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Dat
   return new Date(fakeUtc.getTime() + offsetMs);
 }
 
-function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "full"): string {
-  const timeStr = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "us-long"): string {
+  const h24 = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
   const dow = dayNames[target.getDay()];
+  const dowShort = dow.slice(0, 3);
   const mon = monthNames[target.getMonth()];
   const monShort = mon.slice(0, 3);
   const day = target.getDate();
   const year = target.getFullYear();
+  const h12 = hour % 12 || 12;
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const time12 = minute === 0 ? `${h12} ${ampm}` : `${h12}:${String(minute).padStart(2, "0")} ${ampm}`;
 
   switch (format) {
-    case "long":
-      return `${mon} ${day}, ${year} at ${timeStr}`;
-    case "medium":
-      return `${monShort} ${day}, ${year} at ${timeStr}`;
-    case "short":
-      return `${target.getMonth() + 1}/${day}/${year} ${timeStr}`;
-    case "day-month":
-      return `${dow}, ${mon} ${day} at ${timeStr}`;
-    case "relative": {
-      const now = new Date();
-      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const targetStart = new Date(target.getFullYear(), target.getMonth(), target.getDate());
-      const diffDays = Math.round((targetStart.getTime() - todayStart.getTime()) / 86400000);
-      if (diffDays === 0) return `Today at ${timeStr}`;
-      if (diffDays === 1) return `Tomorrow at ${timeStr}`;
-      if (diffDays < 7 && diffDays > 0) return `${dow} at ${timeStr}`;
-      return `${mon} ${day} at ${timeStr}`;
-    }
-    case "full":
+    case "us-short":
+      return `${dowShort}, ${day} ${monShort} ${year}, ${time12}`;
+    case "iso-like":
+      return `${year}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")} ${h24}`;
+    case "europe-long":
+      return `${dow}, ${day} ${mon} ${year} at ${h24}`;
+    case "europe-short":
+      return `${dowShort}, ${day} ${monShort} ${year}, ${h24}`;
+    case "social":
+      return `${dowShort}, ${monShort} ${day} @ ${h24}`;
+    case "us-long":
     default:
-      return `${dow}, ${mon} ${day}, ${year} at ${timeStr}`;
+      return `${mon} ${day}, ${year} at ${time12}`;
   }
 }
 
@@ -275,7 +271,7 @@ export function getScheduleCandidates(s: ServiceSchedule, now: Date, count: numb
   return candidates;
 }
 
-function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[], dateFormat: DateFormatType = "full"): NextServiceInfo {
+function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[], dateFormat: DateFormatType = "us-long"): NextServiceInfo {
   const now = new Date();
   const nowMs = now.getTime();
 
