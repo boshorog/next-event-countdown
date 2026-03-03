@@ -299,20 +299,19 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: single radial-gradient, overlap 1px into card-body for seamless junction */
+/* Notch connector: keep original arc geometry + pixel-perfect junctions */
 .calendar-tab::after {
   content: '';
   position: absolute;
-  right: calc(-1 * var(--notch-size) - 1px);
-  bottom: -2px;
+  right: calc(-1 * var(--notch-size));
+  bottom: -1px;
   width: calc(var(--notch-size) + 1px);
   height: calc(var(--notch-size) + 1px);
   background: radial-gradient(
-    circle at calc(100% - 1px) 1px,
+    circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
-    var(--tab-border-color) calc(var(--notch-size) - 1px),
-    var(--tab-border-color) var(--notch-size),
-    hsl(var(--card)) var(--notch-size)
+    var(--tab-border-color) calc(var(--notch-size) - 1px) calc(var(--notch-size)),
+    hsl(var(--card)) calc(var(--notch-size))
   );
   z-index: 5;
   pointer-events: none;
