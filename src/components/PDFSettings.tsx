@@ -545,21 +545,22 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
           <CardTitle>Accent Color</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-3">
-            <SaturationCanvasPicker
-              color={localSettings.accentColor}
-              onChange={(c) => setLocalSettings(prev => ({ ...prev, accentColor: c }))}
-              trigger={(color) => (
-                <button className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow" style={{ backgroundColor: color }} />
-              )}
-            />
-            <Input
-              value={localSettings.accentColor}
-              onChange={(e) => setLocalSettings(prev => ({ ...prev, accentColor: e.target.value }))}
-              placeholder="#7FB3DC"
-              className="font-mono h-9 text-sm max-w-[160px]"
-            />
-          </div>
+          <SaturationCanvasPicker
+            color={localSettings.accentColor}
+            onChange={(c) => setLocalSettings(prev => ({ ...prev, accentColor: c }))}
+            trigger={(c) => (
+              <button className="group relative w-full h-20 rounded-xl border border-border overflow-hidden cursor-pointer hover:shadow-lg transition-all">
+                <div className="absolute inset-0" style={{ backgroundColor: c }} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                <div className="absolute bottom-2 left-3 flex items-center gap-2">
+                  <span className="text-xs font-mono text-white/90 tracking-wide">{c}</span>
+                </div>
+                <div className="absolute top-2 right-2 text-[10px] font-medium text-white/60 uppercase tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to edit
+                </div>
+              </button>
+            )}
+          />
         </CardContent>
       </Card>
 

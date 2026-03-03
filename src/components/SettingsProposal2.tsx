@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame } from 'lucide-react';
+import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -315,11 +316,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               <div className="space-y-3 pt-4 border-t border-border">
                 <Label className="text-base font-medium">Icon Color</Label>
                 <div className="flex items-center gap-3">
-                  <Input
-                    type="color"
-                    value={localConfig.iconColor}
-                    onChange={(e) => updateConfig({ iconColor: e.target.value })}
-                    className="w-14 h-10"
+                  <SaturationCanvasPicker
+                    color={localConfig.iconColor}
+                    onChange={(c) => updateConfig({ iconColor: c })}
+                    trigger={(c) => (
+                      <button className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow" style={{ backgroundColor: c }} />
+                    )}
                   />
                   <Input
                     value={localConfig.iconColor}
@@ -344,11 +346,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     <div key={key} className="space-y-2">
                       <Label className="text-sm">{label}</Label>
                       <div className="flex items-center gap-2">
-                        <Input
-                          type="color"
-                          value={(localConfig as any)[key] || placeholder}
-                          onChange={(e) => updateConfig({ [key]: e.target.value } as any)}
-                          className="w-10 h-10 p-1"
+                        <SaturationCanvasPicker
+                          color={(localConfig as any)[key] || placeholder}
+                          onChange={(c) => updateConfig({ [key]: c } as any)}
+                          trigger={(c) => (
+                            <button className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow flex-shrink-0" style={{ backgroundColor: c }} />
+                          )}
                         />
                         <Input
                           value={(localConfig as any)[key] || ''}
