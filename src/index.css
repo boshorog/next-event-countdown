@@ -299,7 +299,7 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: single inverse concave curve with 1px border arc */
+/* Notch connector: inverse concave curve connecting tab right edge to card top border */
 .calendar-tab::after {
   content: '';
   position: absolute;
@@ -309,7 +309,7 @@ All colors MUST be HSL.
   height: calc(var(--notch-size) + 1px);
   background:
     radial-gradient(
-      circle at 0 0,
+      circle at 0 100%,
       transparent calc(var(--notch-size) - 1px),
       var(--tab-border-color) calc(var(--notch-size) - 1px),
       var(--tab-border-color) var(--notch-size),
