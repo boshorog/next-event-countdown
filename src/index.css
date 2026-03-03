@@ -299,7 +299,7 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: exact original curvature (no +1px distortion) */
+/* Notch connector: rotated 180° (matches reference), without straight artifacts */
 .calendar-tab::after {
   content: '';
   position: absolute;
@@ -308,7 +308,7 @@ All colors MUST be HSL.
   width: var(--notch-size);
   height: var(--notch-size);
   background: hsl(var(--card));
-  clip-path: ellipse(var(--notch-size) var(--notch-size) at 0% 100%);
+  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
   z-index: 3;
   pointer-events: none;
 }
@@ -322,20 +322,20 @@ All colors MUST be HSL.
   height: var(--notch-size);
   background: var(--tab-border-color);
   -webkit-mask: radial-gradient(
-    circle at 0% 100%,
+    circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
     #000 calc(var(--notch-size) - 1px),
     #000 var(--notch-size),
     transparent calc(var(--notch-size) + 0.01px)
   );
   mask: radial-gradient(
-    circle at 0% 100%,
+    circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
     #000 calc(var(--notch-size) - 1px),
     #000 var(--notch-size),
     transparent calc(var(--notch-size) + 0.01px)
   );
-  clip-path: ellipse(var(--notch-size) var(--notch-size) at 0% 100%);
+  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
   z-index: 4;
   pointer-events: none;
 }
