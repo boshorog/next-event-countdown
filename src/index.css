@@ -276,18 +276,20 @@ All colors MUST be HSL.
 }
 
 /* Calendar tab-card: folder-tab with inner rounded notch */
+/* Calendar tab-card: folder-tab with inner rounded notch */
 .calendar-tab-card {
   position: relative;
   --tab-radius: 10px;
   --notch-size: 10px;
   --tab-border-color: hsl(var(--primary) / 0.2);
+  margin-top: -0.25rem;
 }
 
 .calendar-tab {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1.25rem 0.5rem 1.5rem;
+  padding: 0.625rem 1.25rem 0.5rem 1.5rem;
   margin-left: 0;
   background: hsl(var(--card));
   border: 1px solid var(--tab-border-color);
@@ -298,7 +300,7 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Rounded connector from tab to card top border */
+/* Fill connector: covers the gap between tab and card body */
 .calendar-tab::after {
   content: '';
   position: absolute;
@@ -312,14 +314,16 @@ All colors MUST be HSL.
   border-bottom-left-radius: var(--notch-size);
 }
 
+/* Inverse curve: masks the outer corner to create smooth transition */
 .calendar-tab::before {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  top: calc(-1 * var(--notch-size));
+  bottom: calc(var(--notch-size) - 1px);
   width: var(--notch-size);
   height: var(--notch-size);
   background: radial-gradient(circle at 0 100%, transparent calc(var(--notch-size) - 1px), hsl(var(--card)) calc(var(--notch-size) - 1px));
+  z-index: 3;
 }
 
 .calendar-tab-body {
@@ -328,4 +332,11 @@ All colors MUST be HSL.
   border-radius: 0 var(--tab-radius) var(--tab-radius) var(--tab-radius);
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   position: relative;
+}
+
+/* Mobile: fewer days, swipeable */
+@media (max-width: 767px) {
+  .calendar-tab {
+    padding: 0.5rem 1rem 0.375rem 1rem;
+  }
 }

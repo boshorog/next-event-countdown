@@ -3,6 +3,7 @@ import { format, addDays, isSameDay, isToday, startOfDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CountdownConfig, getScheduleCandidates } from './ServiceCountdownWidget';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CalendarEvent {
   date: Date;
@@ -50,15 +51,18 @@ function getEventsForRange(config: CountdownConfig, startDate: Date, days: numbe
 }
 
 const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
+  const isMobile = useIsMobile();
   const [offset, setOffset] = useState(0);
   const [sliding, setSliding] = useState<'left' | 'right' | null>(null);
-  const VISIBLE_DAYS = 11;
-  const startDate = addDays(new Date(), offset);
-  const days = Array.from({ length: VISIBLE_DAYS }, (_, i) => addDays(startDate, i));
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const VISIBLE_DAYS = isMobile ? 6 : 11;
+  const TOTAL_MOBILE_DAYS = 21; // preload for swipe
+  const startDate = addDays(new Date(), isMobile ? 0 : offset);
+  const days = Array.from({ length: isMobile ? TOTAL_MOBILE_DAYS : VISIBLE_DAYS }, (_, i) => addDays(startDate, i));
 
   const allEvents = useMemo(
-    () => getEventsForRange(countdownConfig, startDate, VISIBLE_DAYS),
-    [countdownConfig, offset]
+    () => getEventsForRange(countdownConfig, startDate, isMobile ? TOTAL_MOBILE_DAYS : VISIBLE_DAYS),
+    [countdownConfig, offset, isMobile]
   );
 
   const getEventsForDay = (date: Date) => allEvents.filter(e => isSameDay(e.date, date));
@@ -69,8 +73,53 @@ const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
       setOffset(prev => prev + (direction === 'right' ? VISIBLE_DAYS : -VISIBLE_DAYS));
       setSliding(null);
     }, 280);
-  }, []);
+  }, [VISIBLE_DAYS]);
 
+  // Mobile: horizontal scroll, no arrows
+  if (isMobile) {
+    return (
+      <div
+        ref={scrollRef}
+        className="flex gap-1 w-full overflow-x-auto pdfg-scrollbar-hidden snap-x snap-mandatory pb-1"
+      >
+        {days.map((day) => {
+          const events = getEventsForDay(day);
+          const hasEvent = events.length > 0;
+          const dayIsToday = isToday(day);
+
+          return (
+            <div
+              key={day.toISOString()}
+              className={`flex flex-col items-center flex-shrink-0 snap-start px-2 py-2 rounded-lg transition-all border
+                ${dayIsToday
+                  ? 'bg-primary text-primary-foreground border-primary min-w-[52px]'
+                  : hasEvent
+                    ? 'bg-primary/5 border-primary/20 min-w-[52px]'
+                    : 'border-transparent min-w-[44px]'
+                }`}
+            >
+              <span className={`text-[10px] uppercase ${dayIsToday ? 'opacity-80' : 'opacity-70'}`}>
+                {format(day, 'EEE')}
+              </span>
+              <span className="text-sm font-bold">{format(day, 'd')}</span>
+              {dayIsToday && (
+                <span className="text-[8px] font-semibold uppercase tracking-wide opacity-70">
+                  Today
+                </span>
+              )}
+              {hasEvent && !dayIsToday && (
+                <span className="text-[9px] mt-0.5 truncate max-w-[48px] text-primary">
+                  {events[0].title.length > 6 ? events[0].title.slice(0, 6) + '…' : events[0].title}
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Desktop: arrows + sliding animation
   return (
     <div className="flex items-center gap-1 w-full">
       <button
