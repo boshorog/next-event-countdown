@@ -1452,11 +1452,12 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
           {/* Calendar Hero Card */}
           {!isAddingDocument && !isAddingDivider && countdownConfig && (
-            <Card className="border-primary/20">
-              <CardHeader className="pb-2 pt-3">
-                <CardTitle className="text-sm flex items-center gap-2"><CalendarDays className="w-4 h-4 text-primary" /> Upcoming Schedule</CardTitle>
-              </CardHeader>
-              <CardContent className="pb-4 px-3 pt-0">
+            <Card className="border-primary/20 overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-primary/5 border-b border-primary/10">
+                <CalendarDays className="w-4 h-4 text-primary" />
+                <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
+              </div>
+              <CardContent className="pb-4 px-3 pt-3">
                 <UpcomingCalendar countdownConfig={countdownConfig} />
               </CardContent>
             </Card>
