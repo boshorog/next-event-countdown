@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Plus, Upload, Trash2, Edit, Eye, GripVertical, FileText, Minus, RefreshCw, Copy, Check, FileType, Presentation, Image, X, Star, Maximize2, FolderOpen, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Link, Save, CalendarDays } from 'lucide-react';
 import {
   DropdownMenu,
@@ -1405,13 +1406,13 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Navigation removed: top-level tabs now control sections */}
 
       <>
           {/* Top Row: Breadcrumb centered + Save aligned right */}
           <div className="flex items-end justify-between mb-1">
-            <div className="flex-1" />
+            <div className="flex-1 hidden lg:block" />
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm">
                 <span className="text-muted-foreground">Counters</span>
@@ -1425,6 +1426,18 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                   onGalleryRename={handleGalleryRename}
                   onGalleryDelete={handleGalleryDelete}
                 />
+                {/* Mobile-only Save button */}
+                <Button
+                  onClick={() => {
+                    saveGalleriesToWP(galleries);
+                    toast({ title: 'Saved', description: 'Schedules saved successfully.' });
+                  }}
+                  size="sm"
+                  className="lg:hidden bg-primary hover:bg-primary/90 h-7 px-3 text-xs"
+                >
+                  <Check className="w-3 h-3 mr-1" />
+                  Save
+                </Button>
               </div>
               {selectedItems.size > 0 && (
                 <Button 
@@ -1442,7 +1455,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                   saveGalleriesToWP(galleries);
                   toast({ title: 'Saved', description: 'Schedules saved successfully.' });
                 }}
-                className="bg-primary hover:bg-primary/90"
+                className="hidden lg:inline-flex bg-primary hover:bg-primary/90"
               >
                 <Check className="w-4 h-4 mr-2" />
                 Save
