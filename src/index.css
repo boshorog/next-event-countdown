@@ -299,42 +299,22 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: keep 180° arc, fix seams with controlled overlap */
+/* Notch connector: single radial-gradient, no borders/masks/clips = no artifacts */
 .calendar-tab::after {
   content: '';
   position: absolute;
-  right: calc(-1 * var(--notch-size) - 1px);
-  bottom: -2px;
-  width: calc(var(--notch-size) + 2px);
-  height: calc(var(--notch-size) + 2px);
-  background: hsl(var(--card));
-  clip-path: ellipse(calc(var(--notch-size) + 2px) calc(var(--notch-size) + 2px) at 100% 0%);
+  right: calc(-1 * var(--notch-size));
+  bottom: -1px;
+  width: var(--notch-size);
+  height: var(--notch-size);
+  background: radial-gradient(
+    circle at 100% 0%,
+    transparent calc(var(--notch-size) - 1px),
+    var(--tab-border-color) calc(var(--notch-size) - 1px),
+    var(--tab-border-color) var(--notch-size),
+    hsl(var(--card)) var(--notch-size)
+  );
   z-index: 5;
-  pointer-events: none;
-}
-
-.calendar-tab::before {
-  content: '';
-  position: absolute;
-  right: calc(-1 * var(--notch-size) - 1px);
-  bottom: -2px;
-  width: calc(var(--notch-size) + 2px);
-  height: calc(var(--notch-size) + 2px);
-  background: var(--tab-border-color);
-  -webkit-mask: radial-gradient(
-    circle at 100% 0%,
-    transparent calc(var(--notch-size) - 1px),
-    #000 calc(var(--notch-size) - 1px) calc(var(--notch-size) + 0.25px),
-    transparent calc(var(--notch-size) + 0.25px)
-  );
-  mask: radial-gradient(
-    circle at 100% 0%,
-    transparent calc(var(--notch-size) - 1px),
-    #000 calc(var(--notch-size) - 1px) calc(var(--notch-size) + 0.25px),
-    transparent calc(var(--notch-size) + 0.25px)
-  );
-  clip-path: ellipse(calc(var(--notch-size) + 2px) calc(var(--notch-size) + 2px) at 100% 0%);
-  z-index: 6;
   pointer-events: none;
 }
 
