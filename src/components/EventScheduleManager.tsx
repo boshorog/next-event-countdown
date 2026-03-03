@@ -316,7 +316,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-1">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-3">
       {/* Recurring Events */}
       <Card>
         <CardHeader className="pb-2 pt-3">
