@@ -299,16 +299,16 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: rotated 180° (matches reference), tightened bottom-right junction */
+/* Notch connector: perfect junction geometry + artifact cleanup */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -3px;
-  width: calc(var(--notch-size) + 2px);
-  height: calc(var(--notch-size) + 3px);
+  bottom: -1px;
+  width: var(--notch-size);
+  height: var(--notch-size);
   background: hsl(var(--card));
-  clip-path: ellipse(calc(var(--notch-size) + 2px) calc(var(--notch-size) + 3px) at 100% 0%);
+  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
   z-index: 5;
   pointer-events: none;
 }
@@ -317,25 +317,23 @@ All colors MUST be HSL.
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -2px;
-  width: calc(var(--notch-size) + 1px);
-  height: calc(var(--notch-size) + 1px);
+  bottom: -1px;
+  width: var(--notch-size);
+  height: var(--notch-size);
   background: var(--tab-border-color);
   -webkit-mask: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
-    #000 calc(var(--notch-size) - 1px),
-    #000 var(--notch-size),
-    transparent calc(var(--notch-size) + 0.35px)
+    #000 calc(var(--notch-size) - 1px) calc(var(--notch-size) + 0.45px),
+    transparent calc(var(--notch-size) + 0.45px)
   );
   mask: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
-    #000 calc(var(--notch-size) - 1px),
-    #000 var(--notch-size),
-    transparent calc(var(--notch-size) + 0.35px)
+    #000 calc(var(--notch-size) - 1px) calc(var(--notch-size) + 0.45px),
+    transparent calc(var(--notch-size) + 0.45px)
   );
-  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 100% 0%);
+  clip-path: ellipse(var(--notch-size) var(--notch-size) at 100% 0%);
   z-index: 6;
   pointer-events: none;
 }
@@ -348,6 +346,19 @@ All colors MUST be HSL.
   position: relative;
   z-index: 1;
   margin-top: 0;
+}
+
+/* Removes the tiny straight leftover right under the curve */
+.calendar-tab-body::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: calc(var(--notch-size) + 1px);
+  height: 2px;
+  background: hsl(var(--card));
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Mobile: fewer days, swipeable */
