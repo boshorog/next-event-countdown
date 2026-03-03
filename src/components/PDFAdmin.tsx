@@ -1410,7 +1410,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
       <>
           {/* Top Row: Breadcrumb centered + Save aligned right */}
-          <div className="flex items-end justify-between mb-4">
+          <div className="flex items-end justify-between mb-4 lg:mb-[-6px] relative z-10">
             <div className="flex-1 hidden lg:block" />
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm">

@@ -299,20 +299,37 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: rounded arc clipped to quarter-circle — no straight artifacts */
+/* Notch connector: pure rounded arc only (no straight line artifacts) */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
   bottom: -1px;
-  width: var(--notch-size);
-  height: var(--notch-size);
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
   background: hsl(var(--card));
-  border-left: 1px solid var(--tab-border-color);
-  border-bottom: 1px solid var(--tab-border-color);
-  border-bottom-left-radius: var(--notch-size);
-  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
+  clip-path: ellipse(100% 100% at 0% 100%);
+  z-index: 3;
+  pointer-events: none;
+}
+
+.calendar-tab::before {
+  content: '';
+  position: absolute;
+  right: calc(-1 * var(--notch-size));
+  bottom: -1px;
+  width: calc(var(--notch-size) + 1px);
+  height: calc(var(--notch-size) + 1px);
+  background: radial-gradient(
+    circle at 0 100%,
+    transparent calc(var(--notch-size) - 1.25px),
+    var(--tab-border-color) calc(var(--notch-size) - 1px),
+    var(--tab-border-color) var(--notch-size),
+    transparent calc(var(--notch-size) + 0.25px)
+  );
+  clip-path: ellipse(100% 100% at 0% 100%);
   z-index: 4;
+  pointer-events: none;
 }
 
 .calendar-tab-body {
@@ -322,7 +339,7 @@ All colors MUST be HSL.
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   position: relative;
   z-index: 1;
-  margin-top: 1px;
+  margin-top: 0;
 }
 
 /* Mobile: fewer days, swipeable */
