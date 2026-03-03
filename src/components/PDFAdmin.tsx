@@ -1410,7 +1410,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
       <>
           {/* Top Row: Breadcrumb centered + Save aligned right */}
-          <div className="flex items-end justify-between mb-4 lg:mb-[-6px] relative z-10">
+          <div className="flex items-end justify-between mb-4 lg:mb-[-16px] relative z-10">
             <div className="flex-1 hidden lg:block" />
             <div className="flex flex-col items-center gap-2">
               <div className="flex items-center gap-1.5 text-sm">
@@ -1468,8 +1468,8 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 <CalendarDays className="w-4 h-4 text-primary" />
                 <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
               </div>
-              <div className="calendar-tab-body">
-                <div className="pb-4 px-3 pt-3">
+              <div className="calendar-tab-body overflow-visible">
+                <div className="pb-4 px-3 pt-3 overflow-visible">
                   <UpcomingCalendar countdownConfig={countdownConfig} />
                 </div>
               </div>

@@ -1,7 +1,6 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { format, addDays, isSameDay, isToday, startOfDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CountdownConfig, getScheduleCandidates } from './ServiceCountdownWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -129,7 +128,7 @@ const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
       >
         <ChevronLeft className="w-4 h-4" />
       </button>
-      <div className="flex-1 min-w-0 overflow-hidden">
+      <div className="flex-1 min-w-0 overflow-visible">
         <div
           className={`flex gap-1 transition-all duration-[280ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
             sliding === 'right' ? '-translate-x-full opacity-0' :
@@ -143,56 +142,46 @@ const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
             const dayIsToday = isToday(day);
 
             return (
-              <TooltipProvider key={day.toISOString()} delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className={`flex flex-col items-center flex-1 min-w-0 px-1.5 py-2 rounded-lg transition-all border
-                        ${dayIsToday
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : hasEvent
-                            ? 'bg-primary/5 border-primary/20 hover:border-primary/40'
-                            : 'border-transparent hover:bg-muted/30'
-                        }`}
-                    >
-                      <span className={`text-[10px] uppercase ${dayIsToday ? 'opacity-80' : 'opacity-70'}`}>
-                        {format(day, 'EEE')}
-                      </span>
-                      <span className="text-sm font-bold">{format(day, 'd')}</span>
-                      {dayIsToday && (
-                        <span className="text-[8px] font-semibold uppercase tracking-wide opacity-70">
-                          Today
-                        </span>
-                      )}
-                      {hasEvent && !dayIsToday && (
-                        <span className="text-[9px] mt-0.5 truncate max-w-[56px] text-primary">
-                          {events[0].title.length > 8 ? events[0].title.slice(0, 8) + '…' : events[0].title}
-                        </span>
-                      )}
-                    </button>
-                  </TooltipTrigger>
-                  {hasEvent && (
-                    <TooltipContent
-                      side="bottom"
-                      sideOffset={10}
-                      className="z-50 w-[260px] p-3.5 rounded-xl"
-                    >
-                      <p className="text-xs font-semibold mb-2">{format(day, 'EEEE, MMMM d, yyyy')}</p>
-                      <div className="space-y-2.5">
-                        {events.map((e, i) => (
-                          <div key={i} className="text-xs rounded-md border border-border/70 bg-background/80 p-2">
-                            <p className="font-medium leading-tight break-words">{e.title}</p>
-                            <div className="mt-1 text-muted-foreground space-y-0.5">
-                              <p><span className="font-medium text-foreground">Time:</span> {e.time}</p>
-                              <p><span className="font-medium text-foreground">Duration:</span> {e.duration} min</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </TooltipContent>
+              <div key={day.toISOString()} className="relative flex-1 min-w-0 group">
+                <button
+                  className={`flex flex-col items-center w-full px-1.5 py-2 rounded-lg transition-all border
+                    ${dayIsToday
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : hasEvent
+                        ? 'bg-primary/5 border-primary/20 hover:border-primary/40'
+                        : 'border-transparent hover:bg-muted/30'
+                    }`}
+                >
+                  <span className={`text-[10px] uppercase ${dayIsToday ? 'opacity-80' : 'opacity-70'}`}>
+                    {format(day, 'EEE')}
+                  </span>
+                  <span className="text-sm font-bold">{format(day, 'd')}</span>
+                  {dayIsToday && (
+                    <span className="text-[8px] font-semibold uppercase tracking-wide opacity-70">
+                      Today
+                    </span>
                   )}
-                </Tooltip>
-              </TooltipProvider>
+                  {hasEvent && !dayIsToday && (
+                    <span className="text-[9px] mt-0.5 truncate max-w-[56px] text-primary">
+                      {events[0].title.length > 8 ? events[0].title.slice(0, 8) + '…' : events[0].title}
+                    </span>
+                  )}
+                </button>
+                {/* Hover-expand: event details card drops below the day cell */}
+                {hasEvent && (
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">
+                    <div className="bg-card border border-border rounded-lg shadow-lg p-2.5">
+                      <p className="text-[10px] font-semibold text-muted-foreground mb-1.5">{format(day, 'EEEE, MMM d')}</p>
+                      {events.map((e, i) => (
+                        <div key={i} className="text-xs mb-1 last:mb-0">
+                          <p className="font-medium leading-tight">{e.title}</p>
+                          <p className="text-muted-foreground text-[10px] mt-0.5">{e.time} · {e.duration} min</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
         </div>
