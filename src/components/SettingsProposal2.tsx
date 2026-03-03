@@ -190,7 +190,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <Label className="text-base font-medium">Date Format</Label>
                 <p className="text-sm text-muted-foreground">Choose how the event date is displayed</p>
                 <Select
-                  value={localConfig.dateFormat || "full"}
+                  value={localConfig.dateFormat || "us-long"}
                   onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
                 >
                   <SelectTrigger className="w-full">
