@@ -1,5 +1,5 @@
 import React from 'react';
-import logoSvg from '@/assets/pdf-gallery-logo.svg';
+import logoSvg from '@/assets/countdown-logo.svg';
 
 const GalleryNotFoundShowcase: React.FC = () => {
   return (
