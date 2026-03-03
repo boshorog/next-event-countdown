@@ -503,16 +503,13 @@ const Index = () => {
           <div className="p-6 pt-8">
             <TabsContent value="preview" className="space-y-6 mt-0">
               <div className="text-center">
-                <h3 className="text-lg font-semibold mb-2">Gallery Shortcode</h3>
+                <h3 className="text-lg font-semibold mb-2">Countdown Shortcode</h3>
                 <p className="text-muted-foreground mb-4">
-                  Copy this shortcode to display the current gallery on any page or post:
+                  Copy this shortcode to display the countdown widget on any page or post:
                 </p>
                 <div className="flex items-center justify-center gap-2">
                   <code className="bg-muted px-3 py-2 rounded text-sm font-mono">
-                    {(() => {
-                      const galleryName = currentGallery?.name || 'main';
-                      return `[kindpdfg_gallery name="${galleryName.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`;
-                    })()}
+                    {`[nxevtcd_countdown]`}
                   </code>
                   <Button 
                     onClick={copyShortcode}

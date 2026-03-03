@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -130,6 +130,8 @@ function specialSummary(ev: SpecialEvent): string {
 const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) => {
   const [openRecurring, setOpenRecurring] = useState<number | null>(null);
   const [openSpecial, setOpenSpecial] = useState<number | null>(null);
+  const recurringListRef = useRef<HTMLDivElement>(null);
+  const specialListRef = useRef<HTMLDivElement>(null);
 
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
@@ -146,7 +148,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
 
   const addSchedule = () => {
     update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York", duration: 60 }]);
-    setOpenRecurring(config.schedules.length); // auto-expand new
+    setOpenRecurring(config.schedules.length);
+    setTimeout(() => {
+      recurringListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   };
 
   const updateSpecial = (idx: number, patch: Partial<SpecialEvent>) => {
@@ -164,7 +169,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
     update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York", duration: 60 }]);
-    setOpenSpecial(config.specialEvents.length); // auto-expand new
+    setOpenSpecial(config.specialEvents.length);
+    setTimeout(() => {
+      specialListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
   };
 
   const renderRecurrenceFields = (s: ServiceSchedule, i: number) => {
@@ -311,7 +319,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
       {/* Recurring Events */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2 pt-3">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-sm flex items-center gap-2"><RefreshCw className="w-4 h-4 text-primary" /> Recurring Events</CardTitle>
@@ -322,9 +330,9 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-1.5">
+        <CardContent className="space-y-1.5" ref={recurringListRef}>
           {config.schedules.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">No recurring events added.</p>
+            <p className="text-xs text-muted-foreground italic text-center py-6">No recurring events added.</p>
           )}
           {config.schedules.map((s, i) => {
             const isOpen = openRecurring === i;
@@ -367,7 +375,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
 
       {/* Special Events */}
       <Card>
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2 pt-3">
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-sm flex items-center gap-2"><Star className="w-4 h-4 text-primary" /> Special Events</CardTitle>
@@ -378,9 +386,9 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-1.5">
+        <CardContent className="space-y-1.5" ref={specialListRef}>
           {config.specialEvents.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">No special events added.</p>
+            <p className="text-xs text-muted-foreground italic text-center py-6">No special events added.</p>
           )}
           {config.specialEvents.map((ev, i) => {
             const isOpen = openSpecial === i;
