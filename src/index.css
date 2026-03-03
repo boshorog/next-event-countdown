@@ -299,21 +299,37 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: keep original arc geometry + pixel-perfect junctions */
+/* Notch connector: pixel-perfect arc with no junction seams */
 .calendar-tab::after {
   content: '';
   position: absolute;
   right: calc(-1 * var(--notch-size));
-  bottom: -1px;
-  width: calc(var(--notch-size) + 1px);
-  height: calc(var(--notch-size) + 1px);
+  bottom: 0px;
+  width: var(--notch-size);
+  height: var(--notch-size);
   background: radial-gradient(
     circle at 100% 0%,
     transparent calc(var(--notch-size) - 1px),
-    var(--tab-border-color) calc(var(--notch-size) - 1px) calc(var(--notch-size)),
-    hsl(var(--card)) calc(var(--notch-size))
+    var(--tab-border-color) calc(var(--notch-size) - 1px) var(--notch-size),
+    hsl(var(--card)) var(--notch-size)
   );
   z-index: 5;
+  pointer-events: none;
+}
+/* Hide the tab's right border behind the notch area */
+.calendar-tab {
+  border-right-color: transparent;
+}
+/* Re-draw the right border only up to where the arc starts */
+.calendar-tab::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 1px;
+  height: calc(100% - var(--notch-size) + 1px);
+  background: var(--tab-border-color);
+  z-index: 6;
   pointer-events: none;
 }
 
