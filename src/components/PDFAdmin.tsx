@@ -1469,7 +1469,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                 <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
               </div>
               <div className="calendar-tab-body overflow-visible">
-                <div className="pb-4 px-3 pt-3 overflow-visible">
+                <div className="pb-4 px-3 pt-5 overflow-visible">
                   <UpcomingCalendar countdownConfig={countdownConfig} />
                 </div>
               </div>
