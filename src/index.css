@@ -299,7 +299,7 @@ All colors MUST be HSL.
   margin-bottom: -1px;
 }
 
-/* Notch connector: single rounded tie only (no extra straight connector) */
+/* Notch connector: rounded arc clipped to quarter-circle — no straight artifacts */
 .calendar-tab::after {
   content: '';
   position: absolute;
@@ -311,6 +311,7 @@ All colors MUST be HSL.
   border-left: 1px solid var(--tab-border-color);
   border-bottom: 1px solid var(--tab-border-color);
   border-bottom-left-radius: var(--notch-size);
+  clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
   z-index: 4;
 }
 

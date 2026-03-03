@@ -1434,7 +1434,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
                   className="lg:hidden h-7 w-7 p-0 bg-primary text-primary-foreground hover:bg-primary/90"
                   aria-label="Save"
                 >
-                  <Check className="w-3.5 h-3.5" />
+                  <Save className="w-3.5 h-3.5" />
                 </Button>
               </div>
               {selectedItems.size > 0 && (
