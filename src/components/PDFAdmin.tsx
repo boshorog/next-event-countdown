@@ -1452,18 +1452,16 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
           {/* Calendar Hero Card – folder-tab style */}
           {!isAddingDocument && !isAddingDivider && countdownConfig && (
-            <div className="relative">
-              {/* Tab */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 border border-b-0 border-primary/20 rounded-t-lg bg-card relative z-10">
+            <div className="calendar-tab-card">
+              <div className="calendar-tab">
                 <CalendarDays className="w-4 h-4 text-primary" />
                 <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
               </div>
-              {/* Card body – pulled up so the tab overlaps the top border */}
-              <Card className="border-primary/20 rounded-tl-none">
-                <CardContent className="pb-4 px-3 pt-3">
+              <div className="calendar-tab-body">
+                <div className="pb-4 px-3 pt-3">
                   <UpcomingCalendar countdownConfig={countdownConfig} />
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           )}
 
