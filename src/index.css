@@ -320,11 +320,19 @@ All colors MUST be HSL.
   bottom: -1px;
   width: calc(var(--notch-size) + 1px);
   height: calc(var(--notch-size) + 1px);
-  background: radial-gradient(
+  background: var(--tab-border-color);
+  -webkit-mask: radial-gradient(
     circle at 0% 100%,
     transparent calc(var(--notch-size) - 1px),
-    var(--tab-border-color) calc(var(--notch-size) - 1px),
-    var(--tab-border-color) var(--notch-size),
+    #000 calc(var(--notch-size) - 1px),
+    #000 var(--notch-size),
+    transparent calc(var(--notch-size) + 0.2px)
+  );
+  mask: radial-gradient(
+    circle at 0% 100%,
+    transparent calc(var(--notch-size) - 1px),
+    #000 calc(var(--notch-size) - 1px),
+    #000 var(--notch-size),
     transparent calc(var(--notch-size) + 0.2px)
   );
   clip-path: ellipse(calc(var(--notch-size) + 1px) calc(var(--notch-size) + 1px) at 0% 100%);
