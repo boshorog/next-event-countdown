@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Flame, Cross, Star } from "lucide-react";
+import { STYLE_RENDERERS } from "./counterStyles/renderers";
 
 // ─── Recurrence Types ───
 export type RecurrenceType = "weekly" | "biweekly" | "monthly-dow" | "monthly-date" | "daily";
@@ -89,6 +90,7 @@ export interface CountdownConfig {
   labelColor: string;
   showBorder: boolean;
   headerScale: number;
+  counterStyle?: string;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -367,6 +369,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const t = useCountdown(config);
   const Icon = getIconComponent(config.icon);
   const hs = config.headerScale ?? 1;
+  const styleId = config.counterStyle || 'default';
 
   const units = [
     { v: t.days, l: config.labelDays || "Days" },
@@ -374,6 +377,29 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
     { v: t.minutes, l: config.labelMinutes || "Minutes" },
     { v: t.seconds, l: config.labelSeconds || "Seconds" },
   ];
+
+  // Use Pro style renderer if available and not default
+  const StyledRenderer = styleId !== 'default' ? STYLE_RENDERERS[styleId] : null;
+
+  if (StyledRenderer) {
+    return (
+      <StyledRenderer
+        days={t.days}
+        hours={t.hours}
+        minutes={t.minutes}
+        seconds={t.seconds}
+        headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+        eventTitle={t.title}
+        eventDate={t.fullDate}
+        iconColor={config.iconColor}
+        icon={Icon}
+        labelDays={config.labelDays || "Days"}
+        labelHours={config.labelHours || "Hours"}
+        labelMinutes={config.labelMinutes || "Minutes"}
+        labelSeconds={config.labelSeconds || "Seconds"}
+      />
+    );
+  }
 
   return (
     <div
