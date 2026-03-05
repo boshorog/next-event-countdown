@@ -8,10 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { STORAGE_KEYS } from '@/config/pluginIdentity';
 
 type DevLicenseMode = 'free' | 'pro';
 
-const DEV_LICENSE_KEY = 'kindpdfg_dev_license_mode';
+const DEV_LICENSE_KEY = STORAGE_KEYS.devLicenseMode;
 
 /**
  * Development-only license mode selector
