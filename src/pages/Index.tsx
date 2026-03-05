@@ -19,6 +19,7 @@ import CalendarShowcase from '@/components/CalendarShowcase';
 import UpcomingCalendarShowcase from '@/components/UpcomingCalendarShowcase';
 import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorShowcase';
 import LightboxShowcase from '@/components/LightboxShowcase';
+import CounterStylesShowcase from '@/components/CounterStylesShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
 import { useLicense } from '@/hooks/useLicense';
 import { PLUGIN_VERSION } from '@/config/pluginIdentity';
@@ -411,6 +412,15 @@ const Index = () => {
   const showUpcomingCalendarShowcase = urlParams.get('showcase') === 'upcoming-calendar';
   if (showUpcomingCalendarShowcase) {
     return <UpcomingCalendarShowcase />;
+  }
+
+  // DEV: Show showcase for counter styles
+  if (urlParams.get('showcase') === 'counter-styles') {
+    return (
+      <div className="min-h-screen bg-background p-8 max-w-4xl mx-auto">
+        <CounterStylesShowcase />
+      </div>
+    );
   }
 
   if (!showAdmin) {
