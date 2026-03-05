@@ -6,7 +6,8 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown } from 'lucide-react';
+import { BUILD_FLAGS } from '@/config/buildFlags';
 import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
   DropdownMenu,

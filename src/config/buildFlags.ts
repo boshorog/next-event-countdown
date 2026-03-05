@@ -50,6 +50,12 @@ export const BUILD_FLAGS = {
   MULTI_GALLERY_UI: BUILD_VARIANT === 'pro' || isDevPro,
 
   /**
+   * Bulk upload UI (legacy from PDF Gallery, kept for compatibility)
+   * Not used in countdown plugin but referenced by shared components
+   */
+  BULK_UPLOAD_UI: false,
+
+  /**
    * Counter Styles settings menu
    * - Free: false → Single default style
    * - Pro: true → Multiple countdown styles
