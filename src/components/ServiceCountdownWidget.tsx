@@ -131,7 +131,7 @@ export const ICON_OPTIONS: { value: string; label: string; icon: React.Component
   { value: "Star", label: "Star", icon: Star },
 ];
 
-function getIconComponent(name: string) {
+export function getIconComponent(name: string) {
   return ICON_OPTIONS.find((o) => o.value === name)?.icon ?? CalendarDays;
 }
 
@@ -345,7 +345,7 @@ function msToTime(ms: number) {
   };
 }
 
-function useCountdown(config: CountdownConfig) {
+export function useCountdown(config: CountdownConfig) {
   const [state, setState] = useState(() => {
     const n = getNextService(config.schedules, config.specialEvents, config.dateFormat);
     return { ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
