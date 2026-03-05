@@ -19,6 +19,7 @@ import CalendarShowcase from '@/components/CalendarShowcase';
 import UpcomingCalendarShowcase from '@/components/UpcomingCalendarShowcase';
 import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorShowcase';
 import LightboxShowcase from '@/components/LightboxShowcase';
+import CounterStylesShowcase from '@/components/CounterStylesShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
 import { useLicense } from '@/hooks/useLicense';
 import { PLUGIN_VERSION } from '@/config/pluginIdentity';
