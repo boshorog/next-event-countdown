@@ -504,7 +504,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       }`}
                     >
                       <Icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <span className="text-sm font-medium flex-1">{item.label}</span>
+                      {'pro' in item && (item as any).pro && <Crown className="w-3.5 h-3.5 text-amber-500" />}
                     </button>
                   );
                 })}

@@ -12,7 +12,7 @@ const proBuildMarker = () => ({
   closeBundle() {
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
-    const phpPath = path.resolve(__dirname, 'kindpixels-pdf-gallery.php');
+    const phpPath = path.resolve(__dirname, 'next-event-countdown.php');
     
     if (isPro) {
       // Create marker file for Pro build
@@ -24,8 +24,8 @@ const proBuildMarker = () => ({
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         // Change plugin name to "PDF Gallery Pro" (remove KindPixels prefix)
         phpContent = phpContent.replace(
-          /Plugin Name:\s*KindPixels PDF Gallery\s*$/m,
-          'Plugin Name: PDF Gallery Pro'
+          /Plugin Name:\s*Next Event Countdown\s*$/m,
+          'Plugin Name: Next Event Countdown Pro'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
         console.log('✓ Updated plugin header to "PDF Gallery Pro"');
@@ -40,8 +40,8 @@ const proBuildMarker = () => ({
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         phpContent = phpContent.replace(
-          /Plugin Name:\s*PDF Gallery Pro\s*$/m,
-          'Plugin Name: KindPixels PDF Gallery'
+          /Plugin Name:\s*Next Event Countdown Pro\s*$/m,
+          'Plugin Name: Next Event Countdown'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }
@@ -52,7 +52,7 @@ const proBuildMarker = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/wp-content/plugins/kindpixels-pdf-gallery/dist/' : '/',
+  base: mode === 'production' ? '/wp-content/plugins/next-event-countdown/dist/' : '/',
   server: {
     host: "::",
     port: 8080,
