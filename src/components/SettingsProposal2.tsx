@@ -450,7 +450,29 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
 
   return (
     <div className="space-y-6">
-      
+
+// Live preview component that uses the real countdown hook
+const CounterStyleLivePreview = ({ config, Renderer }: { config: CountdownConfig; Renderer: React.FC<any> }) => {
+  const t = useCountdown(config);
+  const Icon = getIconComponent(config.icon);
+  return (
+    <Renderer
+      days={t.days}
+      hours={t.hours}
+      minutes={t.minutes}
+      seconds={t.seconds}
+      headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+      eventTitle={t.title || 'Sunday Morning Worship'}
+      eventDate={t.fullDate || 'March 8, 2026 at 10:00 AM'}
+      iconColor={config.iconColor}
+      icon={Icon}
+      labelDays={config.labelDays || 'Days'}
+      labelHours={config.labelHours || 'Hours'}
+      labelMinutes={config.labelMinutes || 'Minutes'}
+      labelSeconds={config.labelSeconds || 'Seconds'}
+    />
+  );
+};
 
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
