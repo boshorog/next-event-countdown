@@ -21,14 +21,14 @@ const path = require('path');
 const archiver = require('archiver');
 
 // Plugin configuration
-const PLUGIN_SLUG = 'kindpixels-pdf-gallery';
+const PLUGIN_SLUG = 'next-event-countdown';
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const OUTPUT_DIR = path.join(ROOT_DIR, 'releases');
 
 // Files/folders to include in the ZIP (relative to project root)
 const INCLUDE_FILES = [
-  'kindpixels-pdf-gallery.php',
+  'next-event-countdown.php',
   'readme.txt',
   'dist/',
   'freemius/',  // Freemius SDK (if exists)
@@ -47,7 +47,7 @@ const EXCLUDE_PATTERNS = [
  * Get plugin version from main PHP file
  */
 function getPluginVersion() {
-  const phpFile = path.join(ROOT_DIR, 'kindpixels-pdf-gallery.php');
+  const phpFile = path.join(ROOT_DIR, 'next-event-countdown.php');
   const content = fs.readFileSync(phpFile, 'utf8');
   const match = content.match(/Version:\s*([0-9.]+)/i);
   if (!match) {
