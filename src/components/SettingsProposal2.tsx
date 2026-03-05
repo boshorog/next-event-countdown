@@ -144,6 +144,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'other', label: 'Other Settings', icon: Settings },
+    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
 
   const renderContent = () => {
