@@ -6,7 +6,8 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown } from 'lucide-react';
+import { BUILD_FLAGS } from '@/config/buildFlags';
 import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
   DropdownMenu,
@@ -143,6 +144,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'other', label: 'Other Settings', icon: Settings },
+    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
 
   const renderContent = () => {
@@ -397,6 +399,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
           </Card>
         );
 
+      case 'counter-styles':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Frame className="w-5 h-5" />
+                Counter Styles
+                <Crown className="w-4 h-4 text-amber-500" />
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Choose from multiple countdown display styles</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-sm text-muted-foreground">Additional countdown styles coming soon. Stay tuned for new visual options!</p>
+            </CardContent>
+          </Card>
+        );
+
       default:
         return null;
     }
@@ -485,7 +504,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       }`}
                     >
                       <Icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">{item.label}</span>
+                      <span className="text-sm font-medium flex-1">{item.label}</span>
+                      {'pro' in item && (item as any).pro && <Crown className="w-3.5 h-3.5 text-amber-500" />}
                     </button>
                   );
                 })}
