@@ -14,12 +14,10 @@ const STYLE_OPTIONS: StyleOption[] = [
   { id: 'cards', name: 'Card Blocks', description: 'Each countdown unit in its own elevated card with event info below' },
   { id: 'flip', name: 'Flip Clock', description: 'Retro split-flap panels on a dark surface with header badge' },
   { id: 'circles', name: 'Radial Progress', description: 'Circular progress rings with centered event details' },
-  { id: 'minimal', name: 'Minimal Line', description: 'Ultra-clean single-line layout with subtle dividers' },
   { id: 'gradient', name: 'Gradient Glass', description: 'Frosted glass panels with gradient event header' },
   { id: 'bold', name: 'Bold Stack', description: 'Oversized stacked digits with prominent event title' },
   { id: 'dots', name: 'LED Dots', description: 'Green dot-matrix display with digital clock aesthetic' },
-  { id: 'elegant', name: 'Elegant Serif', description: 'Refined serif typography with delicate separators' },
-  { id: 'neon', name: 'Neon Glow', description: 'Glowing neon text on dark background, arcade feel' },
+  { id: 'elegant', name: 'Elegant Serif', description: 'Refined serif typography with date above the counter' },
 ];
 
 // Demo data matching the real widget fields
@@ -71,9 +69,9 @@ const CardBlocksStyle = () => (
       <span className="font-semibold text-sm text-foreground">{demo.headerLabel}</span>
     </div>
     <p className="text-xs text-muted-foreground mb-5">{demo.eventTitle}</p>
-    <div className="flex items-center justify-center gap-2 mb-4">
+    <div className="grid grid-cols-4 gap-2 mb-4">
       {unitsFull.map((u) => (
-        <div key={u.l} className="bg-muted/60 rounded-xl px-3 py-3 text-center shadow-sm min-w-[52px]">
+        <div key={u.l} className="bg-muted/60 rounded-xl py-3 text-center shadow-sm">
           <div className="text-2xl font-bold font-mono text-foreground">{pad(u.v)}</div>
           <div className="text-[8px] uppercase tracking-[0.15em] text-muted-foreground mt-1">{u.l}</div>
         </div>
@@ -123,7 +121,7 @@ const RadialStyle = () => {
     { ...unitsFull[2], max: 60 },
     { ...unitsFull[3], max: 60 },
   ];
-  const r = 22; const c = 2 * Math.PI * r;
+  const r = 34; const c = 2 * Math.PI * r;
   return (
     <div className="w-full rounded-2xl p-6 text-center bg-background border border-border">
       <div className="flex items-center justify-center gap-2 mb-0.5">
@@ -131,18 +129,18 @@ const RadialStyle = () => {
         <span className="font-semibold text-sm text-foreground">{demo.headerLabel}</span>
       </div>
       <p className="text-xs text-muted-foreground italic mb-5">{demo.eventTitle}</p>
-      <div className="flex items-center justify-center gap-4 mb-4">
+      <div className="flex items-center justify-center gap-5 mb-4">
         {items.map(({ v, l, max }) => {
           const pct = (v / max) * 100;
           return (
-            <div key={l} className="relative w-[56px] h-[56px] flex items-center justify-center">
-              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 52 52">
-                <circle cx="26" cy="26" r={r} fill="none" stroke="currentColor" strokeWidth="3" className="text-muted/30" />
-                <circle cx="26" cy="26" r={r} fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${c}`} strokeDashoffset={`${c - (c * pct) / 100}`} strokeLinecap="round" className="text-primary" />
+            <div key={l} className="relative w-[80px] h-[80px] flex items-center justify-center">
+              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 80 80">
+                <circle cx="40" cy="40" r={r} fill="none" stroke="currentColor" strokeWidth="3" className="text-muted/30" />
+                <circle cx="40" cy="40" r={r} fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${c}`} strokeDashoffset={`${c - (c * pct) / 100}`} strokeLinecap="round" className="text-primary" />
               </svg>
               <div className="text-center z-10">
-                <div className="text-base font-bold font-mono leading-none text-foreground">{v}</div>
-                <div className="text-[7px] uppercase tracking-wider text-muted-foreground mt-0.5">{l}</div>
+                <div className="text-xl font-bold font-mono leading-none text-foreground">{v}</div>
+                <div className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">{l}</div>
               </div>
             </div>
           );
@@ -153,25 +151,7 @@ const RadialStyle = () => {
   );
 };
 
-// ─── Style 5: Minimal Line ───
-const MinimalLineStyle = () => (
-  <div className="w-full rounded-2xl p-6 bg-background border border-border">
-    <div className="flex items-center gap-2 mb-4">
-      <Church className="w-4 h-4" style={{ color: demo.iconColor }} />
-      <span className="text-xs font-medium text-foreground">{demo.headerLabel}</span>
-      <span className="text-xs text-muted-foreground">· {demo.eventTitle}</span>
-    </div>
-    <div className="flex items-center gap-4 text-sm tracking-[0.15em] font-light text-foreground">
-      {unitsFull.map((u, i) => (
-        <div key={u.l} className="flex items-center gap-4">
-          <span className="font-mono">{pad(u.v)}<span className="text-[10px] text-muted-foreground ml-0.5 lowercase">{u.s.toLowerCase()}</span></span>
-          {i < 3 && <span className="w-px h-4 bg-border" />}
-        </div>
-      ))}
-    </div>
-    <p className="text-[11px] text-muted-foreground mt-3">{demo.eventDate}</p>
-  </div>
-);
+// (Minimal Line and Neon Glow removed from Pro selection)
 
 // ─── Style 6: Gradient Glass ───
 const GradientGlassStyle = () => (
@@ -245,8 +225,13 @@ const ElegantSerifStyle = () => (
       <Church className="w-4 h-4" style={{ color: demo.iconColor }} />
       <span className="text-sm" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 600, color: 'inherit' }}>{demo.headerLabel}</span>
     </div>
-    <p className="text-xs italic text-muted-foreground mb-5">{demo.eventTitle}</p>
-    <div className="flex items-center justify-center gap-5 mb-4">
+    <p className="text-xs italic text-muted-foreground mb-2">{demo.eventTitle}</p>
+    <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground italic mb-4">
+      <CalendarDays className="w-3 h-3" />
+      <span>{demo.eventDate}</span>
+    </div>
+    <div className="w-16 h-px bg-border mx-auto mb-4" />
+    <div className="flex items-center justify-center gap-5">
       {unitsFull.map((u, i) => (
         <div key={u.l} className="flex items-center gap-5">
           <div className="text-center">
@@ -257,33 +242,6 @@ const ElegantSerifStyle = () => (
         </div>
       ))}
     </div>
-    <div className="w-16 h-px bg-border mx-auto mb-2" />
-    <p className="text-[11px] text-muted-foreground italic">{demo.eventDate}</p>
-  </div>
-);
-
-// ─── Style 10: Neon Glow ───
-const NeonGlowStyle = () => (
-  <div className="w-full rounded-2xl p-6 text-center" style={{ backgroundColor: '#09090b' }}>
-    <div className="flex items-center justify-center gap-2 mb-1">
-      <Church className="w-4 h-4" style={{ color: '#f472b6', filter: 'drop-shadow(0 0 4px rgba(244,114,182,0.5))' }} />
-      <span className="text-sm font-semibold" style={{ color: '#f472b6', textShadow: '0 0 8px rgba(244,114,182,0.4)' }}>{demo.headerLabel}</span>
-    </div>
-    <p className="text-xs italic mb-5" style={{ color: 'rgba(244,114,182,0.4)' }}>{demo.eventTitle}</p>
-    <div className="flex items-center justify-center gap-3 mb-4">
-      {unitsFull.map((u, i) => (
-        <div key={u.l} className="flex items-center gap-3">
-          <div className="text-center">
-            <span className="text-3xl font-bold font-mono" style={{ color: '#f472b6', textShadow: '0 0 12px rgba(244,114,182,0.6), 0 0 30px rgba(244,114,182,0.2)' }}>
-              {pad(u.v)}
-            </span>
-            <div className="text-[7px] uppercase tracking-widest mt-1" style={{ color: 'rgba(244,114,182,0.35)' }}>{u.l}</div>
-          </div>
-          {i < 3 && <span className="text-lg -mt-3" style={{ color: 'rgba(244,114,182,0.25)' }}>:</span>}
-        </div>
-      ))}
-    </div>
-    <p className="text-[11px]" style={{ color: 'rgba(244,114,182,0.35)' }}>{demo.eventDate}</p>
   </div>
 );
 
@@ -292,12 +250,10 @@ const STYLE_RENDERERS: Record<string, React.FC> = {
   cards: CardBlocksStyle,
   flip: FlipClockStyle,
   circles: RadialStyle,
-  minimal: MinimalLineStyle,
   gradient: GradientGlassStyle,
   bold: BoldStackStyle,
   dots: LEDDotsStyle,
   elegant: ElegantSerifStyle,
-  neon: NeonGlowStyle,
 };
 
 const CounterStylesShowcase = () => {
