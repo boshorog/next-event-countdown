@@ -1,53 +1,47 @@
 {
-  "version": "1.0.3",
-  "lastUpdated": "2025-01-26",
+  "version": "1.0.0",
+  "lastUpdated": "2026-03-05",
   "title": "Free vs Pro Comparison",
   "features": [
     {
-      "id": "galleries",
-      "feature": "Number of Galleries",
+      "id": "counters",
+      "feature": "Number of Counters",
       "free": "1",
       "pro": "Unlimited"
     },
     {
-      "id": "documents",
-      "feature": "Documents per Gallery",
+      "id": "recurring-events",
+      "feature": "Recurring Events",
       "free": "Unlimited",
       "pro": "Unlimited"
     },
     {
-      "id": "multi-upload",
-      "feature": "Batch Upload of Multiple Files",
+      "id": "special-events",
+      "feature": "Special Events",
+      "free": "Unlimited",
+      "pro": "Unlimited"
+    },
+    {
+      "id": "countdown-styles",
+      "feature": "Countdown Styles",
+      "free": "1",
+      "pro": "Multiple"
+    },
+    {
+      "id": "multi-location",
+      "feature": "Multiple Locations / Venues",
       "free": false,
       "pro": true
     },
     {
-      "id": "analytics",
-      "feature": "File Analytics",
-      "free": false,
-      "pro": true
-    },
-    {
-      "id": "file-types",
-      "feature": "Multiple File Types (PDF, Office, Images, Video, Audio, Archives)",
+      "id": "customization",
+      "feature": "Colors, Labels & Icon Customization",
       "free": true,
       "pro": true
     },
     {
-      "id": "drag-drop-reorder",
-      "feature": "Drag & Drop Reordering",
-      "free": true,
-      "pro": true
-    },
-    {
-      "id": "dividers",
-      "feature": "Section Dividers",
-      "free": true,
-      "pro": true
-    },
-    {
-      "id": "styling",
-      "feature": "Many Styling Options",
+      "id": "date-formats",
+      "feature": "Multiple Date Formats",
       "free": true,
       "pro": true
     },
