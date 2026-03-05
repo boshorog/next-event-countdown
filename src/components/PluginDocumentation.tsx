@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Crown, Check, X, Shield, Trash2, BookOpen, FileText, Settings, Upload, Layout, Palette, HelpCircle, Zap } from 'lucide-react';
+import { Crown, Check, X, Shield, Trash2, BookOpen, FileText, Settings, Timer, Palette, HelpCircle, Zap, MapPin, CalendarDays, Repeat } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 import { useToast } from '@/hooks/use-toast';
 import { PLUGIN_VERSION } from '@/config/pluginIdentity';
@@ -19,10 +19,9 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
   const [isRemovingLicense, setIsRemovingLicense] = useState(false);
   const { toast } = useToast();
 
-  // Get license owner info from WordPress global
   const getLicenseOwner = () => {
     try {
-      const wpGlobal = (window as any).kindpdfgData || (window as any).wpPDFGallery || (window.parent as any)?.kindpdfgData || (window.parent as any)?.wpPDFGallery;
+      const wpGlobal = (window as any).nxevtcdData || (window.parent as any)?.nxevtcdData;
       return wpGlobal?.licensedTo || 'Pro User';
     } catch {
       return 'Pro User';
@@ -32,7 +31,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
   const handleRemoveLicense = async () => {
     setIsRemovingLicense(true);
     try {
-      const wpGlobal = (window as any).kindpdfgData || (window as any).wpPDFGallery || (window.parent as any)?.kindpdfgData || (window.parent as any)?.wpPDFGallery;
+      const wpGlobal = (window as any).nxevtcdData || (window.parent as any)?.nxevtcdData;
       const ajaxUrl = wpGlobal?.ajaxUrl || (window as any).ajaxurl;
       const nonce = wpGlobal?.nonce;
 
@@ -42,7 +41,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
       }
 
       const form = new FormData();
-      form.append('action', 'kindpdfg_freemius_deactivate');
+      form.append('action', 'nxevtcd_freemius_deactivate');
       form.append('nonce', nonce);
 
       const response = await fetch(ajaxUrl, {
@@ -86,11 +85,10 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
     </tr>
   );
 
-  // If showing only license and comparison, render a simplified view
+  // If showing only license and comparison (Pro tab when licensed)
   if (showOnlyLicenseAndComparison) {
     return (
       <div className={className}>
-        {/* Pro License Info */}
         {license.isPro && license.checked && (
           <Card className="mb-6 border-primary/30 bg-gradient-to-r from-primary/5 to-transparent">
             <CardContent className="py-4">
@@ -103,7 +101,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                     <p className="text-sm font-medium">
                       Licensed to: <span className="text-primary">{getLicenseOwner()}</span>
                     </p>
-                    <p className="text-xs text-muted-foreground">PDF Gallery Pro v{PLUGIN_VERSION}</p>
+                    <p className="text-xs text-muted-foreground">Next Event Countdown Pro v{PLUGIN_VERSION}</p>
                   </div>
                 </div>
                 <AlertDialog>
@@ -137,7 +135,6 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
           </Card>
         )}
         
-        {/* Comparison Table */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -161,14 +158,13 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   </tr>
                 </thead>
                 <tbody>
-                  <FeatureRow feature="Number of Galleries" free="1" pro="Unlimited" />
-                  <FeatureRow feature="Documents per Gallery" free="Unlimited" pro="Unlimited" />
-                  <FeatureRow feature="Batch Upload of Multiple Files" free={false} pro={true} />
-                  <FeatureRow feature="File Analytics" free={false} pro={true} />
-                  <FeatureRow feature="Multiple File Types (PDF, Office, Images, Video, Audio, Archives)" free={true} pro={true} />
-                  <FeatureRow feature="Drag & Drop Reordering" free={true} pro={true} />
-                  <FeatureRow feature="Section Dividers" free={true} pro={true} />
-                  <FeatureRow feature="Many Styling Options" free={true} pro={true} />
+                  <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                  <FeatureRow feature="Recurring Events" free="Unlimited" pro="Unlimited" />
+                  <FeatureRow feature="Special Events" free="Unlimited" pro="Unlimited" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
+                  <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
+                  <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
+                  <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />
                 </tbody>
               </table>
@@ -185,7 +181,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
         <CardHeader>
           <CardTitle className="flex items-center justify-center gap-2">
             <BookOpen className="w-5 h-5" />
-            PDF Gallery Documentation
+            Next Event Countdown Documentation
             <Badge variant="secondary" className="ml-2">v{PLUGIN_VERSION}</Badge>
           </CardTitle>
         </CardHeader>
@@ -203,172 +199,122 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
               <AccordionContent>
                 <div className="space-y-6 text-sm">
                   <div>
-                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">1. Add Your Files</h4>
+                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">1. Set Up Your Events</h4>
                     <ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
-                      <li>Go to the <strong>Galleries</strong> tab</li>
-                      <li>Click <strong>"Add File(s)"</strong> to upload documents</li>
-                      <li>Arrange your documents using drag & drop</li>
+                      <li>Go to the <strong>Counters</strong> tab</li>
+                      <li>Add <strong>Recurring Events</strong> (e.g., weekly services) or <strong>Special Events</strong> (one-time dates)</li>
+                      <li>Configure event times, days, and durations</li>
                     </ol>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">2. Organize with Dividers</h4>
+                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">2. Customize Appearance</h4>
                     <p className="text-muted-foreground ml-2">
-                      Use <strong>"Add Divider"</strong> to create section headers and organize your files into logical chapters or categories.
+                      Visit the <strong>Settings</strong> tab to adjust labels, colors, icon, date format, and display options for your countdown widget.
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">3. Customize Appearance</h4>
-                    <p className="text-muted-foreground ml-2">
-                      Visit the <strong>Settings</strong> tab to adjust column layout, thumbnail styles, colors, hover effects, and more.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">4. Embed Your Gallery</h4>
+                    <h4 className="font-medium mb-3 text-base border-b border-border pb-2">3. Embed Your Countdown</h4>
                     <ol className="list-decimal list-inside space-y-2 text-muted-foreground ml-2">
                       <li>Copy the shortcode from the <strong>Preview</strong> tab</li>
-                      <li>Paste the shortcode into any page or post</li>
+                      <li>Paste <code className="bg-muted px-1 rounded">[nxevtcd_countdown]</code> into any page or post</li>
                     </ol>
                   </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
 
-            {/* Supported File Types */}
-            <AccordionItem value="file-types">
+            {/* Event Types */}
+            <AccordionItem value="event-types">
               <AccordionTrigger className="text-base font-semibold">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-cyan-500" />
-                  Supported File Types
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-3 text-sm">
-                  <p className="text-muted-foreground">
-                    The following file types are currently supported. You can also add YouTube links to display YouTube videos.
-                  </p>
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">PDF</Badge>
-                      <Badge variant="outline">DOC/DOCX</Badge>
-                      <Badge variant="outline">PPT/PPTX</Badge>
-                      <Badge variant="outline">XLS/XLSX</Badge>
-                      <Badge variant="outline">TXT</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Images</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">JPG/JPEG</Badge>
-                      <Badge variant="outline">PNG</Badge>
-                      <Badge variant="outline">GIF</Badge>
-                      <Badge variant="outline">WEBP</Badge>
-                      <Badge variant="outline">SVG</Badge>
-                      <Badge variant="outline">BMP</Badge>
-                      <Badge variant="outline">ICO</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Audio</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">MP3</Badge>
-                      <Badge variant="outline">WAV</Badge>
-                      <Badge variant="outline">OGG</Badge>
-                      <Badge variant="outline">M4A</Badge>
-                      <Badge variant="outline">FLAC</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Video</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">MP4</Badge>
-                      <Badge variant="outline">WEBM</Badge>
-                      <Badge variant="outline">OGV</Badge>
-                      <Badge variant="outline">MOV</Badge>
-                      <Badge variant="outline">AVI</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Archives</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">ZIP</Badge>
-                      <Badge variant="outline">RAR</Badge>
-                      <Badge variant="outline">7Z</Badge>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">eBooks</p>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="outline">EPUB</Badge>
-                      <Badge variant="outline">MOBI</Badge>
-                    </div>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Uploading Files */}
-            <AccordionItem value="uploading">
-              <AccordionTrigger className="text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-green-500" />
-                  Uploading Files
+                  <CalendarDays className="w-4 h-4 text-cyan-500" />
+                  Event Types
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4 text-sm">
                   <div>
-                    <h4 className="font-medium mb-2">Upload Methods</h4>
+                    <h4 className="font-medium mb-2">Recurring Events</h4>
+                    <p className="text-muted-foreground mb-2">
+                      Events that repeat on a schedule. Ideal for regular services, classes, or meetings.
+                    </p>
                     <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li><strong>Computer Upload:</strong> Select files from your device</li>
-                      <li><strong>WordPress Media Library:</strong> Choose existing media files</li>
-                      <li><strong>URL Input:</strong> Enter a direct link to a file</li>
+                      <li><strong>Weekly:</strong> Same day every week (e.g., Sunday at 10 AM)</li>
+                      <li><strong>Biweekly:</strong> Every two weeks</li>
+                      <li><strong>Monthly:</strong> Same date each month</li>
+                      <li><strong>Daily:</strong> Every day at the same time</li>
                     </ul>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-2">Thumbnails</h4>
+                    <h4 className="font-medium mb-2">Special Events</h4>
                     <p className="text-muted-foreground">
-                      Thumbnails are automatically generated for PDF and image files. For other file types, a placeholder icon is displayed. 
-                      You can also upload custom thumbnails for any document.
+                      One-time events with a specific date and time. Great for holidays, conferences, concerts, or any unique occasion. 
+                      Special events take priority over recurring events when they're the next upcoming event.
                     </p>
                   </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
 
-            {/* Gallery Management */}
-            <AccordionItem value="management">
+            {/* Recurrence Patterns */}
+            <AccordionItem value="recurrence">
               <AccordionTrigger className="text-base font-semibold">
                 <div className="flex items-center gap-2">
-                  <Layout className="w-4 h-4 text-purple-500" />
-                  Gallery Management
+                  <Repeat className="w-4 h-4 text-green-500" />
+                  Recurrence & Duration
                 </div>
               </AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-4 text-sm">
                   <div>
-                    <h4 className="font-medium mb-2">Organizing Documents</h4>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li><strong>Drag & Drop:</strong> Reorder documents by dragging them</li>
-                      <li><strong>Section Dividers:</strong> Add headers to group related documents</li>
-                      <li><strong>Bulk Selection:</strong> Select multiple items for batch operations</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Editing Documents</h4>
+                    <h4 className="font-medium mb-2">Recurrence Patterns</h4>
                     <p className="text-muted-foreground">
-                      Click the edit icon on any document to modify its title, subtitle, or thumbnail. 
-                      Changes are saved automatically.
+                      Configure how often your events repeat. The countdown automatically calculates 
+                      the next occurrence based on the recurrence pattern.
                     </p>
                   </div>
-                  {license.isPro && (
-                    <div>
-                      <h4 className="font-medium mb-2">Multiple Galleries (Pro)</h4>
-                      <p className="text-muted-foreground">
-                        Create unlimited galleries for different purposes. Use the gallery selector dropdown 
-                        to switch between galleries or create new ones.
-                      </p>
-                    </div>
-                  )}
+                  <div>
+                    <h4 className="font-medium mb-2">Event Duration</h4>
+                    <p className="text-muted-foreground">
+                      Set how long each event lasts. During an active event, the widget switches from 
+                      "Next Event" countdown to "Happening Now" mode, showing a live indicator instead.
+                    </p>
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Settings & Customization */}
+            <AccordionItem value="settings">
+              <AccordionTrigger className="text-base font-semibold">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-slate-500" />
+                  Settings & Customization
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <h4 className="font-medium mb-2">Labels</h4>
+                    <p className="text-muted-foreground">
+                      Customize all text on the widget: header labels for countdown and live states, 
+                      countdown unit labels (days, hours, minutes, seconds), and choose from 6 date formats 
+                      including US, European, ISO, and social styles.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-2">Colors & Icon</h4>
+                    <p className="text-muted-foreground">
+                      Set custom colors for the accent, background, text, and countdown numbers using 
+                      the built-in color picker. Choose from a selection of icons to display alongside the countdown.
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-2">Other Settings</h4>
+                    <p className="text-muted-foreground">
+                      Toggle the outer frame border around the countdown widget for a cleaner or more defined look.
+                    </p>
+                  </div>
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -386,75 +332,22 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   <div>
                     <h4 className="font-medium mb-2">Basic Usage</h4>
                     <code className="block bg-muted p-3 rounded text-xs">
-                      [kindpdfg_gallery]
+                      [nxevtcd_countdown]
                     </code>
-                    <p className="text-muted-foreground mt-2">Displays the default gallery.</p>
+                    <p className="text-muted-foreground mt-2">Displays the default countdown widget.</p>
                   </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Specific Gallery</h4>
-                    <code className="block bg-muted p-3 rounded text-xs">
-                      [kindpdfg_gallery name="my-gallery-name"]
-                    </code>
-                    <p className="text-muted-foreground mt-2">Displays a specific gallery by name (use lowercase with hyphens).</p>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Display Settings */}
-            <AccordionItem value="settings">
-              <AccordionTrigger className="text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-slate-500" />
-                  Display Settings
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <h4 className="font-medium mb-2">Layout Options</h4>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li><strong>Thumbnail Shape:</strong> Square, landscape, or portrait aspect ratios</li>
-                      <li><strong>Gap Size:</strong> Spacing between gallery items</li>
-                    </ul>
-                    <p className="text-muted-foreground mt-2 text-xs italic">
-                      Note: On mobile devices, thumbnails display one per row. On tablets, they display two per row regardless of column settings.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Thumbnail Styles</h4>
-                    <p className="text-muted-foreground">
-                      Choose from various thumbnail styles including bordered, shadowed, rounded corners, and more.
-                    </p>
-                  </div>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            {/* Styling */}
-            <AccordionItem value="styling">
-              <AccordionTrigger className="text-base font-semibold">
-                <div className="flex items-center gap-2">
-                  <Palette className="w-4 h-4 text-pink-500" />
-                  Styling & Customization
-                </div>
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <h4 className="font-medium mb-2">Accent Colors</h4>
-                    <p className="text-muted-foreground">
-                      Customize the accent color to match your website's branding. This affects buttons, 
-                      links, and interactive elements.
-                    </p>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Custom CSS</h4>
-                    <p className="text-muted-foreground">
-                      Advanced users can add custom CSS through WordPress Customizer to further 
-                      style the gallery output.
-                    </p>
-                  </div>
+                  {license.isPro && (
+                    <div>
+                      <h4 className="font-medium mb-2">Specific Counter (Pro)</h4>
+                      <code className="block bg-muted p-3 rounded text-xs">
+                        [nxevtcd_countdown name="downtown-campus"]
+                      </code>
+                      <p className="text-muted-foreground mt-2">
+                        Displays a specific counter by name. Use lowercase with hyphens. 
+                        This allows you to show different countdowns for different locations on separate pages.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -483,14 +376,13 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                       </tr>
                     </thead>
                     <tbody>
-                      <FeatureRow feature="Number of Galleries" free="1" pro="Unlimited" />
-                      <FeatureRow feature="Documents per Gallery" free="Unlimited" pro="Unlimited" />
-                      <FeatureRow feature="Batch Upload of Multiple Files" free={false} pro={true} />
-                      <FeatureRow feature="File Analytics" free={false} pro={true} />
-                      <FeatureRow feature="Multiple File Types (PDF, Office, Images, Video, Audio)" free={true} pro={true} />
-                      <FeatureRow feature="Drag & Drop Reordering" free={true} pro={true} />
-                      <FeatureRow feature="Section Dividers" free={true} pro={true} />
-                      <FeatureRow feature="Many Styling Options" free={true} pro={true} />
+                      <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                      <FeatureRow feature="Recurring Events" free="Unlimited" pro="Unlimited" />
+                      <FeatureRow feature="Special Events" free="Unlimited" pro="Unlimited" />
+                      <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
+                      <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
+                      <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
+                      <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
                       <FeatureRow feature="Priority Support" free={false} pro={true} />
                     </tbody>
                   </table>
@@ -499,7 +391,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   <div className="mt-4 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-lg border border-amber-500/20">
                     <p className="text-sm text-center">
                       <a 
-                        href="https://checkout.freemius.com/plugin/20814/plan/34946/" 
+                        href="https://checkout.freemius.com/plugin/18355/" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-primary hover:underline font-medium"
@@ -523,27 +415,28 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
               <AccordionContent>
                 <div className="space-y-4 text-sm">
                   <div>
-                    <h4 className="font-medium mb-2">Thumbnails Not Generating</h4>
+                    <h4 className="font-medium mb-2">Countdown Not Showing</h4>
+                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                      <li>Verify you have at least one active event configured in the <strong>Counters</strong> tab</li>
+                      <li>Make sure the shortcode <code className="bg-muted px-1 rounded">[nxevtcd_countdown]</code> is correct</li>
+                      <li>Check for JavaScript errors in the browser console</li>
+                      <li>Ensure no theme or plugin conflicts</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="font-medium mb-2">Wrong Time Displayed</h4>
                     <p className="text-muted-foreground">
-                      Ensure your server has sufficient memory and the file size is within limits. 
-                      For large PDFs, thumbnail generation may take a few moments.
+                      The countdown uses your WordPress timezone settings. Go to <strong>Settings → General</strong> 
+                      in WordPress to verify your timezone is correct.
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-medium mb-2">Upload Errors</h4>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li>Check your PHP <code className="bg-muted px-1 rounded">upload_max_filesize</code> setting</li>
-                      <li>Verify the file type is supported</li>
-                      <li>Ensure file permissions are correct</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium mb-2">Gallery Not Displaying</h4>
-                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li>Verify the shortcode is correct</li>
-                      <li>Check for JavaScript errors in the browser console</li>
-                      <li>Ensure no theme/plugin conflicts</li>
-                    </ul>
+                    <h4 className="font-medium mb-2">Events Not Saving</h4>
+                    <p className="text-muted-foreground">
+                      Make sure you click the <strong>Save</strong> button after making changes. 
+                      If issues persist, check your browser's console for errors and ensure your WordPress 
+                      admin nonce hasn't expired (try refreshing the page).
+                    </p>
                   </div>
                 </div>
               </AccordionContent>
@@ -571,12 +464,12 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                     <h4 className="font-medium mb-2">Useful Links</h4>
                     <ul className="space-y-2">
                       <li>
-                        <a href="https://kindpixels.com/plugins/pdf-gallery/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a href="https://kindpixels.com/plugins/next-event-countdown/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                           Plugin Website →
                         </a>
                       </li>
                       <li>
-                        <a href="https://checkout.freemius.com/plugin/20814/plan/34946/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a href="https://checkout.freemius.com/plugin/18355/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                           Upgrade to Pro →
                         </a>
                       </li>
@@ -584,7 +477,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   </div>
                   <div className="pt-2 border-t">
                     <p className="text-xs text-muted-foreground">
-                      PDF Gallery v{PLUGIN_VERSION} • Made in Romania by Kind Pixels
+                      Next Event Countdown v{PLUGIN_VERSION} • Made in Romania by Kind Pixels
                     </p>
                   </div>
                 </div>

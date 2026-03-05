@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, ExternalLink, Zap, Unlock, Check, BarChart3 } from 'lucide-react';
+import { Crown, ExternalLink, Zap, Unlock, Check, MapPin } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 
 interface ProBannerProps {
@@ -38,14 +38,14 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
 
   // Show banner only in explicit WordPress admin free state
   let wpGlobal: any = null;
-  try { wpGlobal = (window as any).kindpdfgData || (window as any).wpPDFGallery || null; } catch {}
+  try { wpGlobal = (window as any).nxevtcdData || null; } catch {}
   if (!wpGlobal) {
-    try { wpGlobal = (window.parent && ((window.parent as any).kindpdfgData || (window.parent as any).wpPDFGallery)) || null; } catch {}
+    try { wpGlobal = (window.parent && (window.parent as any).nxevtcdData) || null; } catch {}
   }
   const urlParams = new URLSearchParams(window.location.search);
   const hideParam = urlParams.get('hideProBanner') === 'true';
   let lsSuppress = false;
-  try { lsSuppress = localStorage.getItem('kindpdfg_suppressProBanner') === '1'; } catch {}
+  try { lsSuppress = localStorage.getItem('nxevtcd_suppressProBanner') === '1'; } catch {}
   
   const isLikelyWpAdmin = (() => {
     try {
@@ -64,57 +64,22 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
   const wpStatus = String(wpGlobal?.fsStatus ?? '').toLowerCase();
   const wpIsPro = !!(wpGlobal && (wpGlobal.fsIsPro === true || wpGlobal.fsIsPro === 'true' || wpGlobal.fsIsPro === '1' || wpGlobal.fsIsPro === 1));
   
-  console.debug('[PDF Gallery] ProBanner check', { 
-    isAdmin, 
-    fsAvailable, 
-    wpStatus, 
-    wpIsPro,
-    hideParam,
-    lsSuppress,
-    licenseChecked: license.checked,
-    licensePro: license.isPro,
-    licenseStatus: license.status
-  });
-  
-  // Don't show if explicitly hidden (localStorage suppression only applies for Pro/Trial states)
+  // Don't show if explicitly hidden
   const statusLower = String(license.status ?? '').toLowerCase();
   const isProLike = wpIsPro || license.isPro || ['pro','trial','premium'].includes(statusLower);
-  if (hideParam || (lsSuppress && isProLike)) {
-    console.debug('[PDF Gallery] ProBanner hidden by param/localStorage (pro-like state)');
-    return null;
-  }
+  if (hideParam || (lsSuppress && isProLike)) return null;
   
-  // Check if in dev preview environment
   const hostname = window.location.hostname;
   const isDevPreview = hostname.includes('lovable.app') || hostname.includes('lovableproject.com') || hostname === 'localhost';
   
-  // Only show in admin or dev preview
-  if (!isAdmin && !isDevPreview) {
-    console.debug('[PDF Gallery] ProBanner hidden: not admin');
-    return null;
-  }
+  if (!isAdmin && !isDevPreview) return null;
+  if (wpIsPro) return null;
   
-  // Hard kill-switch: never show for Pro/Trial
-  if (wpIsPro) {
-    console.debug('[PDF Gallery] ProBanner hidden: wpIsPro is true');
-    return null;
-  }
-  
-  // If Freemius is available, show for recognized free-like states
   if (fsAvailable) {
     const fsStatus = String(wpStatus).toLowerCase();
     const proLike = new Set(['pro','paid','trial','premium','active_trial','trialing']);
-    if (proLike.has(fsStatus)) {
-      console.debug('[PDF Gallery] ProBanner hidden: fsAvailable and status pro-like (' + fsStatus + ')');
-      return null;
-    }
+    if (proLike.has(fsStatus)) return null;
   }
-  
-  // Banner should show: we're admin, not Pro, and either no FS or FS says "free"
-  console.debug('[PDF Gallery] ProBanner SHOWING');
-
-  const heading = 'Upgrade to PDF Gallery Pro';
-  const description = 'Unlock unlimited galleries and batch uploads to supercharge your document management.';
 
   return (
     <Card className={`border-gradient-to-r from-orange-500/20 to-red-500/20 bg-gradient-to-r from-orange-50/50 to-red-50/50 dark:from-orange-950/20 dark:to-red-950/20 ${className}`}>
@@ -126,28 +91,28 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-bold text-foreground">{heading}</h3>
+              <h3 className="text-lg font-bold text-foreground">Upgrade to Next Event Countdown Pro</h3>
               <div className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full">
                 Pro
               </div>
             </div>
             
             <p className="text-sm text-muted-foreground mb-4">
-              {description}
+              Manage countdowns for multiple locations with unique styles — perfect for churches, venues, and organizations with several campuses.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <Unlock className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">Unlimited Galleries</span>
+                <MapPin className="w-6 h-6 text-orange-500" />
+                <span className="text-lg font-semibold">Multiple Counters</span>
               </div>
               <div className="flex items-center gap-3">
                 <Zap className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">Batch Upload</span>
+                <span className="text-lg font-semibold">Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
-                <BarChart3 className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">File Analytics</span>
+                <Unlock className="w-6 h-6 text-orange-500" />
+                <span className="text-lg font-semibold">Priority Support</span>
               </div>
             </div>
 
@@ -156,9 +121,9 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
               <div className="w-full max-w-md">
                 <Button 
                   className="w-full h-10 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium"
-                  onClick={() => window.open('https://checkout.freemius.com/plugin/20814/plan/34946/', '_blank')}
+                  onClick={() => window.open('https://checkout.freemius.com/plugin/18355/', '_blank')}
                 >
-                  Get PDF Gallery Pro
+                  Get Next Event Countdown Pro
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -189,14 +154,13 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   </tr>
                 </thead>
                 <tbody>
-                  <FeatureRow feature="Number of Galleries" free="1" pro="Unlimited" />
-                  <FeatureRow feature="Documents per Gallery" free="Unlimited" pro="Unlimited" />
-                  <FeatureRow feature="Batch Upload of Multiple Files" free={false} pro={true} />
-                  <FeatureRow feature="File Analytics" free={false} pro={true} />
-                  <FeatureRow feature="Multiple File Types (PDF, Office, Images, Video, Audio, Archives)" free={true} pro={true} />
-                  <FeatureRow feature="Drag & Drop Reordering" free={true} pro={true} />
-                  <FeatureRow feature="Section Dividers" free={true} pro={true} />
-                  <FeatureRow feature="Many Styling Options" free={true} pro={true} />
+                  <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                  <FeatureRow feature="Recurring Events" free="Unlimited" pro="Unlimited" />
+                  <FeatureRow feature="Special Events" free="Unlimited" pro="Unlimited" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
+                  <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
+                  <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
+                  <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />
                 </tbody>
               </table>
