@@ -399,6 +399,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
           </Card>
         );
 
+      case 'counter-styles':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Frame className="w-5 h-5" />
+                Counter Styles
+                <Crown className="w-4 h-4 text-amber-500" />
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Choose from multiple countdown display styles</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <p className="text-sm text-muted-foreground">Additional countdown styles coming soon. Stay tuned for new visual options!</p>
+            </CardContent>
+          </Card>
+        );
+
       default:
         return null;
     }
