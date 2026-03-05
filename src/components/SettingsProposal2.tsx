@@ -404,73 +404,39 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
 
       case 'counter-styles': {
         const currentStyle = localConfig.counterStyle || 'default';
-        const demoProps = {
-          days: 3, hours: 14, minutes: 27, seconds: 52,
-          headerLabel: localConfig.headerLabel || 'Next Event',
-          eventTitle: 'Sunday Morning Worship',
-          eventDate: 'March 8, 2026 at 10:00 AM',
-          iconColor: localConfig.iconColor,
-          icon: Church,
-          labelDays: localConfig.labelDays || 'Days',
-          labelHours: localConfig.labelHours || 'Hours',
-          labelMinutes: localConfig.labelMinutes || 'Minutes',
-          labelSeconds: localConfig.labelSeconds || 'Seconds',
-        };
-        const SelectedRenderer = STYLE_RENDERERS[currentStyle];
         return (
-          <div className="space-y-6">
-            {/* Live preview */}
-            <Card className="border-primary/20">
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">Live Preview</CardTitle>
-                  <Badge variant="secondary" className="text-xs">{COUNTER_STYLE_OPTIONS.find(s => s.id === currentStyle)?.name}</Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {SelectedRenderer && <SelectedRenderer {...demoProps} />}
-              </CardContent>
-            </Card>
-
-            {/* Style grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {COUNTER_STYLE_OPTIONS.map((style) => {
-                const isSelected = currentStyle === style.id;
-                const Renderer = STYLE_RENDERERS[style.id];
-                return (
-                  <button
-                    key={style.id}
-                    onClick={() => updateConfig({ counterStyle: style.id })}
-                    className={`relative text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
-                      isSelected
-                        ? 'border-primary bg-primary/5 shadow-md'
-                        : 'border-border hover:border-primary/30 bg-card'
-                    }`}
-                  >
-                    {isSelected && (
-                      <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center z-10">
-                        <Check className="w-3 h-3 text-primary-foreground" />
-                      </div>
-                    )}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">{style.name}</span>
-                        {!style.pro ? (
-                          <Badge variant="outline" className="text-[10px] px-1.5 py-0">Free</Badge>
-                        ) : (
-                          <Badge className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10">Pro</Badge>
-                        )}
-                      </div>
-                      {/* Mini preview */}
-                      <div className="rounded-lg overflow-hidden border border-border/50" style={{ transform: 'scale(0.65)', transformOrigin: 'top left', height: 130, width: '154%' }}>
-                        {Renderer && <Renderer {...demoProps} />}
-                      </div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{style.description}</p>
+          <div className="space-y-3">
+            {COUNTER_STYLE_OPTIONS.map((style) => {
+              const isSelected = currentStyle === style.id;
+              const Renderer = STYLE_RENDERERS[style.id];
+              return (
+                <button
+                  key={style.id}
+                  onClick={() => updateConfig({ counterStyle: style.id })}
+                  className={`relative w-full text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+                    isSelected
+                      ? 'border-primary bg-primary/5 shadow-md'
+                      : 'border-border hover:border-primary/30 bg-card'
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center z-10">
+                      <Check className="w-3 h-3 text-primary-foreground" />
                     </div>
-                  </button>
-                );
-              })}
-            </div>
+                  )}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-semibold text-sm">{style.name}</span>
+                    {!style.pro ? (
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0">Free</Badge>
+                    ) : (
+                      <Badge className="text-[10px] px-1.5 py-0 bg-amber-500/10 text-amber-600 border-amber-500/20 hover:bg-amber-500/10">Pro</Badge>
+                    )}
+                    <span className="text-xs text-muted-foreground ml-auto mr-6">{style.description}</span>
+                  </div>
+                  {Renderer && <CounterStyleLivePreview config={localConfig} Renderer={Renderer} />}
+                </button>
+              );
+            })}
           </div>
         );
       }
