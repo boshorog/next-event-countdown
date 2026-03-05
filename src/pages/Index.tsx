@@ -414,6 +414,15 @@ const Index = () => {
     return <UpcomingCalendarShowcase />;
   }
 
+  // DEV: Show showcase for counter styles
+  if (urlParams.get('showcase') === 'counter-styles') {
+    return (
+      <div className="min-h-screen bg-background p-8 max-w-4xl mx-auto">
+        <CounterStylesShowcase />
+      </div>
+    );
+  }
+
   if (!showAdmin) {
     // Show gallery not found state if requested gallery doesn't exist
     if (galleryNotFound) {
