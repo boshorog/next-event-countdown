@@ -6,21 +6,18 @@ const isEmbedded = () => {
   try {
     return window.self !== window.top;
   } catch {
-    // Cross-origin access can throw; if so, we're definitely embedded.
     return true;
   }
 };
 
 // When rendered inside a WordPress iframe, ensure the document background is transparent.
 if (typeof window !== 'undefined' && isEmbedded()) {
-  document.documentElement.classList.add('pdfg-embedded');
+  document.documentElement.classList.add('nxevtcd-embedded');
 }
 
 // Look for WordPress root element first, then fallback to default
 const rootElement =
-  document.getElementById("kindpdfg-root") ||
-  document.getElementById("pdf-gallery-root") ||
-  document.getElementById("newsletter-gallery-root") ||
+  document.getElementById("nxevtcd-root") ||
   document.getElementById("root");
 
 if (rootElement) {

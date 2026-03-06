@@ -21,7 +21,7 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
     const urlParams = new URLSearchParams(window.location.search);
     const licenseUpdated = urlParams.get('license_updated');
     const licenseActivated = urlParams.get('license_activated');
-    const reloadParam = urlParams.get('kindpdfg_reload');
+    const reloadParam = urlParams.get('nxevtcd_reload');
 
     const getWpGlobalSafe = () => {
       let wpGlobal: any = null;

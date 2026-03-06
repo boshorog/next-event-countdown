@@ -165,20 +165,17 @@ All colors MUST be HSL.
   }
 
   /* If the gallery is rendered inside an iframe, make the document background transparent */
-  html.pdfg-embedded,
-  html.pdfg-embedded body {
+  html.nxevtcd-embedded,
+  html.nxevtcd-embedded body {
     background: transparent !important;
   }
 
-  html.pdfg-embedded #kindpdfg-root,
-  html.pdfg-embedded #pdf-gallery-root,
-  html.pdfg-embedded #newsletter-gallery-root,
-  html.pdfg-embedded #root {
+  html.nxevtcd-embedded #nxevtcd-root,
+  html.nxevtcd-embedded #root {
     background: transparent !important;
   }
   
-  #kindpdfg-root,
-  #pdf-gallery-root {
+  #nxevtcd-root {
     margin: 0 !important;
     padding: 0 !important;
   }
