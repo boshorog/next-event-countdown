@@ -209,7 +209,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon firstLayerGreen className="flex-shrink-0" />
-                  <span>Current Countdown</span>
+                  <span>Current Counter</span>
                 </div>
                 {saveScope === 'current' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
@@ -219,7 +219,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon allLayersGreen className="flex-shrink-0" />
-                  <span>All Countdowns</span>
+                  <span>All Counters</span>
                 </div>
                 {saveScope === 'all' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
