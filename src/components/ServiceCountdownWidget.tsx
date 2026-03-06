@@ -283,7 +283,7 @@ export function getScheduleCandidates(s: ServiceSchedule, now: Date, count: numb
   return candidates;
 }
 
-function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[], dateFormat: DateFormatType = "us-long"): NextServiceInfo {
+function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEvent[], dateFormat: DateFormatType = "us-long", use24h?: boolean): NextServiceInfo {
   const now = new Date();
   const nowMs = now.getTime();
 
@@ -294,7 +294,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     for (const target of candidates) {
       const elapsed = nowMs - target.getTime();
       if (elapsed >= 0 && elapsed < durationMs) {
-        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat), title: s.title, isLive: true };
+        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h), title: s.title, isLive: true };
       }
     }
   }
@@ -308,7 +308,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
     if (elapsed >= 0 && elapsed < durationMs) {
-      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat), title: ev.title, isLive: true };
+      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h), title: ev.title, isLive: true };
     }
   }
 
@@ -325,7 +325,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const ms = target.getTime() - nowMs;
     if (ms > 0 && ms < nearest) {
       nearest = ms;
-      nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat);
+      nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h);
       nearestTitle = ev.title;
     }
   }
@@ -336,7 +336,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
       const ms = target.getTime() - nowMs;
       if (ms > 0 && ms < nearest) {
         nearest = ms;
-        nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat);
+        nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat, use24h);
         nearestTitle = s.title;
       }
     }
@@ -357,18 +357,18 @@ function msToTime(ms: number) {
 
 export function useCountdown(config: CountdownConfig) {
   const [state, setState] = useState(() => {
-    const n = getNextService(config.schedules, config.specialEvents, config.dateFormat);
+    const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h);
     return { ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
   });
   useEffect(() => {
     const tick = () => {
-      const n = getNextService(config.schedules, config.specialEvents, config.dateFormat);
+      const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h);
       setState({ ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents, config.dateFormat]);
+  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h]);
   return state;
 }
 
