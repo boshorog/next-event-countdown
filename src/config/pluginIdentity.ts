@@ -68,7 +68,7 @@ export const PRO_NAME = 'Next Event Countdown Pro';
  * Plugin version - update this for each release
  * Also update in: next-event-countdown.php, readme.txt
  */
-export const PLUGIN_VERSION = '1.0.0';
+export const PLUGIN_VERSION = '1.0.1';
 
 /**
  * Short description for meta/SEO
@@ -83,13 +83,13 @@ export const PLUGIN_DESCRIPTION = 'Beautiful countdown timer widget for WordPres
  * Freemius Plugin ID - get from Freemius dashboard
  * Set to null if not using Freemius
  */
-export const FREEMIUS_PLUGIN_ID = '18355';
+export const FREEMIUS_PLUGIN_ID = '25492';
 
 /**
  * Freemius Public Key - get from Freemius dashboard
  * Set to null if not using Freemius
  */
-export const FREEMIUS_PUBLIC_KEY = 'pk_e49d0a3e59cc4e5f5f5d8e4a3c8e2';
+export const FREEMIUS_PUBLIC_KEY = 'pk_4f0cdea63e183645cd7daa2d59bd9';
 
 // =============================================================================
 // BRANDING & LINKS

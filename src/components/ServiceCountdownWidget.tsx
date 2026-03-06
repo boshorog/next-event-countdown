@@ -91,11 +91,12 @@ export interface CountdownConfig {
   showBorder: boolean;
   headerScale: number;
   counterStyle?: string;
+  use24h?: boolean;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
-  icon: "Church",
-  iconColor: "#6366f1",
+  icon: "CalendarDays",
+  iconColor: "#e79e27",
   headerLabel: "Next Event",
   liveLabel: "Happening Now",
   dateFormat: "us-long",
@@ -162,7 +163,7 @@ function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Dat
   return new Date(fakeUtc.getTime() + offsetMs);
 }
 
-function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "us-long"): string {
+function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "us-long", use24h?: boolean): string {
   const h24 = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
   const dow = dayNames[target.getDay()];
   const dowShort = dow.slice(0, 3);
@@ -174,20 +175,29 @@ function formatDateStr(target: Date, hour: number, minute: number, format: DateF
   const ampm = hour >= 12 ? "PM" : "AM";
   const time12 = minute === 0 ? `${h12} ${ampm}` : `${h12}:${String(minute).padStart(2, "0")} ${ampm}`;
 
+  // If use24h is explicitly set, override the format's default time style
+  const force24 = use24h === true;
+  const force12 = use24h === false;
+  const timeStr = (defaultIs24: boolean) => {
+    if (force24) return h24;
+    if (force12) return time12;
+    return defaultIs24 ? h24 : time12;
+  };
+
   switch (format) {
     case "us-short":
-      return `${dowShort}, ${day} ${monShort} ${year}, ${time12}`;
+      return `${dowShort}, ${day} ${monShort} ${year}, ${timeStr(false)}`;
     case "iso-like":
-      return `${year}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")} ${h24}`;
+      return `${year}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")} ${timeStr(true)}`;
     case "europe-long":
-      return `${dow}, ${day} ${mon} ${year} at ${h24}`;
+      return `${dow}, ${day} ${mon} ${year} at ${timeStr(true)}`;
     case "europe-short":
-      return `${dowShort}, ${day} ${monShort} ${year}, ${h24}`;
+      return `${dowShort}, ${day} ${monShort} ${year}, ${timeStr(true)}`;
     case "social":
-      return `${dowShort}, ${monShort} ${day} @ ${h24}`;
+      return `${dowShort}, ${monShort} ${day} @ ${timeStr(true)}`;
     case "us-long":
     default:
-      return `${mon} ${day}, ${year} at ${time12}`;
+      return `${mon} ${day}, ${year} at ${timeStr(false)}`;
   }
 }
 
