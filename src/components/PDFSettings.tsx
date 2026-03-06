@@ -24,7 +24,7 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
   allLayersGreen?: boolean; 
   className?: string;
 }) => {
-  const greenColor = "hsl(142, 76%, 36%)"; // green-600 equivalent
+  const purpleColor = "hsl(var(--primary))";
   const grayColor = "currentColor";
   
   return (
@@ -42,17 +42,17 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
       {/* Bottom layer */}
       <path 
         d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" 
-        stroke={allLayersGreen || firstLayerGreen ? greenColor : grayColor}
+        stroke={allLayersGreen || firstLayerGreen ? purpleColor : grayColor}
       />
       {/* Middle layer */}
       <path 
         d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" 
-        stroke={allLayersGreen ? greenColor : grayColor}
+        stroke={allLayersGreen ? purpleColor : grayColor}
       />
       {/* Top layer */}
       <path 
         d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" 
-        stroke={allLayersGreen ? greenColor : grayColor}
+        stroke={allLayersGreen ? purpleColor : grayColor}
       />
     </svg>
   );
@@ -209,7 +209,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon firstLayerGreen className="flex-shrink-0" />
-                  <span>Current Countdown</span>
+                  <span>Current Counter</span>
                 </div>
                 {saveScope === 'current' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
@@ -219,7 +219,7 @@ const PDFSettings = ({ settings, onSettingsChange }: PDFSettingsProps) => {
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon allLayersGreen className="flex-shrink-0" />
-                  <span>All Countdowns</span>
+                  <span>All Counters</span>
                 </div>
                 {saveScope === 'all' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>

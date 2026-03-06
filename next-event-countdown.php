@@ -3,7 +3,7 @@
  * Plugin Name: Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: Beautiful countdown timer widget for WordPress events and services.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,100 +23,80 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.0.0' );
+define( 'NXEVTCD_VERSION', '1.0.1' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
-    /**
-     * Get Freemius SDK instance.
-     *
-     * @return object Freemius SDK instance or stdClass if not available.
-     */
+
+    // Create a helper function for easy SDK access.
+
     function nxevtcd_fs() {
-        global $nxevtcd_fs_instance;
 
-        if ( ! isset( $nxevtcd_fs_instance ) ) {
-            // Try multiple possible SDK locations
-            $paths = array(
-                dirname( __FILE__ ) . '/freemius/start.php',
-                dirname( __FILE__ ) . '/vendor/freemius/start.php',
-            );
+        global $nxevtcd_fs;
 
-            $sdk_loaded = false;
-            foreach ( $paths as $sdk_path ) {
-                if ( file_exists( $sdk_path ) ) {
-                    require_once $sdk_path;
-                    $sdk_loaded = true;
-                    break;
-                }
-            }
+        if ( ! isset( $nxevtcd_fs ) ) {
 
-            if ( $sdk_loaded && function_exists( 'fs_dynamic_init' ) ) {
-                $is_premium_build = file_exists( dirname( __FILE__ ) . '/dist/.pro-build' );
-                if ( $is_premium_build ) {
-                    try {
-                        if ( ! function_exists( 'get_file_data' ) ) {
-                            $plugin_php = ABSPATH . 'wp-admin/includes/plugin.php';
-                            if ( file_exists( $plugin_php ) ) {
-                                require_once $plugin_php;
-                            }
-                        }
-                        if ( function_exists( 'get_file_data' ) ) {
-                            $header = get_file_data( __FILE__, array( 'Name' => 'Plugin Name' ), 'plugin' );
-                            $plugin_name = isset( $header['Name'] ) ? (string) $header['Name'] : '';
-                            if ( stripos( $plugin_name, 'pro' ) === false ) {
-                                $is_premium_build = false;
-                            }
-                        }
-                    } catch ( Throwable $e ) {
-                        $is_premium_build = false;
-                    }
-                }
-                
-                $nxevtcd_fs_instance = fs_dynamic_init( array(
-                    'id'                => '18355',
-                    'slug'              => 'next-event-countdown',
-                    'premium_slug'      => 'next-event-countdown-pro',
-                    'premium_suffix'    => 'Pro',
-                    'type'              => 'plugin',
-                    'public_key'        => 'pk_e49d0a3e59cc4e5f5f5d8e4a3c8e2',
-                    'is_premium'        => $is_premium_build,
-                    'is_premium_only'   => false,
-                    'is_org_compliant'  => ! $is_premium_build,
-                    'has_addons'        => false,
-                    'has_paid_plans'    => true,
-                    'anonymous_mode'    => ! $is_premium_build,
-                    'opt_in_moderation' => array(
-                        'new'       => 0,
-                        'updates'   => 0,
-                        'localhost' => false,
-                    ),
-                    'menu'              => array(
-                        'slug'       => 'next-event-countdown',
-                        'first-path' => 'admin.php?page=next-event-countdown',
-                        'account'    => $is_premium_build,
-                        'support'    => false,
-                    ),
-                ) );
+            // Include Freemius SDK.
 
-                if ( is_object( $nxevtcd_fs_instance ) && method_exists( $nxevtcd_fs_instance, 'set_basename' ) ) {
-                    $nxevtcd_fs_instance->set_basename( false, __FILE__ );
-                }
-            } else {
-                $nxevtcd_fs_instance = new stdClass();
-            }
+            require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+
+            $nxevtcd_fs = fs_dynamic_init( array(
+
+                'id'                  => '25492',
+
+                'slug'                => 'next-event-countdown',
+
+                'type'                => 'plugin',
+
+                'public_key'          => 'pk_4f0cdea63e183645cd7daa2d59bd9',
+
+                'is_premium'          => true,
+
+                'premium_suffix'      => 'PRO',
+
+                // If your plugin is a serviceware, set this option to false.
+
+                'has_premium_version' => true,
+
+                'has_addons'          => false,
+
+                'has_paid_plans'      => true,
+
+                'is_org_compliant'    => true,
+
+                // Automatically removed in the free version. If you're not using the
+
+                // auto-generated free version, delete this line before uploading to wp.org.
+
+                'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
+
+                'menu'                => array(
+
+                    'slug'           => 'next-event-countdown-manager',
+
+                    'support'        => false,
+
+                ),
+
+            ) );
+
         }
 
-        return $nxevtcd_fs_instance;
+        return $nxevtcd_fs;
+
     }
 
-    // Init Freemius
+    // Init Freemius.
+
     nxevtcd_fs();
 
-    // Force redirect to plugin page after license activation (clears cache)
-    nxevtcd_fs()->add_action( 'after_license_change', 'nxevtcd_after_license_change' );
-    
+    // Signal that SDK was initiated.
+
     do_action( 'nxevtcd_fs_loaded' );
+
+    // Hook license change redirect
+    nxevtcd_fs()->add_action( 'after_license_change', 'nxevtcd_after_license_change' );
+
 }
 
 /**
@@ -130,7 +110,7 @@ function nxevtcd_after_license_change( $plan_change ) {
     set_transient( 'nxevtcd_license_changed', time(), 300 );
     
     $redirect_url = add_query_arg( array(
-        'page'          => 'next-event-countdown',
+        'page'          => 'next-event-countdown-manager',
         'license_updated' => time(),
     ), admin_url( 'admin.php' ) );
     

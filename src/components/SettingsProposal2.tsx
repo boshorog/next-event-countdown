@@ -42,7 +42,7 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
   allLayersGreen?: boolean; 
   className?: string;
 }) => {
-  const greenColor = "hsl(142, 76%, 36%)";
+  const purpleColor = "hsl(var(--primary))";
   const grayColor = "hsl(215, 14%, 70%)";
   const defaultColor = "currentColor";
   
@@ -60,15 +60,15 @@ const LayersIcon = ({ firstLayerGreen = false, allLayersGreen = false, className
     >
       <path 
         d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z" 
-        stroke={allLayersGreen || firstLayerGreen ? greenColor : defaultColor}
+        stroke={allLayersGreen || firstLayerGreen ? purpleColor : defaultColor}
       />
       <path 
         d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65" 
-        stroke={allLayersGreen ? greenColor : (firstLayerGreen ? grayColor : defaultColor)}
+        stroke={allLayersGreen ? purpleColor : (firstLayerGreen ? grayColor : defaultColor)}
       />
       <path 
         d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65" 
-        stroke={allLayersGreen ? greenColor : (firstLayerGreen ? grayColor : defaultColor)}
+        stroke={allLayersGreen ? purpleColor : (firstLayerGreen ? grayColor : defaultColor)}
       />
     </svg>
   );
@@ -220,24 +220,50 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               <div className="space-y-3 pt-4 border-t border-border">
                 <Label className="text-base font-medium">Date Format</Label>
                 <p className="text-sm text-muted-foreground">Choose how the event date is displayed</p>
-                <Select
-                  value={localConfig.dateFormat || "us-long"}
-                  onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DATE_FORMAT_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{opt.label}</span>
-                          <span className="text-xs text-muted-foreground">{opt.example}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="flex items-center gap-3">
+                  <Select
+                    value={localConfig.dateFormat || "us-long"}
+                    onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
+                  >
+                    <SelectTrigger className="flex-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {DATE_FORMAT_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          <div className="flex flex-col">
+                            <span className="font-medium">{opt.label}</span>
+                            <span className="text-xs text-muted-foreground">{opt.example}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <div className="flex items-center border border-border rounded-md overflow-hidden shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => updateConfig({ use24h: false })}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        localConfig.use24h !== true
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground hover:bg-accent'
+                      }`}
+                    >
+                      12h
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => updateConfig({ use24h: true })}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        localConfig.use24h === true
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted text-muted-foreground hover:bg-accent'
+                      }`}
+                    >
+                      24h
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* Unit Labels */}
@@ -502,12 +528,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 {saveScope === 'current' ? (
                   <>
                     <LayersIcon firstLayerGreen className="mr-2" />
-                    Current Countdown
+                    Current Counter
                   </>
                 ) : (
                   <>
                     <LayersIcon allLayersGreen className="mr-2" />
-                    All Countdowns
+                    All Counters
                   </>
                 )}
                 <ChevronDown className="w-4 h-4 ml-2" />
@@ -520,7 +546,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon firstLayerGreen className="flex-shrink-0" />
-                  <span>Current Countdown</span>
+                  <span>Current Counter</span>
                 </div>
                 {saveScope === 'current' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
@@ -530,7 +556,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               >
                 <div className="flex items-center gap-2">
                   <LayersIcon allLayersGreen className="flex-shrink-0" />
-                  <span>All Countdowns</span>
+                  <span>All Counters</span>
                 </div>
                 {saveScope === 'all' && <Check className="h-4 w-4 text-primary flex-shrink-0" />}
               </DropdownMenuItem>
