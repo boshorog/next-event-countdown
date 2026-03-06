@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * PDF Gallery Plugin Build Script
+ * Next Event Countdown Plugin Build Script
  * 
  * Builds and packages both Free and Pro variants of the plugin.
  * 
  * Usage:
- *   node scripts/build-plugin.js          # Build both variants
- *   node scripts/build-plugin.js free     # Build Free only
- *   node scripts/build-plugin.js pro      # Build Pro only
+ *   node scripts/build-plugin.cjs          # Build both variants
+ *   node scripts/build-plugin.cjs free     # Build Free only
+ *   node scripts/build-plugin.cjs pro      # Build Pro only
  * 
  * Output:
- *   dist/kindpixels-pdf-gallery-free-{version}.zip
- *   dist/kindpixels-pdf-gallery-pro-{version}.zip
+ *   releases/next-event-countdown-free-{version}.zip
+ *   releases/next-event-countdown-pro-{version}.zip
  */
 
 const { execSync } = require('child_process');
@@ -31,13 +31,13 @@ const INCLUDE_FILES = [
   'next-event-countdown.php',
   'readme.txt',
   'dist/',
-  'freemius/',  // Freemius SDK (if exists)
-  'vendor/',    // Freemius SDK alternate location
+  'freemius/',
+  'vendor/',
 ];
 
 // Files/folders to exclude
 const EXCLUDE_PATTERNS = [
-  '.pro-build',  // Will be handled per variant
+  '.pro-build',
   '.DS_Store',
   'Thumbs.db',
   '*.map',
@@ -51,7 +51,7 @@ function getPluginVersion() {
   const content = fs.readFileSync(phpFile, 'utf8');
   const match = content.match(/Version:\s*([0-9.]+)/i);
   if (!match) {
-    throw new Error('Could not find version in kindpixels-pdf-gallery.php');
+    throw new Error('Could not find version in next-event-countdown.php');
   }
   return match[1];
 }
@@ -81,12 +81,10 @@ async function createZip(variant, version) {
   const zipName = `${PLUGIN_SLUG}-${variant}-${version}.zip`;
   const zipPath = path.join(OUTPUT_DIR, zipName);
   
-  // Ensure output directory exists
   if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   }
   
-  // Remove existing ZIP if present
   if (fs.existsSync(zipPath)) {
     fs.unlinkSync(zipPath);
   }
@@ -106,11 +104,9 @@ async function createZip(variant, version) {
     archive.on('error', reject);
     archive.pipe(output);
     
-    // Add files with plugin slug as root folder
     INCLUDE_FILES.forEach(file => {
       const fullPath = path.join(ROOT_DIR, file);
       if (!fs.existsSync(fullPath)) {
-        // Skip missing optional files (like freemius/)
         if (file !== 'freemius/') {
           console.log(`   ⚠️  Skipping missing: ${file}`);
         }
@@ -122,7 +118,6 @@ async function createZip(variant, version) {
       
       if (stat.isDirectory()) {
         archive.directory(fullPath, destPath, data => {
-          // Filter out excluded patterns
           const name = data.name || '';
           for (const pattern of EXCLUDE_PATTERNS) {
             if (pattern.startsWith('*')) {
@@ -138,7 +133,6 @@ async function createZip(variant, version) {
       }
     });
     
-    // For Pro variant, ensure .pro-build marker is included
     if (variant === 'pro') {
       const proMarker = path.join(DIST_DIR, '.pro-build');
       if (fs.existsSync(proMarker)) {
@@ -158,10 +152,8 @@ async function buildVariant(variant, version) {
   console.log(`🔨 Building ${variant.toUpperCase()} variant (v${version})`);
   console.log('='.repeat(50));
   
-  // Run the appropriate build command
   run(`npm run build:${variant}`, `Building ${variant} assets`);
   
-  // Create ZIP
   const zipPath = await createZip(variant, version);
   
   return zipPath;
@@ -174,13 +166,11 @@ async function main() {
   const args = process.argv.slice(2);
   const variant = args[0]?.toLowerCase();
   
-  // Validate variant argument
   if (variant && !['free', 'pro'].includes(variant)) {
     console.error('❌ Invalid variant. Use: free, pro, or no argument for both');
     process.exit(1);
   }
   
-  // Check for archiver dependency
   try {
     require.resolve('archiver');
   } catch {
@@ -189,7 +179,7 @@ async function main() {
   }
   
   const version = getPluginVersion();
-  console.log(`\n🚀 PDF Gallery Plugin Builder`);
+  console.log(`\n🚀 Next Event Countdown Plugin Builder`);
   console.log(`   Version: ${version}`);
   console.log(`   Output:  ${OUTPUT_DIR}`);
   
@@ -203,7 +193,6 @@ async function main() {
     results.push(await buildVariant('pro', version));
   }
   
-  // Summary
   console.log(`\n${'='.repeat(50)}`);
   console.log('✅ Build Complete!');
   console.log('='.repeat(50));

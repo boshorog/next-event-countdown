@@ -4,7 +4,7 @@
  * ============================================================================
  * 
  * Utility functions for AJAX communication with WordPress backend.
- * Uses wp_localize_script data injected as window.kindpdfgData.
+ * Uses wp_localize_script data injected as window.nxevtcdData.
  * 
  * PATTERN:
  * 1. Get WP context using getWPGlobal()

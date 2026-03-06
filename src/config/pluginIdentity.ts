@@ -27,7 +27,7 @@
 
 /**
  * WordPress plugin slug (folder name, shortcode prefix, option names)
- * Example: 'kindpixels-pdf-gallery' → [kindpdfg_gallery] shortcode
+ * Example: 'next-event-countdown' → [nxevtcd_countdown] shortcode
  */
 export const PLUGIN_SLUG = 'next-event-countdown';
 
@@ -161,7 +161,7 @@ export const getAllSupportedExtensions = (): string[] => {
 
 /**
  * Get a prefixed localStorage key
- * Usage: getStorageKey('backup') → 'kindpdfg_backup'
+ * Usage: getStorageKey('backup') → 'nxevtcd_backup'
  */
 export const getStorageKey = (key: string): string => {
   return `${PLUGIN_PREFIX}_${key}`;
@@ -186,7 +186,7 @@ export const STORAGE_KEYS = {
 
 /**
  * Get a prefixed AJAX action name
- * Usage: getAjaxAction('save_galleries') → 'kindpdfg_action'
+ * Usage: getAjaxAction('save_settings') → 'nxevtcd_action'
  */
 export const AJAX_ACTION = `${PLUGIN_PREFIX}_action`;
 
@@ -201,7 +201,7 @@ export const AJAX_FREEMIUS_CHECK = `${PLUGIN_PREFIX}_freemius_check`;
 
 /**
  * Get a prefixed CSS class
- * Usage: getCssClass('admin-page') → 'kindpdfg-admin-page'
+ * Usage: getCssClass('admin-page') → 'nxevtcd-admin-page'
  */
 export const getCssClass = (className: string): string => {
   return `${PLUGIN_PREFIX}-${className}`;

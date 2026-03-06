@@ -41,14 +41,14 @@ const SettingsProposal3 = ({ settings, onSettingsChange }: SettingsProposal3Prop
   const handleSave = async () => {
     onSettingsChange(localSettings);
     try {
-      const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+      const wp = (window as any).nxevtcdData;
       const urlParams = new URLSearchParams(window.location.search);
       const ajaxUrl = wp?.ajaxUrl || urlParams.get('ajax');
       const nonce = wp?.nonce || urlParams.get('nonce') || '';
 
       if (ajaxUrl && nonce) {
         const form = new FormData();
-        form.append('action', 'kindpdfg_action');
+        form.append('action', 'nxevtcd_action');
         form.append('action_type', 'save_settings');
         form.append('nonce', nonce);
         form.append('settings', JSON.stringify(localSettings));

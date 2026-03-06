@@ -8,7 +8,7 @@
  * ARCHITECTURE:
  * ┌─────────────────────────────────────────────────────────────────────────┐
  * │  1. Check dev mode (localStorage override for testing)                  │
- * │  2. Poll Freemius globals (window.kindpdfgData.fsIsPro)                │
+ * │  2. Poll Freemius globals (window.nxevtcdData.fsIsPro)                  │
  * │  3. Fallback to AJAX check if globals not available                     │
  * │  4. Handle license activation redirect flow                             │
  * │  5. Re-check on window focus (cross-tab activation)                     │
@@ -148,7 +148,7 @@ export const useLicense = (): LicenseInfo => {
           // Use a small delay to ensure the page has fully loaded before reloading
           setTimeout(() => {
             const nextUrl = new URL(window.location.href);
-            nextUrl.searchParams.set('kindpdfg_reload', String(now));
+            nextUrl.searchParams.set('nxevtcd_reload', String(now));
             // Force a hard reload to bypass any caching
             window.location.href = nextUrl.toString();
           }, 100);
