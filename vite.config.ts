@@ -19,16 +19,15 @@ const proBuildMarker = () => ({
       fs.writeFileSync(markerPath, 'pro');
       console.log('✓ Created .pro-build marker for Pro version');
       
-      // Update PHP header to show "PDF Gallery Pro" for Pro builds
+      // Update PHP header to show "Next Event Countdown Pro" for Pro builds
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
-        // Change plugin name to "PDF Gallery Pro" (remove KindPixels prefix)
         phpContent = phpContent.replace(
           /Plugin Name:\s*Next Event Countdown\s*$/m,
           'Plugin Name: Next Event Countdown Pro'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
-        console.log('✓ Updated plugin header to "PDF Gallery Pro"');
+        console.log('✓ Updated plugin header to "Next Event Countdown Pro"');
       }
     } else {
       // Ensure no marker exists for Free build
@@ -69,7 +68,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        // Use predictable filenames for WordPress integration
         entryFileNames: 'assets/index.js',
         chunkFileNames: 'assets/[name].js',
         assetFileNames: (assetInfo) => {
@@ -80,7 +78,6 @@ export default defineConfig(({ mode }) => ({
         }
       }
     },
-    // Copy public files to dist, but hidden files will be excluded by WordPress plugin check
     copyPublicDir: false
   }
 }));
