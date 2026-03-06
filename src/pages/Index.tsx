@@ -80,21 +80,21 @@ const Index = () => {
   const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(defaultCountdownConfig);
 
   useEffect(() => {
-    const wp = (typeof window !== 'undefined' && ((window as any).kindpdfgData || (window as any).wpPDFGallery)) ? ((window as any).kindpdfgData || (window as any).wpPDFGallery) : null;
+    const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
     
     // Debug: Reset galleries if ?reset_galleries=1 is present
     if (urlParams.get('reset_galleries') === '1') {
-      console.log('[PDF Gallery] Resetting galleries...');
+      console.log('[Next Event Countdown] Resetting galleries...');
       
       // Clear localStorage first
-      localStorage.removeItem('kindpdfg_backup');
-      localStorage.removeItem('kindpdfg_galleries');
+      localStorage.removeItem('nxevtcd_backup');
+      localStorage.removeItem('nxevtcd_galleries');
       
       // If in WordPress, also reset via AJAX
       if (wp?.ajaxUrl && wp?.nonce) {
         const form = new FormData();
-        form.append('action', 'kindpdfg_action');
+        form.append('action', 'nxevtcd_action');
         form.append('action_type', 'reset_galleries');
         form.append('nonce', wp.nonce);
         
@@ -129,7 +129,7 @@ const Index = () => {
     if (ajaxUrl && nonce) {
       // Fetch galleries from WordPress
       const form = new FormData();
-      form.append('action', 'kindpdfg_action');
+      form.append('action', 'nxevtcd_action');
       form.append('action_type', 'get_galleries');
       form.append('nonce', nonce);
       if (requestedGalleryName) { form.append('requested_gallery_name', requestedGalleryName); }
@@ -147,7 +147,7 @@ const Index = () => {
             if (galleries.length === 0) {
               // Try to restore from local backup if available
               try {
-                const backupRaw = localStorage.getItem('kindpdfg_backup');
+                const backupRaw = localStorage.getItem('nxevtcd_backup');
                 const backup = backupRaw ? JSON.parse(backupRaw) : null;
                 if (Array.isArray(backup) && backup.length > 0) {
                   // Ensure galleries have proper structure with names
@@ -160,7 +160,7 @@ const Index = () => {
                   
                   // Attempt server restore so it persists
                   const restoreForm = new FormData();
-                  restoreForm.append('action', 'kindpdfg_action');
+                  restoreForm.append('action', 'nxevtcd_action');
                   restoreForm.append('action_type', 'save_galleries');
                   restoreForm.append('nonce', nonce);
                   restoreForm.append('galleries', JSON.stringify(restoredGalleries));
@@ -185,10 +185,10 @@ const Index = () => {
                 currentGalleryId: 'test'
               });
               // Persist default test gallery on fresh install
-              try { localStorage.setItem('kindpdfg_backup', JSON.stringify([testGallery])); } catch {}
+              try { localStorage.setItem('nxevtcd_backup', JSON.stringify([testGallery])); } catch {}
               if (ajaxUrl && nonce) {
                 const saveForm = new FormData();
-                saveForm.append('action', 'kindpdfg_action');
+                saveForm.append('action', 'nxevtcd_action');
                 saveForm.append('action_type', 'save_galleries');
                 saveForm.append('nonce', nonce);
                 saveForm.append('galleries', JSON.stringify([testGallery]));
@@ -213,7 +213,7 @@ const Index = () => {
 
               // Server data is the source of truth - save to local backup
               try {
-                localStorage.setItem('kindpdfg_backup', JSON.stringify(galleries));
+                localStorage.setItem('nxevtcd_backup', JSON.stringify(galleries));
               } catch {}
               
               setGalleryState({
@@ -238,7 +238,7 @@ const Index = () => {
         .catch(() => {
           // Non-WP environment: try to restore from localStorage first
           try {
-            const backupRaw = localStorage.getItem('kindpdfg_backup');
+            const backupRaw = localStorage.getItem('nxevtcd_backup');
             const backup = backupRaw ? JSON.parse(backupRaw) : null;
             if (Array.isArray(backup) && backup.length > 0) {
               const restoredGalleries = backup.map((gallery: any) => ({
@@ -267,12 +267,12 @@ const Index = () => {
             currentGalleryId: 'test'
           });
           // Save default test gallery to localStorage
-          try { localStorage.setItem('kindpdfg_backup', JSON.stringify([testGallery])); } catch {}
+          try { localStorage.setItem('nxevtcd_backup', JSON.stringify([testGallery])); } catch {}
         });
 
       // Also fetch settings (needed for frontend visitors too)
       const settingsForm = new FormData();
-      settingsForm.append('action', 'kindpdfg_action');
+      settingsForm.append('action', 'nxevtcd_action');
       settingsForm.append('action_type', 'get_settings');
       settingsForm.append('nonce', nonce);
 
@@ -315,7 +315,7 @@ const Index = () => {
 
   // Fetch settings for the currently selected gallery (so "Current Gallery" scope persists)
   useEffect(() => {
-    const wp = (typeof window !== 'undefined' && ((window as any).kindpdfgData || (window as any).wpPDFGallery)) ? ((window as any).kindpdfgData || (window as any).wpPDFGallery) : null;
+    const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
     const ajaxUrl = wp?.ajaxUrl || urlParams.get('ajax');
     const nonce = wp?.nonce || urlParams.get('nonce') || '';
@@ -323,7 +323,7 @@ const Index = () => {
     if (!ajaxUrl || !nonce || !galleryState.currentGalleryId) return;
 
     const form = new FormData();
-    form.append('action', 'kindpdfg_action');
+    form.append('action', 'nxevtcd_action');
     form.append('action_type', 'get_settings');
     form.append('nonce', nonce);
     form.append('gallery_id', galleryState.currentGalleryId);
@@ -345,7 +345,7 @@ const Index = () => {
   const copyShortcode = async () => {
     const currentGallery = galleryState.galleries.find(g => g.id === galleryState.currentGalleryId);
     const galleryName = currentGallery?.name || 'main';
-    const shortcode = `[kindpdfg_gallery name="${galleryName.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`;
+    const shortcode = `[nxevtcd_countdown name="${galleryName.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`;
     try {
       await navigator.clipboard.writeText(shortcode);
       setShortcodeCopied(true);
@@ -370,7 +370,7 @@ const Index = () => {
 
   // Check if we should show admin interface (dev preview or WordPress admin)
   const urlParams = new URLSearchParams(window.location.search);
-  const wp = (typeof window !== 'undefined' && ((window as any).kindpdfgData || (window as any).wpPDFGallery)) ? ((window as any).kindpdfgData || (window as any).wpPDFGallery) : null;
+  const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
   const isWordPressAdmin = !!wp?.isAdmin || urlParams.get('admin') === 'true';
   const hostname = window.location.hostname;
   const isDevPreview = hostname.includes('lovable.app') || hostname.includes('lovableproject.com') || hostname === 'localhost';
@@ -607,7 +607,7 @@ const Index = () => {
                   <ExternalLink className="w-3 h-3" />
                 </a>
                 <a 
-                  href="https://wordpress.org/plugins/kindpixels-pdf-gallery/#reviews" 
+                  href="https://wordpress.org/plugins/next-event-countdown/#reviews" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
