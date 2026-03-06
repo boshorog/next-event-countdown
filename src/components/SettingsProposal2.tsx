@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2 } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
@@ -171,6 +171,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
   const sidebarItems = [
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
+    { id: 'size', label: 'Size Settings', icon: Maximize2 },
     { id: 'other', label: 'Other Settings', icon: Settings },
     ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
@@ -283,8 +284,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 </div>
               </div>
 
+            </CardContent>
+          </Card>
+        );
+
+      case 'size':
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Maximize2 className="w-5 h-5" />
+                Size Settings
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Adjust sizing for your countdown elements</p>
+            </CardHeader>
+            <CardContent className="space-y-6">
               {/* Header Scale */}
-              <div className="space-y-3 pt-4 border-t border-border">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <Label className="text-base font-medium">Header Size</Label>
