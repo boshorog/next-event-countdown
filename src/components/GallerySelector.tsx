@@ -87,7 +87,7 @@ export const GallerySelector = ({
     if (!BUILD_FLAGS.MULTI_GALLERY_UI || (!isPro && galleries.length >= 1)) {
       toast({
         title: "Pro Feature Required",
-        description: "Multiple countdowns require the Pro addon. Upgrade to Pro for unlimited countdowns.",
+        description: "Multiple counters require the Pro addon. Upgrade to Pro for unlimited counters.",
         variant: "destructive",
       });
       return;
