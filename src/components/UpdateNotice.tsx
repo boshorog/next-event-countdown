@@ -105,7 +105,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     
     // Pro users: go to plugins page (Freemius handles updates there)
     if (license.isPro) {
-      const pluginsUrl = window.location.origin + '/wp-admin/plugins.php#kindpixels-pdf-gallery';
+      const pluginsUrl = window.location.origin + '/wp-admin/plugins.php#next-event-countdown';
       window.location.href = pluginsUrl;
       return;
     }
@@ -115,7 +115,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     if (wpUpdates && typeof wpUpdates.updatePlugin === 'function') {
       // Use WordPress's built-in AJAX update mechanism
       wpUpdates.updatePlugin({
-        plugin: wpGlobal?.pluginBasename || 'kindpixels-pdf-gallery/kindpixels-pdf-gallery.php',
+        plugin: wpGlobal?.pluginBasename || 'next-event-countdown/next-event-countdown.php',
         slug: PLUGIN_SLUG,
         success: () => {
           setUpdating(false);
