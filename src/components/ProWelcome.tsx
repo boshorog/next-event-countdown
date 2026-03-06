@@ -26,11 +26,11 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
     const getWpGlobalSafe = () => {
       let wpGlobal: any = null;
       try {
-        wpGlobal = (window as any).kindpdfgData || (window as any).wpPDFGallery || null;
+        wpGlobal = (window as any).nxevtcdData || null;
       } catch {}
       if (!wpGlobal) {
         try {
-          wpGlobal = (window.parent && ((window.parent as any).kindpdfgData || (window.parent as any).wpPDFGallery)) || null;
+          wpGlobal = (window.parent && ((window.parent as any).nxevtcdData)) || null;
         } catch {}
       }
       return wpGlobal;
@@ -46,8 +46,8 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
     let dismissed: string | null = null;
     let shown: string | null = null;
     try {
-      dismissed = localStorage.getItem('kindpdfg_pro_welcome_dismissed');
-      shown = localStorage.getItem('kindpdfg_pro_welcome_shown');
+      dismissed = localStorage.getItem('nxevtcd_pro_welcome_dismissed');
+      shown = localStorage.getItem('nxevtcd_pro_welcome_shown');
     } catch {}
 
     // Has license activation params (coming from Freemius activation flow)
@@ -71,13 +71,13 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
       // so the welcome banner can show again (user might have dismissed it during a trial)
       if (hasLicenseParams) {
         try {
-          localStorage.removeItem('kindpdfg_pro_welcome_dismissed');
+          localStorage.removeItem('nxevtcd_pro_welcome_dismissed');
         } catch {}
       }
 
       // Mark as shown immediately (so even if user navigates away quickly it won't re-trigger)
       try {
-        localStorage.setItem('kindpdfg_pro_welcome_shown', '1');
+        localStorage.setItem('nxevtcd_pro_welcome_shown', '1');
       } catch {}
 
       setShouldRender(true);
@@ -89,7 +89,7 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
         let reloadAttempted = false;
         try {
           // useLicense stores a timestamp, not a boolean.
-          reloadAttempted = !!sessionStorage.getItem('kindpdfg_post_license_reload');
+          reloadAttempted = !!sessionStorage.getItem('nxevtcd_post_license_reload');
         } catch {
           // ignore
         }
@@ -131,8 +131,8 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
   const handleDismiss = () => {
     setIsVisible(false);
     try {
-      localStorage.setItem('kindpdfg_pro_welcome_dismissed', '1');
-      localStorage.setItem('kindpdfg_pro_welcome_shown', '1');
+      localStorage.setItem('nxevtcd_pro_welcome_dismissed', '1');
+      localStorage.setItem('nxevtcd_pro_welcome_shown', '1');
     } catch {}
     setTimeout(() => {
       setShouldRender(false);
@@ -145,18 +145,18 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
   const features = [
     {
       icon: Unlock,
-      title: 'Unlimited Galleries',
-      description: 'Create as many galleries as you need for different sections of your site.',
+      title: 'Multiple Counters',
+      description: 'Create counters for different locations and venues.',
     },
     {
       icon: Zap,
-      title: 'Batch Upload of Multiple Files',
-      description: 'Upload multiple files at once with drag & drop support.',
+      title: 'Counter Styles',
+      description: 'Choose from multiple countdown display styles.',
     },
     {
       icon: BarChart3,
-      title: 'File Analytics',
-      description: 'Track views and downloads for all your documents.',
+      title: 'Priority Support',
+      description: 'Get priority support for setup and customization.',
     },
   ];
 
@@ -187,7 +187,7 @@ const ProWelcome = ({ className = '', onDismiss }: ProWelcomeProps) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-foreground">Welcome to PDF Gallery Pro!</h2>
+              <h2 className="text-xl font-bold text-foreground">Welcome to Next Event Countdown Pro!</h2>
               <Sparkles className="w-5 h-5 text-amber-500" />
             </div>
             <p className="text-sm text-muted-foreground">

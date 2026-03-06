@@ -8,7 +8,7 @@
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: kindpixels-pdf-gallery
+ * Text Domain: next-event-countdown
  * Requires at least: 5.8
  * Tested up to: 6.9
  */
@@ -83,27 +83,27 @@ if ( ! function_exists( 'kindpdfg_fs' ) ) {
                 }
                 
                 $kindpdfg_fs_instance = fs_dynamic_init( array(
-                    'id'                => '20814',
-                    'slug'              => 'kindpixels-pdf-gallery',
-                    'premium_slug'      => 'kindpixels-pdf-gallery-pro',
-                    'premium_suffix'    => 'Pro',        // Adds "Pro" to plugin name in Freemius UI
+                    'id'                => '18355',
+                    'slug'              => 'next-event-countdown',
+                    'premium_slug'      => 'next-event-countdown-pro',
+                    'premium_suffix'    => 'Pro',
                     'type'              => 'plugin',
-                    'public_key'        => 'pk_349523fbf9f410023e4e5a4faa9b8',
+                    'public_key'        => 'pk_e49d0a3e59cc4e5f5f5d8e4a3c8e2',
                     'is_premium'        => $is_premium_build,
-                    'is_premium_only'   => false,        // Free version exists on WordPress.org
-                    'is_org_compliant'  => ! $is_premium_build, // Only free version is on WP.org
+                    'is_premium_only'   => false,
+                    'is_org_compliant'  => ! $is_premium_build,
                     'has_addons'        => false,
                     'has_paid_plans'    => true,
-                    'anonymous_mode'    => ! $is_premium_build, // Premium users opt-in
+                    'anonymous_mode'    => ! $is_premium_build,
                     'opt_in_moderation' => array(
                         'new'       => 0,
                         'updates'   => 0,
                         'localhost' => false,
                     ),
                     'menu'              => array(
-                        'slug'       => 'kindpixels-pdf-gallery',
-                        'first-path' => 'admin.php?page=kindpixels-pdf-gallery', // Redirect after activation
-                        'account'    => $is_premium_build,  // Show account page only for Pro
+                        'slug'       => 'next-event-countdown',
+                        'first-path' => 'admin.php?page=next-event-countdown',
+                        'account'    => $is_premium_build,
                         'support'    => false,
                     ),
                 ) );
@@ -145,7 +145,7 @@ function kindpdfg_after_license_change( $plan_change ) {
     
     // Redirect to plugin page with cache-bust parameter
     $redirect_url = add_query_arg( array(
-        'page'          => 'kindpixels-pdf-gallery',
+        'page'          => 'next-event-countdown',
         'license_updated' => time(),
     ), admin_url( 'admin.php' ) );
     
@@ -164,15 +164,14 @@ class KindPDFG_Plugin {
 
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        add_shortcode('kindpdfg_gallery', array($this, 'display_gallery_shortcode'));
+        add_shortcode('nxevtcd_countdown', array($this, 'display_gallery_shortcode'));
         
         // AJAX handlers
-        add_action('wp_ajax_kindpdfg_action', array($this, 'handle_kindpdfg_ajax'));
-        add_action('wp_ajax_nopriv_kindpdfg_action', array($this, 'handle_kindpdfg_ajax'));
-        add_action('wp_ajax_kindpdfg_upload_image', array($this, 'handle_kindpdfg_upload_image'));
-        add_action('wp_ajax_kindpdfg_freemius_check', array($this, 'handle_freemius_check'));
-        add_action('wp_ajax_kindpdfg_freemius_activate', array($this, 'handle_freemius_activate'));
-        add_action('wp_ajax_kindpdfg_freemius_deactivate', array($this, 'handle_freemius_deactivate'));
+        add_action('wp_ajax_nxevtcd_action', array($this, 'handle_kindpdfg_ajax'));
+        add_action('wp_ajax_nopriv_nxevtcd_action', array($this, 'handle_kindpdfg_ajax'));
+        add_action('wp_ajax_nxevtcd_freemius_check', array($this, 'handle_freemius_check'));
+        add_action('wp_ajax_nxevtcd_freemius_activate', array($this, 'handle_freemius_activate'));
+        add_action('wp_ajax_nxevtcd_freemius_deactivate', array($this, 'handle_freemius_deactivate'));
         
         // Script filter
         add_filter('script_loader_tag', array($this, 'modify_script_tag'), 10, 3);
@@ -199,11 +198,11 @@ class KindPDFG_Plugin {
         
         add_menu_page(
             '',                             // Empty page title (we use our own header)
-            'PDF Gallery',                  // Menu title (kept short for UX)
+            'Countdown',                    // Menu title
             'manage_options',               // Capability required
-            'kindpixels-pdf-gallery',       // Menu slug
+            'next-event-countdown',         // Menu slug
             array($this, 'render_admin_page'), // Callback function
-            $icon_base64,                   // Custom SVG icon (exact PDF Gallery logo)
+            $icon_base64,                   // Custom SVG icon
             100                            // Position (high number = bottom of menu)
         );
 
@@ -216,7 +215,7 @@ class KindPDFG_Plugin {
     public function hide_other_plugin_notices() {
         // Check if we're on the PDF Gallery admin page
         $screen = get_current_screen();
-        if (!$screen || strpos($screen->id, 'kindpixels-pdf-gallery') === false) {
+        if (!$screen || strpos($screen->id, 'next-event-countdown') === false) {
             return;
         }
         
@@ -280,12 +279,10 @@ class KindPDFG_Plugin {
      */
     public function enqueue_admin_scripts($hook_suffix) {
         // Only load on our admin page
-        if ($hook_suffix !== 'toplevel_page_kindpixels-pdf-gallery') {
+        if ($hook_suffix !== 'toplevel_page_next-event-countdown') {
             return;
         }
         
-        // Enqueue WordPress media library scripts (required for media library button)
-        wp_enqueue_media();
         
         // Get asset files dynamically
         $js_file = $this->get_asset_url('js');
@@ -389,9 +386,9 @@ class KindPDFG_Plugin {
             }
         }
         
-        wp_localize_script('kindpdfg-admin', 'kindpdfgData', array(
+        wp_localize_script('kindpdfg-admin', 'nxevtcdData', array(
             'isAdmin' => current_user_can('manage_options'),
-            'nonce' => wp_create_nonce('kindpdfg_nonce'),
+            'nonce' => wp_create_nonce('nxevtcd_nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'uploadsUrl' => isset($upload_dir['baseurl']) ? $upload_dir['baseurl'] : '',
             'fsAccountUrl' => $fs_account_url,
@@ -405,7 +402,7 @@ class KindPDFG_Plugin {
         ));
     }
     public function assets_not_found_notice() {
-        echo '<div class="notice notice-error"><p>PDF Gallery: Plugin assets not found. Please rebuild the plugin.</p></div>';
+        echo '<div class="notice notice-error"><p>Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
     }
     
     /**
@@ -413,7 +410,7 @@ class KindPDFG_Plugin {
      */
     public function render_admin_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'kindpixels-pdf-gallery'));
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'next-event-countdown'));
         }
         
         // Add body class for notice hiding CSS and hide the WordPress admin page title
@@ -432,12 +429,12 @@ public function display_gallery_shortcode($atts) {
     $atts = shortcode_atts(array(
         'show_admin' => 'false',
         'name' => ''
-    ), $atts, 'kindpdfg_gallery');
+    ), $atts, 'nxevtcd_countdown');
 
     // Build iframe URL to isolate styles from the host theme
     $index_url = plugins_url('dist/index.html', __FILE__);
-    $nonce = wp_create_nonce('kindpdfg_nonce');
-    $frame_token = function_exists('wp_generate_uuid4') ? wp_generate_uuid4() : uniqid('kindpdfg_', true);
+    $nonce = wp_create_nonce('nxevtcd_nonce');
+    $frame_token = function_exists('wp_generate_uuid4') ? wp_generate_uuid4() : uniqid('nxevtcd_', true);
     $admin = ($atts['show_admin'] === 'true' && current_user_can('manage_options')) ? 'true' : 'false';
     $ajax = admin_url('admin-ajax.php');
 
@@ -450,15 +447,15 @@ public function display_gallery_shortcode($atts) {
     ), $index_url);
 
     // Responsive iframe container with flexible height and no internal scrollbars (auto-resize via postMessage)
-    $iframe_id = 'kindpdfg-iframe-' . uniqid();
-    $html  = '<div class="kindpdfg-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
+    $iframe_id = 'nxevtcd-iframe-' . uniqid();
+    $html  = '<div class="nxevtcd-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
     $html .= '<style>
-    .kindpdfg-iframe-container{overflow:hidden!important;width:100%;position:relative;}
-    .kindpdfg-iframe-container iframe{display:block;width:100%!important;border:0!important;overflow:hidden!important;scrolling:no!important;-webkit-overflow-scrolling:auto!important;-ms-overflow-style:none!important;scrollbar-width:none!important;}
-    .kindpdfg-iframe-container iframe::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important;}
+    .nxevtcd-iframe-container{overflow:hidden!important;width:100%;position:relative;}
+    .nxevtcd-iframe-container iframe{display:block;width:100%!important;border:0!important;overflow:hidden!important;scrolling:no!important;-webkit-overflow-scrolling:auto!important;-ms-overflow-style:none!important;scrollbar-width:none!important;}
+    .nxevtcd-iframe-container iframe::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important;}
     @media (max-width:768px){
-      .kindpdfg-iframe-container{overflow:hidden!important; width:100%!important; max-width:100%!important; box-sizing:border-box!important; position:relative!important; left:0!important; right:0!important; margin-left:0!important; margin-right:0!important; padding-left:0!important; padding-right:0!important; transform:none!important;} 
-      .kindpdfg-iframe-container iframe{overflow:hidden!important;scrolling:no!important;width:100%!important;max-width:100%!important;margin:0!important;}
+      .nxevtcd-iframe-container{overflow:hidden!important; width:100%!important; max-width:100%!important; box-sizing:border-box!important; position:relative!important; left:0!important; right:0!important; margin-left:0!important; margin-right:0!important; padding-left:0!important; padding-right:0!important; transform:none!important;} 
+      .nxevtcd-iframe-container iframe{overflow:hidden!important;scrolling:no!important;width:100%!important;max-width:100%!important;margin:0!important;}
     }
     </style>';
     $html .= '<iframe id="' . esc_attr($iframe_id) . '" src="' . esc_url($src) . '" scrolling="no" loading="lazy" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-downloads" style="height:1px;min-height:1px;overflow:hidden;"></iframe>';
@@ -485,7 +482,7 @@ public function display_gallery_shortcode($atts) {
       // true fullscreen positioning.
       var originalParent = null;
       var originalNextSibling = null;
-      var placeholder = document.createComment("kindpdfg-fullscreen-placeholder");
+      var placeholder = document.createComment("nxevtcd-fullscreen-placeholder");
 
       // Mobile browsers (especially iOS Safari) often reload iframes when moved in the DOM.
       // Skip re-parenting entirely on mobile to avoid page refresh issues.
@@ -546,13 +543,13 @@ public function display_gallery_shortcode($atts) {
             isFullscreen = true;
 
             var shouldMove = hasTransformedAncestor(container);
-            container.setAttribute("data-kindpdfg-moved", shouldMove ? "1" : "0");
+            container.setAttribute("data-nxevtcd-moved", shouldMove ? "1" : "0");
             if(shouldMove) moveContainerToBody();
 
             lastScrollY = window.scrollY || window.pageYOffset || 0;
             heightBeforeFullscreen = iframe.style.height || "";
 
-            container.setAttribute("data-kindpdfg-fullscreen", "1");
+            container.setAttribute("data-nxevtcd-fullscreen", "1");
             container.style.position = "fixed";
             container.style.top = "0";
             container.style.left = "0";
@@ -590,7 +587,7 @@ public function display_gallery_shortcode($atts) {
             if(!isFullscreen) return;
             isFullscreen = false;
 
-            container.removeAttribute("data-kindpdfg-fullscreen");
+            container.removeAttribute("data-nxevtcd-fullscreen");
             container.setAttribute("style", originalContainerStyle);
             iframe.setAttribute("style", originalIframeStyle);
             if(heightBeforeFullscreen) iframe.style.height = heightBeforeFullscreen;
@@ -605,8 +602,8 @@ public function display_gallery_shortcode($atts) {
             document.body.style.width = "";
             document.body.style.top = "";
 
-            var wasMoved = container.getAttribute("data-kindpdfg-moved") === "1";
-            container.removeAttribute("data-kindpdfg-moved");
+            var wasMoved = container.getAttribute("data-nxevtcd-moved") === "1";
+            container.removeAttribute("data-nxevtcd-moved");
             if(wasMoved) restoreContainerFromBody();
 
             window.scrollTo(0, lastScrollY);
@@ -620,14 +617,14 @@ public function display_gallery_shortcode($atts) {
           var d = e.data;
           if(!d || d.token !== token) return;
 
-          if(d.type === "kindpdfg:height" && typeof d.height === "number"){
+          if(d.type === "nxevtcd:height" && typeof d.height === "number"){
             if(isFullscreen) return;
             var minH = 1;
             iframe.style.height = Math.max(d.height, minH) + "px";
           }
 
-          if(d.type === "kindpdfg:lightbox-open") setFullscreen(true);
-          if(d.type === "kindpdfg:lightbox-close") setFullscreen(false);
+          if(d.type === "nxevtcd:lightbox-open") setFullscreen(true);
+          if(d.type === "nxevtcd:lightbox-close") setFullscreen(false);
         }catch(err){}
       }
 
@@ -636,7 +633,7 @@ public function display_gallery_shortcode($atts) {
       // Trigger a height check after a short delay to avoid clipping
       setTimeout(function(){
         if(iframe && iframe.contentWindow){
-          iframe.contentWindow.postMessage({type:"kindpdfg:height-check", token: token}, "*");
+          iframe.contentWindow.postMessage({type:"nxevtcd:height-check", token: token}, "*");
         }
       }, 700);
     })();</script>';
@@ -758,14 +755,6 @@ public function display_gallery_shortcode($atts) {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
         
-        // Create upload directory if it doesn't exist
-        $upload_dir = wp_upload_dir();
-        if (isset($upload_dir['basedir'])) {
-            $pdf_gallery_dir = $upload_dir['basedir'] . '/kindpixels-pdf-gallery';
-            if (!file_exists($pdf_gallery_dir)) {
-                wp_mkdir_p($pdf_gallery_dir);
-            }
-        }
         
         // Set default options and version
         // Only create Test Gallery on fresh installs or if there's exactly one empty gallery
@@ -839,7 +828,7 @@ public function display_gallery_shortcode($atts) {
         }
         
         // Redirect to plugin page
-        wp_safe_redirect(admin_url('admin.php?page=kindpixels-pdf-gallery'));
+        wp_safe_redirect(admin_url('admin.php?page=next-event-countdown'));
         exit;
     }
     
@@ -880,7 +869,7 @@ public function display_gallery_shortcode($atts) {
         }
         
         // Add Dashboard link
-        $dashboard_link = '<a href="' . esc_url(admin_url('admin.php?page=kindpixels-pdf-gallery')) . '">Dashboard</a>';
+        $dashboard_link = '<a href="' . esc_url(admin_url('admin.php?page=next-event-countdown')) . '">Dashboard</a>';
         array_unshift($links, $dashboard_link);
         
         // Add our styled Upgrade link only if not Pro
@@ -892,7 +881,7 @@ public function display_gallery_shortcode($atts) {
             }
         }
         if (!$is_pro) {
-            $upgrade_link = '<a href="' . esc_url(admin_url('admin.php?page=kindpixels-pdf-gallery-pricing')) . '" style="font-weight:600;color:#d97706;">Upgrade to Pro!</a>';
+            $upgrade_link = '<a href="' . esc_url(admin_url('admin.php?page=next-event-countdown-pricing')) . '" style="font-weight:600;color:#d97706;">Upgrade to Pro!</a>';
             $links[] = $upgrade_link;
         }
         
@@ -926,7 +915,7 @@ public function display_gallery_shortcode($atts) {
      */
     public function handle_kindpdfg_ajax() {
         // Verify nonce for security
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'kindpdfg_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
             wp_die('Security check failed');
         }
         
@@ -946,12 +935,7 @@ public function display_gallery_shortcode($atts) {
             case 'get_settings':
                 $this->handle_get_settings();
                 break;
-            case 'upload_pdf':
-                $this->handle_upload_pdf();
-                break;
-            case 'upload_chunk':
-                $this->handle_upload_chunk();
-                break;
+            
             case 'get_galleries':
                 $this->handle_get_galleries();
                 break;
@@ -990,14 +974,14 @@ public function display_gallery_shortcode($atts) {
             /*
             $kindpdfg_freemius = fs_dynamic_init(array(
                 'id'                  => 'YOUR_FREEMIUS_ID', // Replace with your Freemius plugin ID
-                'slug'                => 'kindpixels-pdf-gallery',
+                'slug'                => 'next-event-countdown',
                 'type'                => 'plugin',
                 'public_key'          => 'YOUR_PUBLIC_KEY', // Replace with your public key
                 'is_premium'          => false,
                 'has_addons'          => false,
                 'has_paid_plans'      => true,
                 'menu'                => array(
-                    'slug'           => 'kindpixels-pdf-gallery',
+                    'slug'           => 'next-event-countdown',
                     'override_exact' => true,
                     'contact'        => false,
                     'support'        => false,
@@ -1013,7 +997,7 @@ public function display_gallery_shortcode($atts) {
      * Handle Freemius license check
      */
     public function handle_freemius_check() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'kindpdfg_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -1058,7 +1042,7 @@ public function display_gallery_shortcode($atts) {
      * Handle Freemius license activation
      */
     public function handle_freemius_activate() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'kindpdfg_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -1114,7 +1098,7 @@ public function display_gallery_shortcode($atts) {
                     $ts = time();
                     set_transient( 'kindpdfg_license_changed', $ts, 300 );
                     $redirect_url = add_query_arg( array(
-                        'page'             => 'kindpixels-pdf-gallery',
+                        'page'             => 'next-event-countdown',
                         'license_activated' => '1',
                         'license_updated'   => $ts,
                     ), admin_url( 'admin.php' ) );
@@ -1140,7 +1124,7 @@ public function display_gallery_shortcode($atts) {
      * Handle Freemius license deactivation
      */
     public function handle_freemius_deactivate() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'kindpdfg_nonce')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
             wp_die('Security check failed');
         }
 
@@ -1198,9 +1182,9 @@ public function display_gallery_shortcode($atts) {
         
         if (json_last_error() === JSON_ERROR_NONE && is_array($items)) {
             update_option('kindpdfg_data', $items);
-            wp_send_json_success('PDF gallery items saved successfully');
+            wp_send_json_success('Items saved successfully');
         } else {
-            wp_send_json_error('Invalid PDF gallery data');
+            wp_send_json_error('Invalid data');
         }
     }
     
@@ -1444,302 +1428,7 @@ public function display_gallery_shortcode($atts) {
         wp_send_json_success('Galleries reset successfully. Test Gallery will be re-seeded on next load.');
     }
 
-    private function handle_upload_chunk() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-        
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        if (!isset($_FILES['chunk'])) {
-            wp_send_json_error('No chunk uploaded');
-        }
-        
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        $upload_id = isset($_POST['upload_id']) ? sanitize_text_field(wp_unslash($_POST['upload_id'])) : '';
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        $chunk_index = isset($_POST['chunk_index']) ? intval($_POST['chunk_index']) : 0;
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        $total_chunks = isset($_POST['total_chunks']) ? intval($_POST['total_chunks']) : 1;
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        $filename = isset($_POST['filename']) ? sanitize_file_name(wp_unslash($_POST['filename'])) : 'upload';
-        
-        if (empty($upload_id)) {
-            wp_send_json_error('Missing upload ID');
-        }
-        
-        // Create temp directory for chunks
-        $upload_dir = wp_upload_dir();
-        $temp_dir = $upload_dir['basedir'] . '/kindpixels-pdf-gallery/temp/' . $upload_id;
-        
-        if (!file_exists($temp_dir)) {
-            wp_mkdir_p($temp_dir);
-        }
-        
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified in handle_pdf_gallery_ajax(), file validation handled below
-        $chunk_file = $_FILES['chunk'];
-        
-        // Save chunk to temp directory using WP_Filesystem
-        $chunk_path = $temp_dir . '/chunk_' . str_pad($chunk_index, 5, '0', STR_PAD_LEFT);
-        
-        // Initialize WP_Filesystem
-        global $wp_filesystem;
-        if ( empty( $wp_filesystem ) ) {
-            require_once ABSPATH . 'wp-admin/includes/file.php';
-            WP_Filesystem();
-        }
-        
-        // Read uploaded chunk content and write using WP_Filesystem
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Reading from PHP temp upload file
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        $chunk_content = file_get_contents($chunk_file['tmp_name']);
-        if ( false === $chunk_content || ! $wp_filesystem->put_contents( $chunk_path, $chunk_content, FS_CHMOD_FILE ) ) {
-            wp_send_json_error('Failed to save chunk');
-        }
-        
-        // Check if all chunks are uploaded
-        $uploaded_chunks = glob($temp_dir . '/chunk_*');
-        $chunks_count = count($uploaded_chunks);
-        
-        if ($chunks_count === $total_chunks) {
-            // All chunks received - reassemble the file
-            $final_path = $temp_dir . '/' . $filename;
-            
-            // Sort chunks and concatenate using WP_Filesystem
-            sort($uploaded_chunks);
-            $final_content = '';
-            foreach ($uploaded_chunks as $chunk) {
-                $final_content .= $wp_filesystem->get_contents($chunk);
-                wp_delete_file($chunk); // Clean up chunk using WP function
-            }
-            
-            if ( ! $wp_filesystem->put_contents( $final_path, $final_content, FS_CHMOD_FILE ) ) {
-                wp_send_json_error('Failed to create final file');
-            }
-            
-            // Move to WordPress uploads using standard upload handling
-            require_once(ABSPATH . 'wp-admin/includes/media.php');
-            require_once(ABSPATH . 'wp-admin/includes/image.php');
-            
-            // Get file type
-            $filetype = wp_check_filetype($filename);
-            $mime_type = $filetype['type'] ? $filetype['type'] : 'application/octet-stream';
-            
-            // Move to proper uploads location
-            $upload_file = wp_upload_bits($filename, null, $wp_filesystem->get_contents($final_path));
-            
-            // Clean up temp file and directory using WP functions
-            wp_delete_file($final_path);
-            $wp_filesystem->rmdir($temp_dir);
-            
-            if ($upload_file['error']) {
-                wp_send_json_error('Failed to finalize upload: ' . $upload_file['error']);
-            }
-            
-            // Create attachment
-            $attachment = array(
-                'post_mime_type' => $mime_type,
-                'post_title' => preg_replace('/\.[^.]+$/', '', $filename),
-                'post_content' => '',
-                'post_status' => 'inherit'
-            );
-            
-            $attachment_id = wp_insert_attachment($attachment, $upload_file['file']);
-            
-            if (is_wp_error($attachment_id)) {
-                wp_send_json_error('Failed to create attachment');
-            }
-            
-            $attachment_data = wp_generate_attachment_metadata($attachment_id, $upload_file['file']);
-            wp_update_attachment_metadata($attachment_id, $attachment_data);
-            
-            wp_send_json_success(array(
-                'complete' => true,
-                'url' => $upload_file['url'],
-                'attachment_id' => $attachment_id,
-                'filename' => $filename,
-                'chunks_received' => $chunks_count,
-                'total_chunks' => $total_chunks
-            ));
-        } else {
-            // More chunks expected
-            wp_send_json_success(array(
-                'complete' => false,
-                'chunk_index' => $chunk_index,
-                'chunks_received' => $chunks_count,
-                'total_chunks' => $total_chunks
-            ));
-        }
-    }
-
-    private function handle_upload_pdf() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-        
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_pdf_gallery_ajax()
-        if (!isset($_FILES['pdf_file'])) {
-            wp_send_json_error('No file uploaded');
-        }
-        
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified in handle_pdf_gallery_ajax(), file validation handled by wp_handle_upload()
-        $file = $_FILES['pdf_file'];
-        
-        $allowed_types = array(
-            // Documents
-            'application/pdf',
-            'application/msword',
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/vnd.ms-powerpoint',
-            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-            'application/vnd.ms-excel',
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            // OpenDocument formats
-            'application/vnd.oasis.opendocument.text',
-            'application/vnd.oasis.opendocument.spreadsheet',
-            'application/vnd.oasis.opendocument.presentation',
-            // Text formats
-            'application/rtf',
-            'text/rtf',
-            'text/plain',
-            'text/csv',
-            // Images
-            'image/jpeg',
-            'image/jpg',
-            'image/png',
-            'image/gif',
-            'image/webp',
-            'image/svg+xml',
-            'image/x-icon',
-            'image/vnd.microsoft.icon',
-            // Archives
-            'application/zip',
-            'application/x-zip-compressed',
-            'application/x-rar-compressed',
-            'application/vnd.rar',
-            'application/x-7z-compressed',
-            // eBooks
-            'application/epub+zip',
-            'application/x-mobipocket-ebook',
-            // Audio
-            'audio/mpeg',
-            'audio/mp3',
-            'audio/wav',
-            'audio/x-wav',
-            'audio/ogg',
-            // Video
-            'video/mp4',
-            'video/quicktime',
-            'video/webm',
-            'video/x-msvideo',
-            'video/avi',
-            'video/x-matroska',
-            'video/x-flv',
-            'video/x-ms-wmv',
-            'video/x-m4v',
-            'video/3gpp',
-            'video/3gpp2',
-            // Additional audio
-            'audio/x-m4a',
-            'audio/m4a',
-            'audio/flac',
-            'audio/aac',
-            'audio/x-aac'
-        );
-        if (!in_array($file['type'], $allowed_types, true)) {
-            wp_send_json_error('File type not allowed. Supported: documents, images, audio, video, archives, and eBooks.');
-        }
-        
-        // For non-chunked uploads, keep 100MB limit (chunked uploads handle larger files)
-        if ($file['size'] > 100 * 1024 * 1024) {
-            wp_send_json_error('File size too large. Maximum 100MB for direct upload. Use chunked upload for larger files.');
-        }
-        
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
-        require_once(ABSPATH . 'wp-admin/includes/media.php');
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-        
-        $upload_overrides = array('test_form' => false);
-        $uploaded_file = wp_handle_upload($file, $upload_overrides);
-        
-        if (isset($uploaded_file['error'])) {
-            wp_send_json_error($uploaded_file['error']);
-        }
-        
-        $attachment = array(
-            'post_mime_type' => $uploaded_file['type'],
-            'post_title' => preg_replace('/\.[^.]+$/', '', basename($uploaded_file['file'])),
-            'post_content' => '',
-            'post_status' => 'inherit'
-        );
-        
-        $attachment_id = wp_insert_attachment($attachment, $uploaded_file['file']);
-        
-        if (is_wp_error($attachment_id)) {
-            wp_send_json_error('Failed to create attachment');
-        }
-        
-        $attachment_data = wp_generate_attachment_metadata($attachment_id, $uploaded_file['file']);
-        wp_update_attachment_metadata($attachment_id, $attachment_data);
-        
-        wp_send_json_success(array(
-            'url' => $uploaded_file['url'],
-            'attachment_id' => $attachment_id,
-            'filename' => basename($uploaded_file['file'])
-        ));
-    }
-    
-    /**
-     * Handle image upload
-     */
-    public function handle_kindpdfg_upload_image() {
-        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'kindpdfg_nonce')) {
-            wp_die('Security check failed');
-        }
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-        if (!isset($_FILES['image_file'])) {
-            wp_send_json_error('No file uploaded');
-        }
-        
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File validation handled by wp_handle_upload()
-        $file = $_FILES['image_file'];
-        $allowed = array('image/jpeg','image/png','image/gif','image/webp','image/svg+xml');
-        if (!in_array($file['type'], $allowed, true)) {
-            wp_send_json_error('Only image files are allowed');
-        }
-        
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
-        require_once(ABSPATH . 'wp-admin/includes/media.php');
-        require_once(ABSPATH . 'wp-admin/includes/image.php');
-
-        $upload_overrides = array('test_form' => false);
-        $uploaded_file = wp_handle_upload($file, $upload_overrides);
-        if (isset($uploaded_file['error'])) {
-            wp_send_json_error($uploaded_file['error']);
-        }
-        
-        $attachment = array(
-            'post_mime_type' => $uploaded_file['type'],
-            'post_title' => preg_replace('/\.[^.]+$/', '', basename($uploaded_file['file'])),
-            'post_content' => '',
-            'post_status' => 'inherit'
-        );
-        
-        $attachment_id = wp_insert_attachment($attachment, $uploaded_file['file']);
-        if (is_wp_error($attachment_id)) {
-            wp_send_json_error('Failed to create attachment');
-        }
-        
-        $attachment_data = wp_generate_attachment_metadata($attachment_id, $uploaded_file['file']);
-        wp_update_attachment_metadata($attachment_id, $attachment_data);
-        
-        wp_send_json_success(array(
-            'url' => $uploaded_file['url'],
-            'attachment_id' => $attachment_id,
-            'filename' => basename($uploaded_file['file'])
-        ));
-    }
+    // Upload handlers removed - not needed for countdown plugin
 
     /**
      * Handle analytics tracking (Pro feature)

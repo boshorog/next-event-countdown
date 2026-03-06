@@ -6,12 +6,12 @@ const GalleryNotFound: React.FC = () => {
     <div className="flex flex-col items-center justify-center py-16 text-center">
       <img 
         src={logoSvg} 
-        alt="PDF Gallery" 
+        alt="Next Event Countdown" 
         className="w-16 h-16 mb-6 opacity-60"
       />
-      <h3 className="text-lg font-medium text-foreground mb-2">Gallery Not Found</h3>
+      <h3 className="text-lg font-medium text-foreground mb-2">Countdown Not Found</h3>
       <p className="text-sm text-muted-foreground max-w-md">
-        The requested gallery does not exist. It may have been renamed or deleted.
+        The requested countdown does not exist. It may have been renamed or deleted.
       </p>
     </div>
   );

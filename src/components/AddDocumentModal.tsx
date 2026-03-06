@@ -162,7 +162,7 @@ const AddDocumentModal = ({ isOpen, onClose, onAdd }: AddDocumentModalProps) => 
     uploadId: string, 
     totalChunks: number
   ): Promise<{ success: boolean; complete?: boolean; url?: string; error?: string }> => {
-    const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+    const wp = (window as any).nxevtcdData;
     
     const start = chunkIndex * CHUNK_SIZE;
     const end = Math.min(start + CHUNK_SIZE, file.size);
@@ -206,7 +206,7 @@ const AddDocumentModal = ({ isOpen, onClose, onAdd }: AddDocumentModalProps) => 
       xhr.onerror = () => resolve({ success: false, error: 'Network error' });
 
       const form = new FormData();
-      form.append('action', 'kindpdfg_action');
+      form.append('action', 'nxevtcd_action');
       form.append('action_type', 'upload_chunk');
       form.append('nonce', wp.nonce);
       form.append('chunk', chunk, file.name);

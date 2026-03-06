@@ -15,7 +15,7 @@
  * 6. Update BRANDING section (colors, links, credits)
  * 
  * IMPORTANT: After changing this file, also update:
- * - kindpixels-pdf-gallery.php → Search/replace the prefix
+ * - next-event-countdown.php → Search/replace the prefix
  * - readme.txt → Update plugin name and descriptions
  * - vite.config.ts → Update base path if slug changes
  * ============================================================================
@@ -122,10 +122,10 @@ export const BRANDING = {
   links: {
     website: 'https://kindpixels.dev',
     support: 'https://kindpixels.dev/support',
-    pricing: 'https://kindpixels.dev/plugins/pdf-gallery-pro',
-    documentation: 'https://kindpixels.dev/docs/pdf-gallery',
-    github: 'https://github.com/boshorog/pdf-gallery',
-    wordpressOrg: 'https://wordpress.org/plugins/kindpixels-pdf-gallery',
+    pricing: 'https://kindpixels.dev/plugins/next-event-countdown-pro',
+    documentation: 'https://kindpixels.dev/docs/next-event-countdown',
+    github: 'https://github.com/boshorog/next-event-countdown',
+    wordpressOrg: 'https://wordpress.org/plugins/next-event-countdown',
   },
 } as const;
 
