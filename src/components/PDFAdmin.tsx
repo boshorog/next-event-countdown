@@ -591,7 +591,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       xhr.onerror = () => resolve({ success: false, error: 'Network error' });
 
       const form = new FormData();
-      form.append('action', 'kindpdfg_action');
+      form.append('action', 'nxevtcd_action');
       form.append('action_type', 'upload_chunk');
       form.append('nonce', wp.nonce);
       form.append('chunk', chunk, file.name);
@@ -605,7 +605,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   };
 
   const uploadFileToWP = async (file: { file: File; title: string; subtitle: string; fileType: string }, index: number): Promise<string> => {
-    const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+    const wp = (window as any).nxevtcdData;
     
     // Fallback: simulate in non-WordPress environments
     if (!wp?.ajaxUrl || !wp?.nonce) {
@@ -677,7 +677,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       xhr.onerror = () => reject('Network error');
 
       const form = new FormData();
-      form.append('action', 'kindpdfg_action');
+      form.append('action', 'nxevtcd_action');
       form.append('action_type', 'upload_pdf');
       form.append('nonce', wp.nonce);
       form.append('pdf_file', file.file);
@@ -730,11 +730,11 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
       console.warn('Aborting save: empty galleries payload');
       return false;
     }
-    const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+    const wp = (window as any).nxevtcdData;
     if (wp?.ajaxUrl && wp?.nonce) {
       try {
         const form = new FormData();
-        form.append('action', 'kindpdfg_action');
+        form.append('action', 'nxevtcd_action');
         form.append('action_type', 'save_galleries');
         form.append('nonce', wp.nonce);
         form.append('galleries', JSON.stringify(updatedGalleries));
@@ -748,7 +748,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
         
         const data = await res.json();
         if (data?.success) {
-          try { localStorage.setItem('kindpdfg_backup', JSON.stringify(updatedGalleries)); } catch {}
+          try { localStorage.setItem('nxevtcd_backup', JSON.stringify(updatedGalleries)); } catch {}
         }
         return data?.success;
       } catch (error) {
@@ -758,7 +758,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
     }
     // Non-WP environment: persist to localStorage
     try { 
-      localStorage.setItem('kindpdfg_backup', JSON.stringify(updatedGalleries));
+      localStorage.setItem('nxevtcd_backup', JSON.stringify(updatedGalleries));
     } catch (e) {
       console.warn('Failed to save to localStorage:', e);
     }
@@ -1155,11 +1155,11 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
     setIsUploading(true);
 
     try {
-      const wp = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+      const wp = (window as any).nxevtcdData;
       
         if (wp?.ajaxUrl && wp?.nonce) {
           const formData = new FormData();
-          formData.append('action', 'kindpdfg_action');
+          formData.append('action', 'nxevtcd_action');
           formData.append('action_type', 'upload_pdf');
           formData.append('nonce', wp.nonce);
           formData.append('pdf_file', file);
@@ -1240,7 +1240,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
   const openWordPressMediaLibrary = () => {
     const wp = (window as any).wp;
-    const wpData = (window as any).kindpdfgData || (window as any).wpPDFGallery;
+    const wpData = (window as any).nxevtcdData;
     
     // Check if WordPress media library is available
     // wp.media is a function that needs to exist, not just wp object
@@ -1338,7 +1338,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
   const copyShortcode = async () => {
     const galleryName = currentGallery?.name || 'main';
-    const shortcode = `[kindpdfg_gallery name="${galleryName.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`;
+    const shortcode = `[nxevtcd_countdown name="${galleryName.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`;
     try {
       await navigator.clipboard.writeText(shortcode);
       setShortcodeCopied(true);
@@ -1380,7 +1380,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
     saveGalleriesToWP(updatedGalleries);
     
     // Show rename warning if user hasn't dismissed it 3 times yet
-    const dismissCount = parseInt(localStorage.getItem('kindpdfg_rename_warning_dismissed') || '0', 10);
+    const dismissCount = parseInt(localStorage.getItem('nxevtcd_rename_warning_dismissed') || '0', 10);
     if (dismissCount < 3) {
       setShowRenameWarning(true);
     }
@@ -1388,8 +1388,8 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
 
   const handleDismissRenameWarning = () => {
     setShowRenameWarning(false);
-    const currentCount = parseInt(localStorage.getItem('kindpdfg_rename_warning_dismissed') || '0', 10);
-    localStorage.setItem('kindpdfg_rename_warning_dismissed', String(currentCount + 1));
+    const currentCount = parseInt(localStorage.getItem('nxevtcd_rename_warning_dismissed') || '0', 10);
+    localStorage.setItem('nxevtcd_rename_warning_dismissed', String(currentCount + 1));
   };
 
   const handleGalleryDelete = (galleryId: string) => {
