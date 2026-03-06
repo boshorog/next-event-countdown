@@ -94,6 +94,9 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
 
     do_action( 'nxevtcd_fs_loaded' );
 
+    // Hook license change redirect
+    nxevtcd_fs()->add_action( 'after_license_change', 'nxevtcd_after_license_change' );
+
 }
 
 /**
@@ -107,7 +110,7 @@ function nxevtcd_after_license_change( $plan_change ) {
     set_transient( 'nxevtcd_license_changed', time(), 300 );
     
     $redirect_url = add_query_arg( array(
-        'page'          => 'next-event-countdown',
+        'page'          => 'next-event-countdown-manager',
         'license_updated' => time(),
     ), admin_url( 'admin.php' ) );
     
