@@ -17,7 +17,7 @@ serve(async (req) => {
     JSON.stringify({ 
       status: 'alive', 
       timestamp: new Date().toISOString(),
-      message: 'PDF Gallery Supabase project is active' 
+      message: 'Next Event Countdown Supabase project is active' 
     }),
     { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

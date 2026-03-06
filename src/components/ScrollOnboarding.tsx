@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 
 // Version-aware key so existing users see onboarding after plugin updates
-const STORAGE_KEY = "kindpdfg_scroll_onboarding_v2";
+const STORAGE_KEY = "nxevtcd_scroll_onboarding_v2";
 
 interface ScrollOnboardingProps {
   /** Whether the document has multiple pages (needs scrolling) */

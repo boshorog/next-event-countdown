@@ -4,7 +4,7 @@ import logoSvg from '@/assets/countdown-logo.svg';
 const GalleryNotFoundShowcase: React.FC = () => {
   return (
     <div className="p-8 space-y-12 bg-muted/30 min-h-screen">
-      <h1 className="text-2xl font-bold text-foreground mb-8">Gallery Not Found - Design Options</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-8">Countdown Not Found - Design Options</h1>
       
       {/* Option 1: Minimal Centered */}
       <div className="space-y-3">
@@ -14,12 +14,12 @@ const GalleryNotFoundShowcase: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <img 
               src={logoSvg} 
-              alt="PDF Gallery" 
+              alt="Next Event Countdown" 
               className="w-16 h-16 mb-6 opacity-60"
             />
-            <h3 className="text-lg font-medium text-foreground mb-2">Gallery Not Found</h3>
+            <h3 className="text-lg font-medium text-foreground mb-2">Countdown Not Found</h3>
             <p className="text-sm text-muted-foreground max-w-md">
-              The requested gallery does not exist. Please check the shortcode and try again.
+              The requested countdown does not exist. Please check the shortcode and try again.
             </p>
           </div>
         </div>
@@ -33,16 +33,16 @@ const GalleryNotFoundShowcase: React.FC = () => {
           <div className="flex items-start gap-6 p-6 bg-muted/40 border-l-4 border-primary/60 rounded-r-lg max-w-lg mx-auto">
             <img 
               src={logoSvg} 
-              alt="PDF Gallery" 
+              alt="Next Event Countdown" 
               className="w-12 h-12 flex-shrink-0"
             />
             <div>
-              <h3 className="text-base font-semibold text-foreground mb-1">Gallery Not Found</h3>
+              <h3 className="text-base font-semibold text-foreground mb-1">Countdown Not Found</h3>
               <p className="text-sm text-muted-foreground">
-                The gallery specified in your shortcode doesn't exist or may have been deleted.
+                The countdown specified in your shortcode doesn't exist or may have been deleted.
               </p>
               <code className="text-xs text-primary/80 bg-primary/10 px-2 py-1 rounded mt-3 inline-block">
-                [kindpdfg_gallery name="..."]
+                [nxevtcd_countdown name="..."]
               </code>
             </div>
           </div>
@@ -59,13 +59,13 @@ const GalleryNotFoundShowcase: React.FC = () => {
               <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
                 <img 
                   src={logoSvg} 
-                  alt="PDF Gallery" 
+                  alt="Next Event Countdown" 
                   className="w-8 h-8 opacity-50"
                 />
               </div>
-              <p className="text-muted-foreground font-medium">Gallery not found</p>
+              <p className="text-muted-foreground font-medium">Countdown not found</p>
               <p className="text-xs text-muted-foreground/70 mt-1">
-                Check that the gallery ID in your shortcode is correct
+                Check that the countdown name in your shortcode is correct
               </p>
             </div>
           </div>
@@ -81,16 +81,16 @@ const GalleryNotFoundShowcase: React.FC = () => {
             <div className="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center flex-shrink-0">
               <img 
                 src={logoSvg} 
-                alt="PDF Gallery" 
+                alt="Next Event Countdown" 
                 className="w-6 h-6"
               />
             </div>
             <div className="flex-1">
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                Gallery not found
+                Countdown not found
               </p>
               <p className="text-xs text-amber-700/80 dark:text-amber-300/70">
-                The gallery ID specified in the shortcode does not exist. Please verify your configuration.
+                The countdown name specified in the shortcode does not exist. Please verify your configuration.
               </p>
             </div>
           </div>

@@ -34,12 +34,12 @@ export interface DailyStats {
 
 const getWPContext = () => 
   typeof window !== 'undefined' 
-    ? ((window as any).kindpdfgData || (window as any).wpPDFGallery || (window as any).wpNewsletterGallery) 
+    ? (window as any).nxevtcdData 
     : undefined;
 
 // Get or create a visitor ID for tracking unique visitors
 export const getVisitorId = (): string => {
-  const key = 'kindpdfg_visitor_id';
+  const key = 'nxevtcd_visitor_id';
   let visitorId = localStorage.getItem(key);
   if (!visitorId) {
     visitorId = 'v_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
@@ -63,7 +63,7 @@ export const trackAnalyticsEvent = async (
   const visitorId = getVisitorId();
 
   const form = new FormData();
-  form.append('action', 'kindpdfg_action');
+  form.append('action', 'nxevtcd_action');
   form.append('action_type', 'track_analytics');
   form.append('nonce', wp.nonce);
   form.append('gallery_id', galleryId);
@@ -96,7 +96,7 @@ export const fetchAnalytics = async (galleryId: string): Promise<AnalyticsData |
   }
 
   const form = new FormData();
-  form.append('action', 'kindpdfg_action');
+  form.append('action', 'nxevtcd_action');
   form.append('action_type', 'get_analytics');
   form.append('nonce', wp.nonce);
   form.append('gallery_id', galleryId);

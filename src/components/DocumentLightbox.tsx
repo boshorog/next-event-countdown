@@ -322,21 +322,21 @@ const DocumentLightbox = ({
 
     if (isOpen) {
       // Fire multiple times with staggered delays to ensure parent receives message
-      post('kindpdfg:lightbox-open');
-      const t1 = window.setTimeout(() => post('kindpdfg:lightbox-open'), 50);
-      const t2 = window.setTimeout(() => post('kindpdfg:lightbox-open'), 150);
-      const t3 = window.setTimeout(() => post('kindpdfg:lightbox-open'), 300);
+      post('nxevtcd:lightbox-open');
+      const t1 = window.setTimeout(() => post('nxevtcd:lightbox-open'), 50);
+      const t2 = window.setTimeout(() => post('nxevtcd:lightbox-open'), 150);
+      const t3 = window.setTimeout(() => post('nxevtcd:lightbox-open'), 300);
       return () => {
         window.clearTimeout(t1);
         window.clearTimeout(t2);
         window.clearTimeout(t3);
-        post('kindpdfg:lightbox-close');
-        window.setTimeout(() => post('kindpdfg:lightbox-close'), 100);
+        post('nxevtcd:lightbox-close');
+        window.setTimeout(() => post('nxevtcd:lightbox-close'), 100);
       };
     }
 
-    post('kindpdfg:lightbox-close');
-    const t = window.setTimeout(() => post('kindpdfg:lightbox-close'), 100);
+    post('nxevtcd:lightbox-close');
+    const t = window.setTimeout(() => post('nxevtcd:lightbox-close'), 100);
     return () => window.clearTimeout(t);
   }, [isOpen]);
 
