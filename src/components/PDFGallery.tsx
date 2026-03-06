@@ -50,8 +50,8 @@ interface PDFGalleryProps {
 
 const PDFGallery = ({ 
   items = [], 
-  title = "PDF Gallery",
-  description = "Browse our collection of PDF documents",
+  title = "Document Gallery",
+  description = "Browse our collection of documents",
   galleryId = "default",
   showRatings = false,
   lightboxEnabled = false,

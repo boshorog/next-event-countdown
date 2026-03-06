@@ -98,9 +98,9 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     
     // Check if we have WordPress globals
     let wpGlobal: any = null;
-    try { wpGlobal = (window as any).kindpdfgData || (window as any).wpPDFGallery || null; } catch {}
+    try { wpGlobal = (window as any).nxevtcdData || null; } catch {}
     if (!wpGlobal) {
-      try { wpGlobal = (window.parent && ((window.parent as any).kindpdfgData || (window.parent as any).wpPDFGallery)) || null; } catch {}
+      try { wpGlobal = (window.parent && (window.parent as any).nxevtcdData) || null; } catch {}
     }
     
     // Pro users: go to plugins page (Freemius handles updates there)
