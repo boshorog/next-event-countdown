@@ -159,9 +159,8 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                 </thead>
                 <tbody>
                   <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
-                  <FeatureRow feature="Recurring Events" free="Unlimited" pro="Unlimited" />
-                  <FeatureRow feature="Special Events" free="Unlimited" pro="Unlimited" />
-                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
+                  <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                   <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
