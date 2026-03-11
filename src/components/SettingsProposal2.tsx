@@ -413,7 +413,10 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     { key: 'textColor', label: 'Header Text', placeholder: '#1a1a1a' },
                     { key: 'digitColor', label: 'Countdown Digits', placeholder: '#1a1a1a' },
                     { key: 'separatorColor', label: 'Separator (:)', placeholder: '#d4d4d4' },
-                    { key: 'labelColor', label: 'Unit Labels & Date', placeholder: '#737373' },
+                    { key: 'labelColor', label: 'Unit Labels', placeholder: '#737373' },
+                    { key: 'titleColor', label: 'Event Title', placeholder: '#737373' },
+                    { key: 'dateColor', label: 'Event Date', placeholder: '#737373' },
+                    { key: 'cardBgColor', label: 'Card / Block Fill', placeholder: '#f5f5f5' },
                   ].map(({ key, label, placeholder }) => (
                     <div key={key} className="space-y-2">
                       <Label className="text-sm">{label}</Label>
