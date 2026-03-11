@@ -51,7 +51,7 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-5">{p.eventTitle}</p>
-      <div className="grid grid-cols-4 gap-2 mb-4">
+      <div className="grid grid-cols-4 gap-2 mb-4 max-w-[320px] mx-auto">
         {units.map((u) => (
           <div key={u.l} className="bg-muted/60 rounded-xl py-3 text-center shadow-sm">
             <div className="text-2xl font-bold font-mono text-foreground">{pad(u.v)}</div>
