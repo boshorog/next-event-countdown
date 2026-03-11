@@ -95,6 +95,7 @@ export interface CountdownConfig {
   showTitle?: boolean;
   showDate?: boolean;
   borderRadius?: number;
+  fullWidth?: boolean;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
