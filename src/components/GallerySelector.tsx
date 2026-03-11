@@ -241,19 +241,6 @@ export const GallerySelector = ({
         {shortcodeCopied ? <Check className="h-3 w-3 text-green-500" /> : <Copy className="h-3 w-3" />}
       </Button>
 
-      {/* Analytics button - Pro only */}
-      {BUILD_FLAGS.ANALYTICS && isPro && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          aria-label="View Analytics"
-          title="View Analytics"
-          onClick={() => setIsAnalyticsOpen(true)}
-        >
-          <BarChart3 className="h-3 w-3" />
-        </Button>
-      )}
 
       {/* Add Gallery button - Pro only */}
       {BUILD_FLAGS.MULTI_GALLERY_UI && isPro && (
