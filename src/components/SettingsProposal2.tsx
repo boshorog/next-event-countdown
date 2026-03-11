@@ -124,7 +124,7 @@ const CounterStyleLivePreview = ({ config, Renderer }: { config: CountdownConfig
 const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, countdownConfig, onCountdownConfigChange }: SettingsProposal2Props) => {
   const config = countdownConfig || defaultCountdownConfig;
   const [localConfig, setLocalConfig] = useState<CountdownConfig>(config);
-  const [activeSection, setActiveSection] = useState('labels');
+  const [activeSection, setActiveSection] = useState('colors');
   const [saveScope, setSaveScope] = useState<'current' | 'all'>('current');
   const { toast } = useToast();
   const license = useLicense();
