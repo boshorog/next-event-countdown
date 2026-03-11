@@ -112,7 +112,7 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-border">
+    <div className="w-full rounded-2xl overflow-hidden">
       <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)` }}>
         <Icon className="w-4 h-4 text-white/90" />
         <span className="text-sm font-semibold text-white">{p.headerLabel}</span>
