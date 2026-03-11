@@ -18,7 +18,7 @@ export const ClassicRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 text-center border border-border bg-background">
+    <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center flex-wrap gap-2 mb-1">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}:</span>
@@ -45,13 +45,13 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 text-center bg-background border border-border">
+    <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center gap-2 mb-1">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-5">{p.eventTitle}</p>
-      <div className="grid grid-cols-4 gap-2 mb-4">
+      <div className="grid grid-cols-4 gap-2 mb-4 max-w-[320px] mx-auto">
         {units.map((u) => (
           <div key={u.l} className="bg-muted/60 rounded-xl py-3 text-center shadow-sm">
             <div className="text-2xl font-bold font-mono text-foreground">{pad(u.v)}</div>
@@ -61,39 +61,6 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       </div>
       <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
         <CalendarDays className="w-3 h-3" />
-        <span>{p.eventDate}</span>
-      </div>
-    </div>
-  );
-};
-
-// ─── Flip Clock ───
-export const FlipClockRenderer: React.FC<CounterStyleRenderProps> = (p) => {
-  const Icon = p.icon;
-  const units = getUnits(p);
-  return (
-    <div className="w-full rounded-2xl p-6 text-center" style={{ backgroundColor: '#18181b' }}>
-      <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 mb-1">
-        <Icon className="w-3.5 h-3.5" style={{ color: '#a78bfa' }} />
-        <span className="text-xs font-medium text-white/90">{p.headerLabel}</span>
-      </div>
-      <p className="text-xs text-white/50 italic mb-5">{p.eventTitle}</p>
-      <div className="flex items-center justify-center gap-2 mb-4">
-        {units.map((u, i) => (
-          <div key={u.l} className="flex items-center gap-2">
-            <div className="min-w-[44px]">
-              <div className="rounded-lg overflow-hidden" style={{ backgroundColor: '#27272a' }}>
-                <div className="px-2 pt-2 pb-0.5 text-xl font-bold font-mono text-center text-white" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{pad(u.v)}</div>
-                <div className="px-2 pt-0.5 pb-2 text-xl font-bold font-mono text-center text-white/80">{pad(u.v)}</div>
-              </div>
-              <div className="text-[8px] uppercase tracking-widest text-white/40 mt-1.5">{u.l}</div>
-            </div>
-            {i < 3 && <span className="text-white/20 text-lg font-light -mt-4">:</span>}
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-center gap-1.5 text-[11px] text-white/40">
-        <Clock className="w-3 h-3" />
         <span>{p.eventDate}</span>
       </div>
     </div>
@@ -112,7 +79,7 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const r = 34;
   const c = 2 * Math.PI * r;
   return (
-    <div className="w-full rounded-2xl p-6 text-center bg-background border border-border">
+    <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center gap-2 mb-0.5">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
@@ -145,7 +112,7 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-border">
+    <div className="w-full rounded-2xl overflow-hidden">
       <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)` }}>
         <Icon className="w-4 h-4 text-white/90" />
         <span className="text-sm font-semibold text-white">{p.headerLabel}</span>
@@ -171,7 +138,7 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 bg-background border border-border text-center">
+    <div className="w-full rounded-2xl p-6 bg-background text-center">
       <Icon className="w-6 h-6 mx-auto mb-2" style={{ color: p.iconColor }} />
       <h3 className="text-lg font-black text-foreground tracking-tight">{p.eventTitle}</h3>
       <p className="text-xs text-muted-foreground mb-5">{p.headerLabel} · {p.eventDate}</p>
@@ -221,27 +188,34 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 bg-background border border-border text-center">
-      <div className="flex items-center justify-center gap-2 mb-1">
-        <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
-        <span className="text-sm" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 600, color: 'inherit' }}>{p.headerLabel}</span>
-      </div>
-      <p className="text-xs italic text-muted-foreground mb-2">{p.eventTitle}</p>
-      <div className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground italic mb-4">
-        <CalendarDays className="w-3 h-3" />
-        <span>{p.eventDate}</span>
-      </div>
-      <div className="w-16 h-px bg-border mx-auto mb-4" />
-      <div className="flex items-center justify-center gap-5">
-        {units.map((u, i) => (
-          <div key={u.l} className="flex items-center gap-5">
-            <div className="text-center">
-              <div className="text-3xl font-light text-foreground" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>{pad(u.v)}</div>
-              <div className="text-[8px] tracking-[0.15em] text-muted-foreground italic mt-1">{u.l}</div>
-            </div>
-            {i < 3 && <div className="w-px h-10 bg-border/50" />}
+    <div className="w-full rounded-2xl p-6 bg-background">
+      <div className="flex items-center gap-8">
+        {/* Right-aligned header info */}
+        <div className="flex flex-col items-end text-right flex-shrink-0">
+          <div className="flex items-center gap-2 mb-1">
+            <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
+            <span className="text-sm" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 600, color: 'inherit' }}>{p.headerLabel}</span>
           </div>
-        ))}
+          <p className="text-xs italic text-muted-foreground mb-1">{p.eventTitle}</p>
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground italic">
+            <CalendarDays className="w-3 h-3" />
+            <span>{p.eventDate}</span>
+          </div>
+        </div>
+        {/* Divider */}
+        <div className="w-px h-16 bg-border/50 flex-shrink-0" />
+        {/* Counter */}
+        <div className="flex items-center gap-5 flex-1">
+          {units.map((u, i) => (
+            <div key={u.l} className="flex items-center gap-5">
+              <div className="text-center">
+                <div className="text-3xl font-light text-foreground" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>{pad(u.v)}</div>
+                <div className="text-[8px] tracking-[0.15em] text-muted-foreground italic mt-1">{u.l}</div>
+              </div>
+              {i < 3 && <div className="w-px h-10 bg-border/50" />}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -251,7 +225,6 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
 export const STYLE_RENDERERS: Record<string, React.FC<CounterStyleRenderProps>> = {
   default: ClassicRenderer,
   cards: CardBlocksRenderer,
-  flip: FlipClockRenderer,
   circles: RadialRenderer,
   gradient: GradientGlassRenderer,
   bold: BoldStackRenderer,

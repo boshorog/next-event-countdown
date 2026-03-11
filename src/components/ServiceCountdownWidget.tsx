@@ -95,6 +95,7 @@ export interface CountdownConfig {
   showTitle?: boolean;
   showDate?: boolean;
   borderRadius?: number;
+  fullWidth?: boolean;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -418,7 +419,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
 
   return (
     <div
-      className="w-full p-8 text-center"
+      className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} p-8 text-center`}
       style={{
         backgroundColor: config.bgColor,
         border: config.showBorder ? '1px solid #e5e7eb' : 'none',

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3 } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
@@ -124,7 +124,7 @@ const CounterStyleLivePreview = ({ config, Renderer }: { config: CountdownConfig
 const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, countdownConfig, onCountdownConfigChange }: SettingsProposal2Props) => {
   const config = countdownConfig || defaultCountdownConfig;
   const [localConfig, setLocalConfig] = useState<CountdownConfig>(config);
-  const [activeSection, setActiveSection] = useState('colors');
+  const [activeSection, setActiveSection] = useState(BUILD_FLAGS.COUNTER_STYLES ? 'counter-styles' : 'colors');
   const [saveScope, setSaveScope] = useState<'current' | 'all'>('current');
   const { toast } = useToast();
   const license = useLicense();
@@ -169,11 +169,11 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
   };
 
   const sidebarItems = [
+    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: LayoutGrid, pro: true }] : []),
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'size', label: 'Counter Size', icon: Maximize2 },
     { id: 'other', label: 'Other Settings', icon: Settings },
-    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
 
   const renderContent = () => {
@@ -497,6 +497,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <Checkbox 
                   checked={localConfig.showDate !== false}
                   onCheckedChange={(checked) => updateConfig({ showDate: checked === true })}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* Full Width */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Rows3 className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Full Width</Label>
+                    <p className="text-xs text-muted-foreground">Stretch the widget to fill its container, or wrap around content</p>
+                  </div>
+                </div>
+                <Checkbox 
+                  checked={localConfig.fullWidth !== false}
+                  onCheckedChange={(checked) => updateConfig({ fullWidth: checked === true })}
                 />
               </div>
 

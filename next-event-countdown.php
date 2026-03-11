@@ -3,7 +3,7 @@
  * Plugin Name: Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: Beautiful countdown timer widget for WordPress events and services.
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.0.2' );
+define( 'NXEVTCD_VERSION', '1.0.3' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
