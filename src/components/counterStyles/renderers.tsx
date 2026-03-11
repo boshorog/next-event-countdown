@@ -138,7 +138,7 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 bg-background border border-border text-center">
+    <div className="w-full rounded-2xl p-6 bg-background text-center">
       <Icon className="w-6 h-6 mx-auto mb-2" style={{ color: p.iconColor }} />
       <h3 className="text-lg font-black text-foreground tracking-tight">{p.eventTitle}</h3>
       <p className="text-xs text-muted-foreground mb-5">{p.headerLabel} · {p.eventDate}</p>
