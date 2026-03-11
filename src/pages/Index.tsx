@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import { isDevPreview } from '@/config/pluginIdentity';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,8 +28,8 @@ import { PLUGIN_VERSION } from '@/config/pluginIdentity';
 import { Gallery, GalleryItem, GalleryState } from '@/types/gallery';
 import countdownLogo from '@/assets/countdown-logo.svg';
 
-// DevLicenseSelector is lazy-loaded only in dev environments to exclude from production builds
-const DevLicenseSelector = import.meta.env.DEV 
+const IS_DEV_PREVIEW = isDevPreview();
+const DevLicenseSelector = IS_DEV_PREVIEW
   ? lazy(() => import('@/components/DevLicenseSelector').then(m => ({ default: m.DevLicenseSelector })))
   : null;
 
@@ -632,7 +633,7 @@ const Index = () => {
       </div>
 
       {/* Dev Mode Selector - only in dev preview, excluded from production builds */}
-      {import.meta.env.DEV && license.isDevMode && DevLicenseSelector && (
+      {IS_DEV_PREVIEW && license.isDevMode && DevLicenseSelector && (
         <Suspense fallback={null}>
           <DevLicenseSelector />
         </Suspense>

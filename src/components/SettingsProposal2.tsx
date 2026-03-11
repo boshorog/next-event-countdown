@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2 } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
@@ -124,7 +124,7 @@ const CounterStyleLivePreview = ({ config, Renderer }: { config: CountdownConfig
 const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, countdownConfig, onCountdownConfigChange }: SettingsProposal2Props) => {
   const config = countdownConfig || defaultCountdownConfig;
   const [localConfig, setLocalConfig] = useState<CountdownConfig>(config);
-  const [activeSection, setActiveSection] = useState('labels');
+  const [activeSection, setActiveSection] = useState('colors');
   const [saveScope, setSaveScope] = useState<'current' | 'all'>('current');
   const { toast } = useToast();
   const license = useLicense();
@@ -169,9 +169,9 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
   };
 
   const sidebarItems = [
-    { id: 'labels', label: 'Labels', icon: Type },
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
-    { id: 'size', label: 'Size Settings', icon: Maximize2 },
+    { id: 'labels', label: 'Labels', icon: Type },
+    { id: 'size', label: 'Counter Size', icon: Maximize2 },
     { id: 'other', label: 'Other Settings', icon: Settings },
     ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
@@ -188,13 +188,14 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </CardTitle>
               <p className="text-sm text-muted-foreground">Customize all text displayed on the countdown widget</p>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
               {/* Header Labels */}
-              <div className="space-y-4">
-                <Label className="text-base font-medium">Header Labels</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="headerLabel" className="text-sm">Before Event (countdown)</Label>
+              <div className="space-y-1.5">
+                <Label className="text-base font-semibold">Header Labels</Label>
+                <p className="text-sm text-muted-foreground mb-4">Text shown in the header area of the countdown</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="headerLabel" className="text-sm font-medium">Before Event (countdown)</Label>
                     <Input
                       id="headerLabel"
                       value={localConfig.headerLabel}
@@ -203,8 +204,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     />
                     <p className="text-xs text-muted-foreground">Shown while counting down to the next event</p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="liveLabel" className="text-sm">During Event (live)</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="liveLabel" className="text-sm font-medium">During Event (live)</Label>
                     <Input
                       id="liveLabel"
                       value={localConfig.liveLabel}
@@ -217,9 +218,9 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </div>
 
               {/* Date Format */}
-              <div className="space-y-3 pt-4 border-t border-border">
-                <Label className="text-base font-medium">Date Format</Label>
-                <p className="text-sm text-muted-foreground">Choose how the event date is displayed</p>
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Date Format</Label>
+                <p className="text-sm text-muted-foreground mb-4">Choose how the event date and time are displayed</p>
                 <div className="flex items-center gap-3">
                   <Select
                     value={localConfig.dateFormat || "us-long"}
@@ -267,11 +268,11 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </div>
 
               {/* Unit Labels */}
-              <div className="space-y-4 pt-4 border-t border-border">
-                <Label className="text-base font-medium">Countdown Unit Labels</Label>
-                <p className="text-sm text-muted-foreground">Customize the text below each digit group</p>
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Countdown Unit Labels</Label>
+                <p className="text-sm text-muted-foreground mb-4">Customize the text below each digit group</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelDays" className="text-sm">Days</Label>
                     <Input
                       id="labelDays"
@@ -280,7 +281,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Days"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelHours" className="text-sm">Hours</Label>
                     <Input
                       id="labelHours"
@@ -289,7 +290,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Hours"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelMinutes" className="text-sm">Minutes</Label>
                     <Input
                       id="labelMinutes"
@@ -298,7 +299,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Minutes"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelSeconds" className="text-sm">Seconds</Label>
                     <Input
                       id="labelSeconds"
@@ -320,17 +321,16 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Maximize2 className="w-5 h-5" />
-                Size Settings
+                Counter Size
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Adjust sizing for your countdown elements</p>
+              <p className="text-sm text-muted-foreground">Scale the entire countdown widget proportionally</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Header Scale */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Header Size</Label>
-                    <p className="text-sm text-muted-foreground">Scale the header text and icon</p>
+                    <Label className="text-base font-medium">Counter Scale</Label>
+                    <p className="text-sm text-muted-foreground">Resize header, digits, labels, and spacing together</p>
                   </div>
                   <span className="text-sm font-medium text-primary">{Math.round((localConfig.headerScale ?? 1) * 100)}%</span>
                 </div>
@@ -450,7 +450,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </CardTitle>
               <p className="text-sm text-muted-foreground">Additional display options for the countdown</p>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-5">
               {/* Border Toggle */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -463,6 +463,64 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <Checkbox 
                   checked={localConfig.showBorder}
                   onCheckedChange={(checked) => updateConfig({ showBorder: checked === true })}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* Show Event Title */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Type className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Show Event Title</Label>
+                    <p className="text-xs text-muted-foreground">Display the name of the upcoming event</p>
+                  </div>
+                </div>
+                <Checkbox 
+                  checked={localConfig.showTitle !== false}
+                  onCheckedChange={(checked) => updateConfig({ showTitle: checked === true })}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* Show Date */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Show Event Date</Label>
+                    <p className="text-xs text-muted-foreground">Display the date & time in the header</p>
+                  </div>
+                </div>
+                <Checkbox 
+                  checked={localConfig.showDate !== false}
+                  onCheckedChange={(checked) => updateConfig({ showDate: checked === true })}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* Rounded Corners */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Maximize2 className="w-4 h-4 text-muted-foreground" />
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">Corner Radius</Label>
+                      <p className="text-xs text-muted-foreground">Adjust the roundness of the widget corners</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-primary">{localConfig.borderRadius ?? 16}px</span>
+                </div>
+                <Slider
+                  value={[localConfig.borderRadius ?? 16]}
+                  onValueChange={(v) => updateConfig({ borderRadius: v[0] })}
+                  min={0}
+                  max={32}
+                  step={2}
+                  className="w-full"
                 />
               </div>
             </CardContent>
