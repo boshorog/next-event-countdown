@@ -169,11 +169,11 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
   };
 
   const sidebarItems = [
+    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: LayoutGrid, pro: true }] : []),
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'size', label: 'Counter Size', icon: Maximize2 },
     { id: 'other', label: 'Other Settings', icon: Settings },
-    ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: Frame, pro: true }] : []),
   ];
 
   const renderContent = () => {
