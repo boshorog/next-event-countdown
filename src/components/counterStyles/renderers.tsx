@@ -225,7 +225,6 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
 export const STYLE_RENDERERS: Record<string, React.FC<CounterStyleRenderProps>> = {
   default: ClassicRenderer,
   cards: CardBlocksRenderer,
-  flip: FlipClockRenderer,
   circles: RadialRenderer,
   gradient: GradientGlassRenderer,
   bold: BoldStackRenderer,
