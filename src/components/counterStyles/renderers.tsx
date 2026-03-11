@@ -67,39 +67,6 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   );
 };
 
-// ─── Flip Clock ───
-export const FlipClockRenderer: React.FC<CounterStyleRenderProps> = (p) => {
-  const Icon = p.icon;
-  const units = getUnits(p);
-  return (
-    <div className="w-full rounded-2xl p-6 text-center" style={{ backgroundColor: '#18181b' }}>
-      <div className="inline-flex items-center gap-2 bg-white/10 rounded-full px-3 py-1 mb-1">
-        <Icon className="w-3.5 h-3.5" style={{ color: '#a78bfa' }} />
-        <span className="text-xs font-medium text-white/90">{p.headerLabel}</span>
-      </div>
-      <p className="text-xs text-white/50 italic mb-5">{p.eventTitle}</p>
-      <div className="flex items-center justify-center gap-2 mb-4">
-        {units.map((u, i) => (
-          <div key={u.l} className="flex items-center gap-2">
-            <div className="min-w-[44px]">
-              <div className="rounded-lg overflow-hidden" style={{ backgroundColor: '#27272a' }}>
-                <div className="px-2 pt-2 pb-0.5 text-xl font-bold font-mono text-center text-white" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{pad(u.v)}</div>
-                <div className="px-2 pt-0.5 pb-2 text-xl font-bold font-mono text-center text-white/80">{pad(u.v)}</div>
-              </div>
-              <div className="text-[8px] uppercase tracking-widest text-white/40 mt-1.5">{u.l}</div>
-            </div>
-            {i < 3 && <span className="text-white/20 text-lg font-light -mt-4">:</span>}
-          </div>
-        ))}
-      </div>
-      <div className="flex items-center justify-center gap-1.5 text-[11px] text-white/40">
-        <Clock className="w-3 h-3" />
-        <span>{p.eventDate}</span>
-      </div>
-    </div>
-  );
-};
-
 // ─── Radial Progress ───
 export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
