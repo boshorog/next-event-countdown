@@ -51,10 +51,10 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-5">{p.eventTitle}</p>
-      <div className="grid grid-cols-4 gap-2 mb-4 max-w-[320px] mx-auto">
+      <div className="grid grid-cols-4 gap-2 mb-4 max-w-[280px] mx-auto">
         {units.map((u) => (
-          <div key={u.l} className="bg-muted/60 rounded-xl py-3 text-center shadow-sm">
-            <div className="text-2xl font-bold font-mono text-foreground">{pad(u.v)}</div>
+          <div key={u.l} className="bg-muted/60 rounded-xl py-3 flex flex-col items-center justify-center shadow-sm">
+            <div className="text-2xl font-bold font-mono text-foreground tabular-nums">{pad(u.v)}</div>
             <div className="text-[8px] uppercase tracking-[0.15em] text-muted-foreground mt-1">{u.l}</div>
           </div>
         ))}
@@ -112,7 +112,7 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden">
+    <div className="w-full rounded-2xl overflow-hidden border border-border">
       <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)` }}>
         <Icon className="w-4 h-4 text-white/90" />
         <span className="text-sm font-semibold text-white">{p.headerLabel}</span>
@@ -188,7 +188,7 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 bg-background">
+    <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center">
       <div className="flex items-center gap-8">
         {/* Right-aligned header info */}
         <div className="flex flex-col items-end text-right flex-shrink-0">

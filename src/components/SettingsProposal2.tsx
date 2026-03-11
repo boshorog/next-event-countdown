@@ -413,7 +413,10 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     { key: 'textColor', label: 'Header Text', placeholder: '#1a1a1a' },
                     { key: 'digitColor', label: 'Countdown Digits', placeholder: '#1a1a1a' },
                     { key: 'separatorColor', label: 'Separator (:)', placeholder: '#d4d4d4' },
-                    { key: 'labelColor', label: 'Unit Labels & Date', placeholder: '#737373' },
+                    { key: 'labelColor', label: 'Unit Labels', placeholder: '#737373' },
+                    { key: 'titleColor', label: 'Event Title', placeholder: '#737373' },
+                    { key: 'dateColor', label: 'Event Date', placeholder: '#737373' },
+                    { key: 'cardBgColor', label: 'Card / Block Fill', placeholder: '#f5f5f5' },
                   ].map(({ key, label, placeholder }) => (
                     <div key={key} className="space-y-2">
                       <Label className="text-sm">{label}</Label>
@@ -547,7 +550,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
       case 'counter-styles': {
         const currentStyle = localConfig.counterStyle || 'default';
         return (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-3">
             {COUNTER_STYLE_OPTIONS.map((style) => {
               const isSelected = currentStyle === style.id;
               const Renderer = STYLE_RENDERERS[style.id];
@@ -555,11 +558,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <button
                   key={style.id}
                   onClick={() => updateConfig({ counterStyle: style.id })}
-                  className={`relative w-full text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+                  className={`relative w-full text-left rounded-xl border-2 p-4 transition-all hover:shadow-md flex flex-col ${
                     isSelected
                       ? 'border-primary bg-primary/5 shadow-md'
                       : 'border-border hover:border-primary/30 bg-card'
                   }`}
+                  style={{ minHeight: 180 }}
                 >
                   {isSelected && (
                     <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center z-10">
@@ -575,7 +579,9 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     )}
                     <span className="text-xs text-muted-foreground ml-auto mr-6">{style.description}</span>
                   </div>
-                  {Renderer && <CounterStyleLivePreview config={localConfig} Renderer={Renderer} />}
+                  <div className="flex-1 flex items-center">
+                    {Renderer && <div className="w-full"><CounterStyleLivePreview config={localConfig} Renderer={Renderer} /></div>}
+                  </div>
                 </button>
               );
             })}

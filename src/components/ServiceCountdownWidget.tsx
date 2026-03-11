@@ -88,6 +88,9 @@ export interface CountdownConfig {
   digitColor: string;
   separatorColor: string;
   labelColor: string;
+  titleColor?: string;
+  dateColor?: string;
+  cardBgColor?: string;
   showBorder: boolean;
   headerScale: number;
   counterStyle?: string;
