@@ -414,25 +414,35 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
     );
   }
 
+  const radius = config.borderRadius ?? 16;
+
   return (
     <div
-      className="w-full rounded-2xl p-8 text-center"
-      style={{ backgroundColor: config.bgColor, border: config.showBorder ? '1px solid #e5e7eb' : 'none' }}
+      className="w-full p-8 text-center"
+      style={{
+        backgroundColor: config.bgColor,
+        border: config.showBorder ? '1px solid #e5e7eb' : 'none',
+        borderRadius: `${radius}px`,
+        transform: `scale(${hs})`,
+        transformOrigin: 'top center',
+      }}
     >
       {/* Header */}
-      <div className="flex items-center justify-center flex-wrap" style={{ gap: `${Math.round(10 * hs)}px`, marginBottom: '6px' }}>
-        <Icon style={{ color: config.iconColor, width: `${Math.round(28 * hs)}px`, height: `${Math.round(28 * hs)}px` }} />
-        <span className="font-semibold" style={{ color: config.textColor, fontSize: `${Math.round(18 * hs)}px` }}>
+      <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px' }}>
+        <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
+        <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
           {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
         </span>
-        <span style={{ color: config.labelColor, fontSize: `${Math.round(18 * hs)}px` }}>
-          {t.fullDate}
-        </span>
+        {config.showDate !== false && (
+          <span style={{ color: config.labelColor, fontSize: '18px' }}>
+            {t.fullDate}
+          </span>
+        )}
       </div>
 
       {/* Service title */}
-      {t.title && (
-        <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: `${Math.round(18 * hs)}px` }}>
+      {config.showTitle !== false && t.title && (
+        <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px' }}>
           {t.title}
         </p>
       )}
