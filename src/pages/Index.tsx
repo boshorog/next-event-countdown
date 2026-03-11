@@ -542,7 +542,9 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <ServiceCountdownWidget config={countdownConfig} />
+              <div style={{ overflow: 'hidden', height: `${Math.ceil(200 * (countdownConfig.headerScale ?? 1))}px` }}>
+                <ServiceCountdownWidget config={countdownConfig} />
+              </div>
             </TabsContent>
             
             <TabsContent value="gallery" className="mt-0">
