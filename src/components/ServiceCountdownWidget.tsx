@@ -92,6 +92,9 @@ export interface CountdownConfig {
   headerScale: number;
   counterStyle?: string;
   use24h?: boolean;
+  showTitle?: boolean;
+  showDate?: boolean;
+  borderRadius?: number;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
