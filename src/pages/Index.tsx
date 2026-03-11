@@ -28,8 +28,8 @@ import { PLUGIN_VERSION } from '@/config/pluginIdentity';
 import { Gallery, GalleryItem, GalleryState } from '@/types/gallery';
 import countdownLogo from '@/assets/countdown-logo.svg';
 
-// DevLicenseSelector is lazy-loaded only in dev environments to exclude from production builds
-const DevLicenseSelector = import.meta.env.DEV 
+// DevLicenseSelector is lazy-loaded only in dev/preview environments
+const DevLicenseSelector = isDevPreview()
   ? lazy(() => import('@/components/DevLicenseSelector').then(m => ({ default: m.DevLicenseSelector })))
   : null;
 
