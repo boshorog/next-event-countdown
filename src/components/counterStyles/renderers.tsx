@@ -188,7 +188,7 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 bg-background">
+    <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center">
       <div className="flex items-center gap-8">
         {/* Right-aligned header info */}
         <div className="flex flex-col items-end text-right flex-shrink-0">
