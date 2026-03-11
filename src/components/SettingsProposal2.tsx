@@ -188,13 +188,14 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </CardTitle>
               <p className="text-sm text-muted-foreground">Customize all text displayed on the countdown widget</p>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
               {/* Header Labels */}
-              <div className="space-y-4">
-                <Label className="text-base font-medium">Header Labels</Label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="headerLabel" className="text-sm">Before Event (countdown)</Label>
+              <div className="space-y-1.5">
+                <Label className="text-base font-semibold">Header Labels</Label>
+                <p className="text-sm text-muted-foreground mb-4">Text shown in the header area of the countdown</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="headerLabel" className="text-sm font-medium">Before Event (countdown)</Label>
                     <Input
                       id="headerLabel"
                       value={localConfig.headerLabel}
@@ -203,8 +204,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     />
                     <p className="text-xs text-muted-foreground">Shown while counting down to the next event</p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="liveLabel" className="text-sm">During Event (live)</Label>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="liveLabel" className="text-sm font-medium">During Event (live)</Label>
                     <Input
                       id="liveLabel"
                       value={localConfig.liveLabel}
@@ -217,9 +218,9 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </div>
 
               {/* Date Format */}
-              <div className="space-y-3 pt-4 border-t border-border">
-                <Label className="text-base font-medium">Date Format</Label>
-                <p className="text-sm text-muted-foreground">Choose how the event date is displayed</p>
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Date Format</Label>
+                <p className="text-sm text-muted-foreground mb-4">Choose how the event date and time are displayed</p>
                 <div className="flex items-center gap-3">
                   <Select
                     value={localConfig.dateFormat || "us-long"}
@@ -267,11 +268,11 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </div>
 
               {/* Unit Labels */}
-              <div className="space-y-4 pt-4 border-t border-border">
-                <Label className="text-base font-medium">Countdown Unit Labels</Label>
-                <p className="text-sm text-muted-foreground">Customize the text below each digit group</p>
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Countdown Unit Labels</Label>
+                <p className="text-sm text-muted-foreground mb-4">Customize the text below each digit group</p>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelDays" className="text-sm">Days</Label>
                     <Input
                       id="labelDays"
@@ -280,7 +281,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Days"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelHours" className="text-sm">Hours</Label>
                     <Input
                       id="labelHours"
@@ -289,7 +290,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Hours"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelMinutes" className="text-sm">Minutes</Label>
                     <Input
                       id="labelMinutes"
@@ -298,7 +299,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       placeholder="Minutes"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="labelSeconds" className="text-sm">Seconds</Label>
                     <Input
                       id="labelSeconds"
