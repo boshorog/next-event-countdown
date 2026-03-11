@@ -79,7 +79,7 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const r = 34;
   const c = 2 * Math.PI * r;
   return (
-    <div className="w-full rounded-2xl p-6 text-center bg-background border border-border">
+    <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center gap-2 mb-0.5">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
