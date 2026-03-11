@@ -633,7 +633,7 @@ const Index = () => {
       </div>
 
       {/* Dev Mode Selector - only in dev preview, excluded from production builds */}
-      {IS_DEV_PREVIEW && license.isDevMode && DevLicenseSelector && (
+      {IS_DEV_PREVIEW && DevLicenseSelector && (
         <Suspense fallback={null}>
           <DevLicenseSelector />
         </Suspense>

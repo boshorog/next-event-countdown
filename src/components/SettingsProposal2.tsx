@@ -550,7 +550,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
       case 'counter-styles': {
         const currentStyle = localConfig.counterStyle || 'default';
         return (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-3">
             {COUNTER_STYLE_OPTIONS.map((style) => {
               const isSelected = currentStyle === style.id;
               const Renderer = STYLE_RENDERERS[style.id];
@@ -558,11 +558,12 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <button
                   key={style.id}
                   onClick={() => updateConfig({ counterStyle: style.id })}
-                  className={`relative w-full text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+                  className={`relative w-full text-left rounded-xl border-2 p-4 transition-all hover:shadow-md flex flex-col ${
                     isSelected
                       ? 'border-primary bg-primary/5 shadow-md'
                       : 'border-border hover:border-primary/30 bg-card'
                   }`}
+                  style={{ minHeight: 180 }}
                 >
                   {isSelected && (
                     <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center z-10">
@@ -578,7 +579,9 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     )}
                     <span className="text-xs text-muted-foreground ml-auto mr-6">{style.description}</span>
                   </div>
-                  {Renderer && <CounterStyleLivePreview config={localConfig} Renderer={Renderer} />}
+                  <div className="flex-1 flex items-center">
+                    {Renderer && <div className="w-full"><CounterStyleLivePreview config={localConfig} Renderer={Renderer} /></div>}
+                  </div>
                 </button>
               );
             })}
