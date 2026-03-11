@@ -26,7 +26,6 @@ export interface CounterStyleRenderProps {
 export const COUNTER_STYLE_OPTIONS: CounterStyleOption[] = [
   { id: 'default', name: 'Classic', description: 'Clean header row with large digits and colon separators', pro: false },
   { id: 'cards', name: 'Card Blocks', description: 'Each countdown unit in its own elevated card with event info below', pro: true },
-  { id: 'flip', name: 'Flip Clock', description: 'Retro split-flap panels on a dark surface with header badge', pro: true },
   { id: 'circles', name: 'Radial Progress', description: 'Circular progress rings with centered event details', pro: true },
   { id: 'gradient', name: 'Gradient Glass', description: 'Frosted glass panels with gradient event header', pro: true },
   { id: 'bold', name: 'Bold Stack', description: 'Oversized stacked digits with prominent event title', pro: true },

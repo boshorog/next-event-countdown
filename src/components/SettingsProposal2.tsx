@@ -502,6 +502,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
 
               <div className="border-t border-border" />
 
+              {/* Full Width */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Rows3 className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Full Width</Label>
+                    <p className="text-xs text-muted-foreground">Stretch the widget to fill its container, or wrap around content</p>
+                  </div>
+                </div>
+                <Checkbox 
+                  checked={localConfig.fullWidth !== false}
+                  onCheckedChange={(checked) => updateConfig({ fullWidth: checked === true })}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
               {/* Rounded Corners */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
