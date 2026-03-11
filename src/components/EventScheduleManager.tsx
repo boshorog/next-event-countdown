@@ -386,7 +386,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Button>
           </div>
         </CardHeader>
-        <CardContent className={cn("space-y-1.5", config.specialEvents.length === 0 && "flex items-center justify-center min-h-[120px]")} ref={specialListRef}>
+        <CardContent className={cn("space-y-1.5", config.specialEvents.length === 0 && "flex items-center justify-center min-h-[180px]")} ref={specialListRef}>
           {config.specialEvents.length === 0 && (
             <p className="text-xs text-muted-foreground italic text-center">No special events added.</p>
           )}

@@ -10,22 +10,16 @@
       "pro": "Unlimited"
     },
     {
-      "id": "recurring-events",
-      "feature": "Recurring Events",
-      "free": "Unlimited",
-      "pro": "Unlimited"
-    },
-    {
-      "id": "special-events",
-      "feature": "Special Events",
-      "free": "Unlimited",
-      "pro": "Unlimited"
-    },
-    {
       "id": "countdown-styles",
       "feature": "Countdown Styles",
       "free": "1",
-      "pro": "Multiple"
+      "pro": "5+"
+    },
+    {
+      "id": "events",
+      "feature": "Unlimited one-time and recurring events",
+      "free": true,
+      "pro": true
     },
     {
       "id": "multi-location",
