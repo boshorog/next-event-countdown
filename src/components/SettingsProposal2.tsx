@@ -321,17 +321,16 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Maximize2 className="w-5 h-5" />
-                Size Settings
+                Counter Size
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Adjust sizing for your countdown elements</p>
+              <p className="text-sm text-muted-foreground">Scale the entire countdown widget proportionally</p>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Header Scale */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Header Size</Label>
-                    <p className="text-sm text-muted-foreground">Scale the header text and icon</p>
+                    <Label className="text-base font-medium">Counter Scale</Label>
+                    <p className="text-sm text-muted-foreground">Resize header, digits, labels, and spacing together</p>
                   </div>
                   <span className="text-sm font-medium text-primary">{Math.round((localConfig.headerScale ?? 1) * 100)}%</span>
                 </div>
