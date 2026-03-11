@@ -18,7 +18,7 @@ export const ClassicRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl p-6 text-center border border-border bg-background">
+    <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center flex-wrap gap-2 mb-1">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
         <span className="font-semibold text-sm text-foreground">{p.headerLabel}:</span>
