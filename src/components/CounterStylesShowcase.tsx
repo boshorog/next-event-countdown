@@ -81,7 +81,7 @@ const CounterStylesShowcase = () => {
                 <div className="rounded-lg overflow-hidden border border-border/50" style={{ transform: 'scale(0.65)', transformOrigin: 'top left', height: 130, width: '154%' }}>
                   {Renderer && <Renderer {...demoProps} />}
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">{style.description}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed mt-auto">{style.description}</p>
               </div>
             </button>
           );
