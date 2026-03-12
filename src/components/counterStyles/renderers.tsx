@@ -159,27 +159,32 @@ export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const units = getUnits(p);
   return (
     <div className="w-full rounded-2xl overflow-hidden" style={{ backgroundColor: '#0a0a0a' }}>
-      <div className="px-5 py-2.5 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(34,197,94,0.2)' }}>
+      <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(34,197,94,0.2)' }}>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#22c55e', boxShadow: '0 0 6px rgba(34,197,94,0.5)' }} />
-          <span className="text-xs font-mono font-semibold" style={{ color: '#22c55e' }}>{p.headerLabel.toUpperCase()}</span>
+          <span className="text-sm font-mono font-semibold" style={{ color: '#22c55e' }}>{p.headerLabel.toUpperCase()}</span>
         </div>
-        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgba(34,197,94,0.7)' }}>{p.eventTitle}</span>
+        <span className="text-xs font-mono font-medium" style={{ color: 'rgba(34,197,94,0.85)' }}>{p.eventTitle}</span>
       </div>
       <div className="px-5 py-5 text-center">
-        <div className="grid grid-cols-4 gap-0 max-w-[320px] mx-auto">
+        <div className="flex items-center justify-center gap-0 max-w-[360px] mx-auto">
           {units.map((u, i) => (
-            <div key={u.l} className="flex flex-col items-center">
-              <div className="font-mono text-3xl font-bold tabular-nums" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>
-                {pad(u.v)}{i < 3 ? ':' : ''}
+            <div key={u.l} className="flex items-center">
+              <div className="flex flex-col items-center">
+                <div className="font-mono text-3xl font-bold tabular-nums" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>
+                  {pad(u.v)}
+                </div>
+                <span className="text-[9px] font-mono tracking-widest uppercase mt-1.5" style={{ color: 'rgba(34,197,94,0.7)' }}>{u.l}</span>
               </div>
-              <span className="text-[8px] font-mono tracking-widest uppercase mt-1.5" style={{ color: 'rgba(34,197,94,0.55)' }}>{u.l}</span>
+              {i < 3 && (
+                <span className="font-mono text-2xl font-bold mx-1 -mt-3" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>:</span>
+              )}
             </div>
           ))}
         </div>
       </div>
-      <div className="px-5 py-2.5 text-center" style={{ borderTop: '1px solid rgba(34,197,94,0.2)' }}>
-        <span className="text-[10px] font-mono font-medium" style={{ color: 'rgba(34,197,94,0.6)' }}>{p.eventDate}</span>
+      <div className="px-5 py-3 text-center" style={{ borderTop: '1px solid rgba(34,197,94,0.2)' }}>
+        <span className="text-xs font-mono font-medium" style={{ color: 'rgba(34,197,94,0.7)' }}>{p.eventDate}</span>
       </div>
     </div>
   );
