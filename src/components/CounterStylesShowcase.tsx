@@ -57,7 +57,7 @@ const CounterStylesShowcase = () => {
             <button
               key={style.id}
               onClick={() => setSelected(style.id)}
-              className={`relative text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+              className={`relative text-left rounded-xl border-2 p-4 transition-all hover:shadow-md flex flex-col ${
                 isSelected
                   ? 'border-primary bg-primary/5 shadow-md'
                   : 'border-border hover:border-primary/30 bg-card'
