@@ -60,7 +60,7 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
         ))}
       </div>
       <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-        <CalendarDays className="w-3 h-3" />
+        <Clock className="w-3 h-3" />
         <span>{p.eventDate}</span>
       </div>
     </div>
