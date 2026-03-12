@@ -29,6 +29,7 @@ import ScrollOnboardingShowcase from "./components/ScrollOnboardingShowcase";
 import CountersPageShowcase from "./components/CountersPageShowcase";
 import ColorPickerShowcase from "./components/ColorPickerShowcase";
 import ColorDisplayShowcase from "./components/ColorDisplayShowcase";
+import PreviewTabShowcase from "./components/PreviewTabShowcase";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
@@ -124,6 +125,7 @@ const App = () => {
     if (showcaseParam === 'counters-page') return <CountersPageShowcase />;
     if (showcaseParam === 'color-picker') return <ColorPickerShowcase />;
     if (showcaseParam === 'color-display') return <ColorDisplayShowcase />;
+    if (showcaseParam === 'preview-tab') return <PreviewTabShowcase />;
     return <Index />;
   };
 

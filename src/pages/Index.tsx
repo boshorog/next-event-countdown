@@ -78,7 +78,13 @@ const Index = () => {
   });
   const [shortcodeCopied, setShortcodeCopied] = useState(false);
   const [galleryNotFound, setGalleryNotFound] = useState(false);
-  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(defaultCountdownConfig);
+  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(() => {
+    try {
+      const saved = localStorage.getItem('nxevtcd_countdown_config');
+      if (saved) return { ...defaultCountdownConfig, ...JSON.parse(saved) };
+    } catch {}
+    return defaultCountdownConfig;
+  });
 
   useEffect(() => {
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
@@ -367,6 +373,10 @@ const Index = () => {
   // Ratings default: off. Lightbox default: on (expected gallery behavior).
   const galleryRatingsEnabled = toBoolean((settings as any)?.ratingsEnabled, false);
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
+  // Persist countdownConfig to localStorage whenever it changes
+  useEffect(() => {
+    try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
+  }, [countdownConfig]);
 
 
   // Check if we should show admin interface (dev preview or WordPress admin)
@@ -542,7 +552,7 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <div style={{ overflow: 'hidden', height: `${Math.ceil(200 * (countdownConfig.headerScale ?? 1))}px` }}>
+              <div className="flex justify-center">
                 <ServiceCountdownWidget config={countdownConfig} />
               </div>
             </TabsContent>
