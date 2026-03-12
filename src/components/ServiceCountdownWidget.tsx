@@ -122,7 +122,7 @@ export const defaultCountdownConfig: CountdownConfig = {
   digitColor: "#1a1a1a",
   separatorColor: "#d4d4d4",
   labelColor: "#737373",
-  showBorder: true,
+  showBorder: false,
   headerScale: 1,
 };
 
