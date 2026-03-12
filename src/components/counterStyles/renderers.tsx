@@ -32,7 +32,7 @@ export const ClassicRenderer: React.FC<CounterStyleRenderProps> = (p) => {
               <span className="text-4xl font-black tabular-nums leading-none text-foreground">{pad(u.v)}</span>
               <span className="text-[9px] uppercase tracking-wider mt-1.5 text-muted-foreground">{u.l}</span>
             </div>
-            {i < 3 && <span className="text-2xl font-light -mt-3 text-border mx-0.5">:</span>}
+            {i < 3 && <span className="text-2xl font-light -mt-4 text-border mx-0.5">:</span>}
           </div>
         ))}
       </div>
