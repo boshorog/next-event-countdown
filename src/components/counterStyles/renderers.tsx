@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarDays, Clock } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import type { CounterStyleRenderProps } from './types';
 
 const pad = (n: number) => String(n).padStart(2, '0');
