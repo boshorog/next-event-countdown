@@ -200,7 +200,7 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           </div>
           <p className="text-xs italic text-muted-foreground mb-1">{p.eventTitle}</p>
           <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground italic">
-            <CalendarDays className="w-3 h-3" />
+            <Clock className="w-3 h-3" />
             <span>{p.eventDate}</span>
           </div>
         </div>

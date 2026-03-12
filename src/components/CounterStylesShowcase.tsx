@@ -68,7 +68,7 @@ const CounterStylesShowcase = () => {
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               )}
-              <div className="space-y-3">
+              <div className="space-y-3 flex flex-col flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">{style.name}</span>
                   {!style.pro ? (
