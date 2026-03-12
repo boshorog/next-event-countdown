@@ -29,6 +29,7 @@ import ScrollOnboardingShowcase from "./components/ScrollOnboardingShowcase";
 import CountersPageShowcase from "./components/CountersPageShowcase";
 import ColorPickerShowcase from "./components/ColorPickerShowcase";
 import ColorDisplayShowcase from "./components/ColorDisplayShowcase";
+import PreviewTabShowcase from "./components/PreviewTabShowcase";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
