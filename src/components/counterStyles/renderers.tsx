@@ -167,19 +167,19 @@ export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
         <span className="text-xs font-mono font-medium" style={{ color: 'rgba(34,197,94,0.85)' }}>{p.eventTitle}</span>
       </div>
       <div className="px-5 py-5 text-center">
-        <div className="flex items-center justify-center gap-0 max-w-[360px] mx-auto">
+        <div className="flex items-center justify-center max-w-[360px] mx-auto">
           {units.map((u, i) => (
-            <div key={u.l} className="flex items-center">
-              <div className="flex flex-col items-center">
+            <React.Fragment key={u.l}>
+              <div className="flex flex-col items-center" style={{ minWidth: 56 }}>
                 <div className="font-mono text-3xl font-bold tabular-nums" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>
                   {pad(u.v)}
                 </div>
                 <span className="text-[9px] font-mono tracking-widest uppercase mt-1.5" style={{ color: 'rgba(34,197,94,0.7)' }}>{u.l}</span>
               </div>
               {i < 3 && (
-                <span className="font-mono text-2xl font-bold mx-1 -mt-3" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>:</span>
+                <span className="font-mono text-2xl font-bold mx-1 self-start" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)', lineHeight: '36px' }}>:</span>
               )}
-            </div>
+            </React.Fragment>
           ))}
         </div>
       </div>
