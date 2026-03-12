@@ -57,7 +57,7 @@ const CounterStylesShowcase = () => {
             <button
               key={style.id}
               onClick={() => setSelected(style.id)}
-              className={`relative text-left rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+              className={`relative text-left rounded-xl border-2 p-4 transition-all hover:shadow-md flex flex-col ${
                 isSelected
                   ? 'border-primary bg-primary/5 shadow-md'
                   : 'border-border hover:border-primary/30 bg-card'
@@ -68,7 +68,7 @@ const CounterStylesShowcase = () => {
                   <Check className="w-3 h-3 text-primary-foreground" />
                 </div>
               )}
-              <div className="space-y-3">
+              <div className="space-y-3 flex flex-col flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">{style.name}</span>
                   {!style.pro ? (
@@ -81,7 +81,7 @@ const CounterStylesShowcase = () => {
                 <div className="rounded-lg overflow-hidden border border-border/50" style={{ transform: 'scale(0.65)', transformOrigin: 'top left', height: 130, width: '154%' }}>
                   {Renderer && <Renderer {...demoProps} />}
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">{style.description}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed mt-auto">{style.description}</p>
               </div>
             </button>
           );
