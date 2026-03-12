@@ -3,7 +3,7 @@ import { isDevPreview } from '@/config/pluginIdentity';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
+import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid, Wand2 } from 'lucide-react';
 import PDFAdmin from '@/components/PDFAdmin';
 import PDFGallery from '@/components/PDFGallery';
 import ServiceCountdownWidget, { defaultCountdownConfig, CountdownConfig } from '@/components/ServiceCountdownWidget';
