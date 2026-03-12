@@ -523,29 +523,33 @@ const Index = () => {
           
           <div className="p-6 pt-8">
             <TabsContent value="preview" className="mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
                 {/* Preview panel - 2/3 */}
-                <div className="lg:col-span-2">
-                  <div className="rounded-xl border border-border overflow-hidden">
+                <div className="lg:col-span-2 flex">
+                  <div className="rounded-xl border border-border overflow-hidden flex flex-col w-full">
                     <div className="bg-muted px-5 py-4 flex items-center gap-2 border-b border-border">
                       <Eye className="w-4 h-4 text-muted-foreground" />
                       <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Live Preview</span>
                     </div>
-                    <div className="p-8 bg-background flex justify-center">
+                    <div className="p-8 bg-background flex justify-center items-center flex-1">
                       <ServiceCountdownWidget config={countdownConfig} />
                     </div>
                   </div>
                 </div>
 
                 {/* Sidebar - 1/3 */}
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   <div className="rounded-xl border border-border p-5 space-y-4">
                     <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
                       <Copy className="w-4 h-4" />
                       Embed Code
                     </h4>
                     <div className="bg-muted rounded-lg p-3">
-                      <code className="text-xs font-mono text-foreground break-all">{`[nxevtcd_countdown]`}</code>
+                      <code className="text-xs font-mono text-foreground break-all">
+                        {galleryState.galleries.length > 1 && currentGallery
+                          ? `[nxevtcd_countdown name="${currentGallery.name.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`
+                          : `[nxevtcd_countdown]`}
+                      </code>
                     </div>
                     <Button
                       size="sm"
@@ -556,7 +560,7 @@ const Index = () => {
                     </Button>
                   </div>
 
-                  <div className="rounded-xl border border-border p-5 space-y-3">
+                  <div className="rounded-xl border border-border p-5 space-y-3 flex-1">
                     <h4 className="text-sm font-semibold text-foreground">Quick Tips</h4>
                     <ul className="text-xs text-muted-foreground space-y-2">
                       <li className="flex gap-2"><span className="text-primary">•</span> Paste the shortcode in any page or post</li>
