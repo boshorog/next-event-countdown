@@ -548,7 +548,7 @@ const Index = () => {
                   </Button>
                 </div>
               </div>
-              <div style={{ overflow: 'hidden', height: `${Math.ceil(200 * (countdownConfig.headerScale ?? 1))}px` }}>
+              <div className="flex justify-center">
                 <ServiceCountdownWidget config={countdownConfig} />
               </div>
             </TabsContent>
