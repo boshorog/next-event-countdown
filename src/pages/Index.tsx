@@ -3,7 +3,7 @@ import { isDevPreview } from '@/config/pluginIdentity';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid } from 'lucide-react';
+import { Check, Copy, FileImage, Timer, Settings, BookOpen, Crown, ExternalLink, Eye, LayoutGrid, Wand2 } from 'lucide-react';
 import PDFAdmin from '@/components/PDFAdmin';
 import PDFGallery from '@/components/PDFGallery';
 import ServiceCountdownWidget, { defaultCountdownConfig, CountdownConfig } from '@/components/ServiceCountdownWidget';
@@ -546,9 +546,7 @@ const Index = () => {
                     </h4>
                     <div className="bg-muted rounded-lg p-3">
                       <code className="text-xs font-mono text-foreground break-all">
-                        {galleryState.galleries.length > 1 && currentGallery
-                          ? `[nxevtcd_countdown name="${currentGallery.name.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`
-                          : `[nxevtcd_countdown]`}
+                        {`[nxevtcd_countdown name="${(currentGallery?.name || 'main').toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`}
                       </code>
                     </div>
                     <Button
@@ -560,12 +558,16 @@ const Index = () => {
                     </Button>
                   </div>
 
-                  <div className="rounded-xl border border-border p-5 space-y-3 flex-1">
-                    <h4 className="text-sm font-semibold text-foreground">Quick Tips</h4>
-                    <ul className="text-xs text-muted-foreground space-y-2">
+                  <div className="rounded-xl border border-border p-5 flex flex-col flex-1">
+                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-4">
+                      <Wand2 className="w-4 h-4" />
+                      Quick Tips
+                    </h4>
+                    <ul className="text-xs text-muted-foreground space-y-3 flex-1">
                       <li className="flex gap-2"><span className="text-primary">•</span> Paste the shortcode in any page or post</li>
-                      <li className="flex gap-2"><span className="text-primary">•</span> Use the Settings tab to customize colors</li>
+                      <li className="flex gap-2"><span className="text-primary">•</span> Use the Settings tab to customize appearance</li>
                       <li className="flex gap-2"><span className="text-primary">•</span> Add events in the Counters tab</li>
+                      <li className="flex gap-2"><span className="text-primary">•</span> Each counter can have its own style and colors</li>
                     </ul>
                   </div>
                 </div>
