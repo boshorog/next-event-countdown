@@ -546,9 +546,7 @@ const Index = () => {
                     </h4>
                     <div className="bg-muted rounded-lg p-3">
                       <code className="text-xs font-mono text-foreground break-all">
-                        {galleryState.galleries.length > 1 && currentGallery
-                          ? `[nxevtcd_countdown name="${currentGallery.name.toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`
-                          : `[nxevtcd_countdown]`}
+                        {`[nxevtcd_countdown name="${(currentGallery?.name || 'main').toLowerCase().replace(/[^a-z0-9-_]/g, '-')}"]`}
                       </code>
                     </div>
                     <Button
