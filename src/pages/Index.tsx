@@ -373,6 +373,10 @@ const Index = () => {
   // Ratings default: off. Lightbox default: on (expected gallery behavior).
   const galleryRatingsEnabled = toBoolean((settings as any)?.ratingsEnabled, false);
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
+  // Persist countdownConfig to localStorage whenever it changes
+  useEffect(() => {
+    try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
+  }, [countdownConfig]);
 
 
   // Check if we should show admin interface (dev preview or WordPress admin)
