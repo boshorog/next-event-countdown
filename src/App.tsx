@@ -125,6 +125,7 @@ const App = () => {
     if (showcaseParam === 'counters-page') return <CountersPageShowcase />;
     if (showcaseParam === 'color-picker') return <ColorPickerShowcase />;
     if (showcaseParam === 'color-display') return <ColorDisplayShowcase />;
+    if (showcaseParam === 'preview-tab') return <PreviewTabShowcase />;
     return <Index />;
   };
 
