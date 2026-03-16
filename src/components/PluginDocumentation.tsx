@@ -467,7 +467,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                         </a>
                       </li>
                       <li>
-                        <a href="https://checkout.freemius.com/plugin/18355/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a href="https://checkout.freemius.com/plugin/25492/plan/42185/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                           Upgrade to Pro →
                         </a>
                       </li>
