@@ -389,7 +389,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   <div className="mt-4 p-4 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-lg border border-amber-500/20">
                     <p className="text-sm text-center">
                       <a 
-                        href="https://checkout.freemius.com/plugin/18355/" 
+                        href="https://checkout.freemius.com/plugin/25492/plan/42185/"
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-primary hover:underline font-medium"
