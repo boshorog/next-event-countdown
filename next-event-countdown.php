@@ -664,7 +664,7 @@ class NxEvtCd_Plugin {
             }
         }
         if (!$is_pro) {
-            $upgrade_link = '<a href="' . esc_url(admin_url('admin.php?page=next-event-countdown-pricing')) . '" style="font-weight:600;color:#d97706;">Upgrade to Pro!</a>';
+            $upgrade_link = '<a href="https://checkout.freemius.com/plugin/25492/plan/42185/" target="_blank" style="font-weight:600;color:#d97706;">Upgrade to Pro!</a>';
             $links[] = $upgrade_link;
         }
         
