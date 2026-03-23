@@ -93,6 +93,10 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 
 == Changelog ==
 
+= 1.0.8 =
+* Fixed Freemius upgrade URL — now opens the correct checkout page
+* Version bump
+
 = 1.0.7 =
 * Added Freemius checkout integration for Pro upgrades
 * Improved upgrade links across admin UI and WordPress plugins page
