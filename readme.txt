@@ -5,7 +5,7 @@ Donate link: https://kindpixels.dev/donate
 Tags: countdown, timer, event, church, service
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -93,6 +93,10 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 
 == Changelog ==
 
+= 1.0.8 =
+* Fixed Freemius upgrade URL — now opens the correct checkout page
+* Version bump
+
 = 1.0.7 =
 * Added Freemius checkout integration for Pro upgrades
 * Improved upgrade links across admin UI and WordPress plugins page
@@ -112,6 +116,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+Fixed Pro checkout link to open the correct Freemius plan page.
 
 = 1.0.7 =
 Checkout and upgrade links now point to the correct Freemius plan.
