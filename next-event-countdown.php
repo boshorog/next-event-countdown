@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.0.7' );
+define( 'NXEVTCD_VERSION', '1.0.8' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
