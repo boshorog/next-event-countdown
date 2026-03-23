@@ -117,6 +117,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 
 == Upgrade Notice ==
 
+= 1.0.8 =
+Fixed Pro checkout link to open the correct Freemius plan page.
+
 = 1.0.7 =
 Checkout and upgrade links now point to the correct Freemius plan.
 
