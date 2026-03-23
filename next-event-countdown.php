@@ -282,9 +282,8 @@ class NxEvtCd_Plugin {
                 if ( method_exists( $fs, 'get_account_url' ) ) {
                     $fs_account_url = $fs->get_account_url();
                 }
-                if ( method_exists( $fs, 'get_upgrade_url' ) ) {
-                    $fs_pricing_url = $fs->get_upgrade_url();
-                }
+                // Always use our direct checkout URL instead of Freemius SDK's generated URL
+                $fs_pricing_url = 'https://checkout.freemius.com/plugin/25492/plan/42185/';
                 $fs_available = (
                     method_exists( $fs, 'can_use_premium_code' ) ||
                     method_exists( $fs, 'is_premium' ) ||
