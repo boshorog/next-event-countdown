@@ -1,30 +1,35 @@
 === Next Event Countdown ===
 Contributors: kindpixels
-Plugin URI: https://kindpixels.dev/plugins/next-event-countdown/
-Donate link: https://kindpixels.dev/donate
-Tags: countdown, timer, event, church, service
+Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
+Donate link: https://kindpixels.com/donate
+Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A beautiful, always-accurate countdown widget that shows your congregation exactly when the next event starts — automatically.
+A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
 
 == Description ==
 
-**Stop manually updating countdown timers.** Next Event Countdown automatically cycles through your recurring events and always displays the one coming up next. Set it once, and it runs forever.
+**Stop manually updating countdown timers.** Next Event Countdown automatically cycles through your events and always displays the one coming up next. Set it once, and it runs forever.
 
-Perfect for churches, community centers, and any organization with a repeating weekly schedule.
+Whether you run a gym, a church, a school, a co-working space, a community center, or a weekly meetup — if you have events that repeat, this plugin keeps your visitors informed without any manual work.
+
+= Real-World Examples =
+
+* **Fitness studios** — show the next class: yoga at 6 AM → spinning at noon → HIIT at 5 PM.
+* **Churches** — Sunday service ends → midweek Bible study → Friday youth group → back to Sunday.
+* **Schools & universities** — next open day, parent-teacher conference, or semester start.
+* **Restaurants & bars** — happy hour countdown, trivia night, live music events.
+* **Co-working spaces** — networking events, workshops, community lunches.
+* **Online communities** — weekly webinars, AMAs, or live streams.
 
 = Why Next Event Countdown? =
 
 Most countdown plugins make you pick a single date. When the event passes, the timer hits zero and stays there. Next Event Countdown is different — it knows your full schedule and always counts down to whatever's next.
-
-* **Sunday morning service ends → timer instantly switches to Wednesday Bible study.**
-* **Wednesday ends → it rolls to Friday youth group.**
-* **Friday ends → back to Sunday.**
 
 No manual updates. No expired timers. Just a clean, live countdown that's always right.
 
@@ -35,7 +40,7 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * **Live Ticking** – Real-time countdown updates every second.
 * **Fully Customizable** – Colors, labels, fonts, and icons — all configurable from the admin panel.
 * **Responsive** – Looks great on desktop, tablet, and mobile.
-* **Lightweight** – No jQuery. No bloat. Pure React compiled to a single optimized bundle.
+* **Lightweight** – No bloat, no external dependencies. A single optimized bundle that won't slow your site down.
 * **Shortcode Embed** – Drop `[nxevtcd_countdown name="my-counter"]` anywhere.
 
 = Free vs Pro =
@@ -45,15 +50,15 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * 1 countdown style
 * Full color and label customization
 * Recurring and one-time events
-* Multiple date formats
+* Multiple date formats and timezone support
 
 **Pro version adds:**
 * Unlimited counters
 * 5+ premium countdown styles (LED Dots, Radial Progress, Gradient Glass, Card Blocks, Elegant Serif)
-* Multiple locations / venues
+* Multiple locations / venues within the same website
 * Priority support
 
-For a full comparison, visit [kindpixels.dev/plugins/next-event-countdown-pro](https://kindpixels.dev/plugins/next-event-countdown-pro).
+For a full comparison, visit [kindpixels.com/plugins/next-event-countdown-pro](https://kindpixels.com/plugins/next-event-countdown-pro).
 
 == Installation ==
 
@@ -71,7 +76,7 @@ The plugin compares all your events against the current date and time, and autom
 
 = Can I have multiple countdowns on different pages? =
 
-Yes, with the Pro version. Each counter gets its own shortcode, events, and style. The free version supports one counter.
+Yes, with the Pro version. Each counter gets its own shortcode, events, and style — allowing you to show different countdowns for different locations within the same website. The free version supports one counter.
 
 = Does it work with page builders? =
 
@@ -79,11 +84,11 @@ Yes. The shortcode `[nxevtcd_countdown name="my-counter"]` works in Gutenberg, E
 
 = Will it slow down my site? =
 
-No. The entire front-end is a single optimized JavaScript bundle with zero external dependencies. No jQuery, no extra HTTP requests.
+No. The entire front-end is a single optimized bundle with zero external dependencies. No extra HTTP requests, no bloat.
 
 = What if I have more questions? =
 
-Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support](https://kindpixels.dev/support).
+Check the Documentation tab inside the plugin, or visit [kindpixels.com/support](https://kindpixels.com/support).
 
 == Screenshots ==
 
@@ -93,9 +98,12 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 
 == Changelog ==
 
+= 1.0.9 =
+* Updated plugin description and documentation
+* Minor copy improvements
+
 = 1.0.8 =
-* Fixed Freemius upgrade URL — now opens the correct checkout page
-* Version bump
+* Bug fixes
 
 = 1.0.7 =
 * Added Freemius checkout integration for Pro upgrades
@@ -117,8 +125,11 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.dev/support]
 
 == Upgrade Notice ==
 
+= 1.0.9 =
+Updated plugin description and documentation.
+
 = 1.0.8 =
-Fixed Pro checkout link to open the correct Freemius plan page.
+Bug fixes.
 
 = 1.0.7 =
 Checkout and upgrade links now point to the correct Freemius plan.
@@ -143,7 +154,7 @@ https://github.com/boshorog/next-event-countdown
 
 = Support =
 
-For questions or issues, visit [kindpixels.dev/support](https://kindpixels.dev/support) or use the WordPress.org support forum.
+For questions or issues, visit [kindpixels.com/support](https://kindpixels.com/support) or use the WordPress.org support forum.
 
 = Privacy =
 

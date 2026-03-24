@@ -68,7 +68,7 @@ export const PRO_NAME = 'Next Event Countdown Pro';
  * Plugin version - update this for each release
  * Also update in: next-event-countdown.php, readme.txt
  */
-export const PLUGIN_VERSION = '1.0.8';
+export const PLUGIN_VERSION = '1.0.9';
 
 /**
  * Short description for meta/SEO
@@ -120,10 +120,10 @@ export const BRANDING = {
    * External links
    */
   links: {
-    website: 'https://kindpixels.dev',
-    support: 'https://kindpixels.dev/support',
-    pricing: 'https://kindpixels.dev/plugins/next-event-countdown-pro',
-    documentation: 'https://kindpixels.dev/docs/next-event-countdown',
+    website: 'https://kindpixels.com',
+    support: 'https://kindpixels.com/support',
+    pricing: 'https://kindpixels.com/plugins/next-event-countdown-pro',
+    documentation: 'https://kindpixels.com/docs/next-event-countdown',
     github: 'https://github.com/boshorog/next-event-countdown',
     wordpressOrg: 'https://wordpress.org/plugins/next-event-countdown',
   },
