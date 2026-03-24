@@ -99,19 +99,17 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 == Changelog ==
 
 = 1.0.9 =
-* Updated plugin description and documentation
+* Updated plugin documentation
 * Minor copy improvements
 
 = 1.0.8 =
 * Bug fixes
 
 = 1.0.7 =
-* Added Freemius checkout integration for Pro upgrades
-* Improved upgrade links across admin UI and WordPress plugins page
-* Minor UI refinements
+* Refined Freemius checkout workflow for Pro upgrades
+* Minor UI tweaks
 
 = 1.0.6 =
-* LED Dots counter style — improved label centering and separator alignment
 * Counter style refinements across all premium styles
 * Bug fixes
 
