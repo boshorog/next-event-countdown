@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
- * Description: Beautiful countdown timer widget for WordPress events and services.
- * Version: 1.0.8
+ * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
+ * Version: 1.0.9
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
