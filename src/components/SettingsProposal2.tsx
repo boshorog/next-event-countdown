@@ -180,7 +180,27 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
 
   const renderContent = () => {
     switch (activeSection) {
-      case 'labels':
+      case 'labels': {
+        const currentLang = localConfig.language || 'en';
+        const langData = getLanguage(currentLang);
+        const configDayNames = localConfig.dayNames || langData.dayNames;
+        const configMonthNames = localConfig.monthNames || langData.monthNames;
+        const configAtWord = localConfig.atWord ?? langData.atWord;
+
+        const handleLanguageChange = (code: string) => {
+          const lang = getLanguage(code);
+          updateConfig({
+            language: code,
+            labelDays: lang.days,
+            labelHours: lang.hours,
+            labelMinutes: lang.minutes,
+            labelSeconds: lang.seconds,
+            dayNames: [...lang.dayNames],
+            monthNames: [...lang.monthNames],
+            atWord: lang.atWord,
+          });
+        };
+
         return (
           <Card>
             <CardHeader>
@@ -191,8 +211,29 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               <p className="text-sm text-muted-foreground">Customize all text displayed on the countdown widget</p>
             </CardHeader>
             <CardContent className="space-y-8">
-              {/* Header Labels */}
+              {/* Language Selector */}
               <div className="space-y-1.5">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <Languages className="w-4 h-4" />
+                  Language
+                </Label>
+                <p className="text-sm text-muted-foreground mb-3">Pre-fill all labels with translations for your language</p>
+                <Select value={currentLang} onValueChange={handleLanguageChange}>
+                  <SelectTrigger className="w-full max-w-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGES.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code}>
+                        {lang.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Header Labels */}
+              <div className="space-y-1.5 pt-6 border-t border-border">
                 <Label className="text-base font-semibold">Header Labels</Label>
                 <p className="text-sm text-muted-foreground mb-4">Text shown in the header area of the countdown</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -269,6 +310,18 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 </div>
               </div>
 
+              {/* "at" word for date formats */}
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Date Connector Word</Label>
+                <p className="text-sm text-muted-foreground mb-3">The word used between date and time (e.g. "at" in "March 6, 2026 at 7:00 PM")</p>
+                <Input
+                  value={configAtWord}
+                  onChange={(e) => updateConfig({ atWord: e.target.value })}
+                  placeholder="at"
+                  className="max-w-[120px]"
+                />
+              </div>
+
               {/* Unit Labels */}
               <div className="space-y-1.5 pt-6 border-t border-border">
                 <Label className="text-base font-semibold">Countdown Unit Labels</Label>
@@ -276,46 +329,73 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="labelDays" className="text-sm">Days</Label>
-                    <Input
-                      id="labelDays"
-                      value={localConfig.labelDays}
-                      onChange={(e) => updateConfig({ labelDays: e.target.value })}
-                      placeholder="Days"
-                    />
+                    <Input id="labelDays" value={localConfig.labelDays} onChange={(e) => updateConfig({ labelDays: e.target.value })} placeholder="Days" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="labelHours" className="text-sm">Hours</Label>
-                    <Input
-                      id="labelHours"
-                      value={localConfig.labelHours}
-                      onChange={(e) => updateConfig({ labelHours: e.target.value })}
-                      placeholder="Hours"
-                    />
+                    <Input id="labelHours" value={localConfig.labelHours} onChange={(e) => updateConfig({ labelHours: e.target.value })} placeholder="Hours" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="labelMinutes" className="text-sm">Minutes</Label>
-                    <Input
-                      id="labelMinutes"
-                      value={localConfig.labelMinutes}
-                      onChange={(e) => updateConfig({ labelMinutes: e.target.value })}
-                      placeholder="Minutes"
-                    />
+                    <Input id="labelMinutes" value={localConfig.labelMinutes} onChange={(e) => updateConfig({ labelMinutes: e.target.value })} placeholder="Minutes" />
                   </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="labelSeconds" className="text-sm">Seconds</Label>
-                    <Input
-                      id="labelSeconds"
-                      value={localConfig.labelSeconds}
-                      onChange={(e) => updateConfig({ labelSeconds: e.target.value })}
-                      placeholder="Seconds"
-                    />
+                    <Input id="labelSeconds" value={localConfig.labelSeconds} onChange={(e) => updateConfig({ labelSeconds: e.target.value })} placeholder="Seconds" />
                   </div>
+                </div>
+              </div>
+
+              {/* Day Names */}
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Day Names</Label>
+                <p className="text-sm text-muted-foreground mb-4">Used in date formats that display the day of the week</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map((engName, idx) => (
+                    <div key={engName} className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">{engName}</Label>
+                      <Input
+                        value={configDayNames[idx] || ''}
+                        onChange={(e) => {
+                          const newDays = [...configDayNames];
+                          newDays[idx] = e.target.value;
+                          updateConfig({ dayNames: newDays });
+                        }}
+                        placeholder={engName}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Month Names */}
+              <div className="space-y-1.5 pt-6 border-t border-border">
+                <Label className="text-base font-semibold">Month Names</Label>
+                <p className="text-sm text-muted-foreground mb-4">Used in date formats that display the month name</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {['January','February','March','April','May','June','July','August','September','October','November','December'].map((engName, idx) => (
+                    <div key={engName} className="space-y-1">
+                      <Label className="text-xs text-muted-foreground">{engName}</Label>
+                      <Input
+                        value={configMonthNames[idx] || ''}
+                        onChange={(e) => {
+                          const newMonths = [...configMonthNames];
+                          newMonths[idx] = e.target.value;
+                          updateConfig({ monthNames: newMonths });
+                        }}
+                        placeholder={engName}
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                  ))}
                 </div>
               </div>
 
             </CardContent>
           </Card>
         );
+      }
 
       case 'size':
         return (
