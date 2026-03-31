@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Flame, Cross, Star } from "lucide-react";
+import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Star, Music, Trophy } from "lucide-react";
 import { STYLE_RENDERERS } from "./counterStyles/renderers";
 
 // ─── Recurrence Types ───
