@@ -146,8 +146,10 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     if (openRecurring === idx) setOpenRecurring(null);
   };
 
+  const defaultTz = config.defaultTimezone || "America/New_York";
+
   const addSchedule = () => {
-    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: "America/New_York", duration: 60 }]);
+    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
     setOpenRecurring(config.schedules.length);
     setTimeout(() => {
       recurringListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
