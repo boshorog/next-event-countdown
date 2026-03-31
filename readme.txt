@@ -129,8 +129,8 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Upgrade Notice ==
 
-= 1.0.9 =
-Updated plugin description and documentation.
+= 1.1.0 =
+Multi-language support and improved settings organization.
 
 = 1.0.8 =
 Bug fixes.
