@@ -100,6 +100,10 @@ export interface CountdownConfig {
   borderRadius?: number;
   fullWidth?: boolean;
   defaultTimezone?: string;
+  language?: string;
+  dayNames?: string[];
+  monthNames?: string[];
+  atWord?: string;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
