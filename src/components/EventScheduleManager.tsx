@@ -170,7 +170,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
-    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: "America/New_York", duration: 60 }]);
+    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: defaultTz, duration: 60 }]);
     setOpenSpecial(config.specialEvents.length);
     setTimeout(() => {
       specialListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
