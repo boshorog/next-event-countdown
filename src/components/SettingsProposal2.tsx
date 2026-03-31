@@ -195,6 +195,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
             labelHours: lang.hours,
             labelMinutes: lang.minutes,
             labelSeconds: lang.seconds,
+            headerLabel: lang.headerLabel,
+            liveLabel: lang.liveLabel,
             dayNames: [...lang.dayNames],
             monthNames: [...lang.monthNames],
             atWord: lang.atWord,
