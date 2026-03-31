@@ -68,7 +68,7 @@ export const PRO_NAME = 'Next Event Countdown Pro';
  * Plugin version - update this for each release
  * Also update in: next-event-countdown.php, readme.txt
  */
-export const PLUGIN_VERSION = '1.0.9';
+export const PLUGIN_VERSION = '1.1.0';
 
 /**
  * Short description for meta/SEO

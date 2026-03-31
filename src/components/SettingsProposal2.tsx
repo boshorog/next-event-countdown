@@ -537,121 +537,129 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               </CardTitle>
               <p className="text-sm text-muted-foreground">Additional display options for the countdown</p>
             </CardHeader>
-            <CardContent className="space-y-5">
-              {/* Border Toggle */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Frame className="w-4 h-4 text-muted-foreground" />
-                  <div className="space-y-0.5">
-                    <Label className="text-sm font-medium">Show Outer Frame</Label>
-                    <p className="text-xs text-muted-foreground">Display a border around the countdown widget</p>
-                  </div>
-                </div>
-                <Checkbox 
-                  checked={localConfig.showBorder}
-                  onCheckedChange={(checked) => updateConfig({ showBorder: checked === true })}
-                />
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Show Event Title */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Type className="w-4 h-4 text-muted-foreground" />
-                  <div className="space-y-0.5">
-                    <Label className="text-sm font-medium">Show Event Title</Label>
-                    <p className="text-xs text-muted-foreground">Display the name of the upcoming event</p>
-                  </div>
-                </div>
-                <Checkbox 
-                  checked={localConfig.showTitle !== false}
-                  onCheckedChange={(checked) => updateConfig({ showTitle: checked === true })}
-                />
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Show Date */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                  <div className="space-y-0.5">
-                    <Label className="text-sm font-medium">Show Event Date</Label>
-                    <p className="text-xs text-muted-foreground">Display the date & time in the header</p>
-                  </div>
-                </div>
-                <Checkbox 
-                  checked={localConfig.showDate !== false}
-                  onCheckedChange={(checked) => updateConfig({ showDate: checked === true })}
-                />
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Full Width */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Rows3 className="w-4 h-4 text-muted-foreground" />
-                  <div className="space-y-0.5">
-                    <Label className="text-sm font-medium">Full Width</Label>
-                    <p className="text-xs text-muted-foreground">Stretch the widget to fill its container, or wrap around content</p>
-                  </div>
-                </div>
-                <Checkbox 
-                  checked={localConfig.fullWidth !== false}
-                  onCheckedChange={(checked) => updateConfig({ fullWidth: checked === true })}
-                />
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Default Timezone */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                  <div className="space-y-0.5">
-                    <Label className="text-sm font-medium">Default Timezone</Label>
-                    <p className="text-xs text-muted-foreground">Applied to all newly created events</p>
-                  </div>
-                </div>
-                <Select
-                  value={localConfig.defaultTimezone || "America/New_York"}
-                  onValueChange={(v) => updateConfig({ defaultTimezone: v })}
-                >
-                  <SelectTrigger className="h-9 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TIMEZONE_OPTIONS.map((tz) => (
-                      <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Rounded Corners */}
-              <div className="space-y-3">
+            <CardContent className="space-y-6">
+              {/* ── Layout ── */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Layout</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Maximize2 className="w-4 h-4 text-muted-foreground" />
+                    <Rows3 className="w-4 h-4 text-muted-foreground" />
                     <div className="space-y-0.5">
-                      <Label className="text-sm font-medium">Corner Radius</Label>
-                      <p className="text-xs text-muted-foreground">Adjust the roundness of the widget corners</p>
+                      <Label className="text-sm font-medium">Full Width</Label>
+                      <p className="text-xs text-muted-foreground">Stretch the widget to fill its container, or wrap around content</p>
                     </div>
                   </div>
-                  <span className="text-sm font-medium text-primary">{localConfig.borderRadius ?? 16}px</span>
+                  <Checkbox 
+                    checked={localConfig.fullWidth !== false}
+                    onCheckedChange={(checked) => updateConfig({ fullWidth: checked === true })}
+                  />
                 </div>
-                <Slider
-                  value={[localConfig.borderRadius ?? 16]}
-                  onValueChange={(v) => updateConfig({ borderRadius: v[0] })}
-                  min={0}
-                  max={32}
-                  step={2}
-                  className="w-full"
-                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* ── Regional ── */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Regional</p>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4 text-muted-foreground" />
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-medium">Default Timezone</Label>
+                      <p className="text-xs text-muted-foreground">Applied to all newly created events</p>
+                    </div>
+                  </div>
+                  <Select
+                    value={localConfig.defaultTimezone || "America/New_York"}
+                    onValueChange={(v) => updateConfig({ defaultTimezone: v })}
+                  >
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIMEZONE_OPTIONS.map((tz) => (
+                        <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* ── Visibility ── */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Visibility</p>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Type className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Show Event Title</Label>
+                        <p className="text-xs text-muted-foreground">Display the name of the upcoming event</p>
+                      </div>
+                    </div>
+                    <Checkbox 
+                      checked={localConfig.showTitle !== false}
+                      onCheckedChange={(checked) => updateConfig({ showTitle: checked === true })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Show Event Date</Label>
+                        <p className="text-xs text-muted-foreground">Display the date & time in the header</p>
+                      </div>
+                    </div>
+                    <Checkbox 
+                      checked={localConfig.showDate !== false}
+                      onCheckedChange={(checked) => updateConfig({ showDate: checked === true })}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* ── Frame & Shape ── */}
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Frame & Shape</p>
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Frame className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Show Outer Frame</Label>
+                        <p className="text-xs text-muted-foreground">Display a border around the countdown widget</p>
+                      </div>
+                    </div>
+                    <Checkbox 
+                      checked={localConfig.showBorder}
+                      onCheckedChange={(checked) => updateConfig({ showBorder: checked === true })}
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <Maximize2 className="w-4 h-4 text-muted-foreground" />
+                        <div className="space-y-0.5">
+                          <Label className="text-sm font-medium">Corner Radius</Label>
+                          <p className="text-xs text-muted-foreground">Adjust the roundness of the widget corners</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-medium text-primary">{localConfig.borderRadius ?? 16}px</span>
+                    </div>
+                    <Slider
+                      value={[localConfig.borderRadius ?? 16]}
+                      onValueChange={(v) => updateConfig({ borderRadius: v[0] })}
+                      min={0}
+                      max={32}
+                      step={2}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
