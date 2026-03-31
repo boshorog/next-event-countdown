@@ -99,6 +99,7 @@ export interface CountdownConfig {
   showDate?: boolean;
   borderRadius?: number;
   fullWidth?: boolean;
+  defaultTimezone?: string;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {

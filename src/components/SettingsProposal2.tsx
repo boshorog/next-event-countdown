@@ -32,6 +32,7 @@ import {
   ICON_OPTIONS,
   DATE_FORMAT_OPTIONS,
   DateFormatType,
+  TIMEZONE_OPTIONS,
   useCountdown,
   getIconComponent,
 } from '@/components/ServiceCountdownWidget';
@@ -518,6 +519,32 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                   checked={localConfig.fullWidth !== false}
                   onCheckedChange={(checked) => updateConfig({ fullWidth: checked === true })}
                 />
+              </div>
+
+              <div className="border-t border-border" />
+
+              {/* Default Timezone */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                  <div className="space-y-0.5">
+                    <Label className="text-sm font-medium">Default Timezone</Label>
+                    <p className="text-xs text-muted-foreground">Applied to all newly created events</p>
+                  </div>
+                </div>
+                <Select
+                  value={localConfig.defaultTimezone || "America/New_York"}
+                  onValueChange={(v) => updateConfig({ defaultTimezone: v })}
+                >
+                  <SelectTrigger className="h-9 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIMEZONE_OPTIONS.map((tz) => (
+                      <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="border-t border-border" />
