@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
+import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
 import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
