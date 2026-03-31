@@ -134,14 +134,14 @@ export const defaultCountdownConfig: CountdownConfig = {
 // ─── Icon map ───
 export const ICON_OPTIONS: { value: string; label: string; icon: React.ComponentType<any> }[] = [
   { value: "CalendarDays", label: "Calendar", icon: CalendarDays },
-  { value: "Church", label: "Church", icon: Church },
   { value: "Clock", label: "Clock", icon: Clock },
   { value: "Heart", label: "Heart", icon: Heart },
-  { value: "BookOpen", label: "Book", icon: BookOpen },
   { value: "Bell", label: "Bell", icon: Bell },
-  { value: "Flame", label: "Flame", icon: Flame },
-  { value: "Cross", label: "Cross", icon: Cross },
+  { value: "BookOpen", label: "Book", icon: BookOpen },
   { value: "Star", label: "Star", icon: Star },
+  { value: "Church", label: "Church", icon: Church },
+  { value: "Music", label: "Music", icon: Music },
+  { value: "Trophy", label: "Trophy", icon: Trophy },
 ];
 
 export function getIconComponent(name: string) {
