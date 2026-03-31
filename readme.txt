@@ -5,7 +5,7 @@ Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.0.9
+Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +98,12 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.1.0 =
+* Added multi-language support with 21 languages for all countdown labels, day names, and month names
+* Reorganized Other Settings into grouped sections (Layout, Regional, Visibility, Frame & Shape)
+* Added customizable day-of-week and month name labels
+* Added date connector word customization for localized date formats
+
 = 1.0.9 =
 * Updated plugin documentation
 * Minor copy improvements
@@ -123,8 +129,8 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Upgrade Notice ==
 
-= 1.0.9 =
-Updated plugin description and documentation.
+= 1.1.0 =
+Multi-language support and improved settings organization.
 
 = 1.0.8 =
 Bug fixes.
