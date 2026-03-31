@@ -30,9 +30,14 @@ export const ClassicRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           <div key={u.l} className="flex items-center">
             <div className="flex flex-col items-center" style={{ minWidth: 56 }}>
               <span className="text-4xl font-black tabular-nums leading-none text-foreground">{pad(u.v)}</span>
-              <span className="text-[9px] uppercase tracking-wider mt-1.5 text-muted-foreground">{u.l}</span>
+              <span className="text-[9px] uppercase tracking-wider text-muted-foreground" style={{ marginTop: '4px' }}>{u.l}</span>
             </div>
-            {i < 3 && <span className="text-2xl font-light -mt-4 text-border mx-0.5">:</span>}
+            {i < 3 && (
+              <span
+                className="text-2xl font-light text-border"
+                style={{ marginTop: '-16px', marginLeft: '2px', marginRight: '2px' }}
+              >:</span>
+            )}
           </div>
         ))}
       </div>
