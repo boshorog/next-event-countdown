@@ -98,6 +98,12 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.1.0 =
+* Added multi-language support with 21 languages for all countdown labels, day names, and month names
+* Reorganized Other Settings into grouped sections (Layout, Regional, Visibility, Frame & Shape)
+* Added customizable day-of-week and month name labels
+* Added date connector word customization for localized date formats
+
 = 1.0.9 =
 * Updated plugin documentation
 * Minor copy improvements
