@@ -5,9 +5,11 @@ export interface LanguageTranslation {
   hours: string;
   minutes: string;
   seconds: string;
-  atWord: string; // "at" in date formats like "March 6, 2026 at 7:00 PM"
-  dayNames: string[]; // Sunday=0 … Saturday=6
-  monthNames: string[]; // January=0 … December=11
+  headerLabel: string;   // "Next Event"
+  liveLabel: string;     // "Happening Now"
+  atWord: string;
+  dayNames: string[];
+  monthNames: string[];
 }
 
 export const LANGUAGES: LanguageTranslation[] = [
