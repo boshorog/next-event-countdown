@@ -175,11 +175,20 @@ function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Dat
   return new Date(fakeUtc.getTime() + offsetMs);
 }
 
-function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "us-long", use24h?: boolean): string {
+interface FormatOptions {
+  dayNamesList?: string[];
+  monthNamesList?: string[];
+  atWordStr?: string;
+}
+
+function formatDateStr(target: Date, hour: number, minute: number, format: DateFormatType = "us-long", use24h?: boolean, opts?: FormatOptions): string {
+  const dn = opts?.dayNamesList || defaultDayNames;
+  const mn = opts?.monthNamesList || defaultMonthNames;
+  const at = opts?.atWordStr ?? "at";
   const h24 = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-  const dow = dayNames[target.getDay()];
+  const dow = dn[target.getDay()] || defaultDayNames[target.getDay()];
   const dowShort = dow.slice(0, 3);
-  const mon = monthNames[target.getMonth()];
+  const mon = mn[target.getMonth()] || defaultMonthNames[target.getMonth()];
   const monShort = mon.slice(0, 3);
   const day = target.getDate();
   const year = target.getFullYear();
@@ -187,7 +196,6 @@ function formatDateStr(target: Date, hour: number, minute: number, format: DateF
   const ampm = hour >= 12 ? "PM" : "AM";
   const time12 = minute === 0 ? `${h12} ${ampm}` : `${h12}:${String(minute).padStart(2, "0")} ${ampm}`;
 
-  // If use24h is explicitly set, override the format's default time style
   const force24 = use24h === true;
   const force12 = use24h === false;
   const timeStr = (defaultIs24: boolean) => {
@@ -196,20 +204,22 @@ function formatDateStr(target: Date, hour: number, minute: number, format: DateF
     return defaultIs24 ? h24 : time12;
   };
 
+  const atSep = at ? ` ${at} ` : " ";
+
   switch (format) {
     case "us-short":
       return `${dowShort}, ${day} ${monShort} ${year}, ${timeStr(false)}`;
     case "iso-like":
       return `${year}-${String(target.getMonth() + 1).padStart(2, "0")}-${String(day).padStart(2, "0")} ${timeStr(true)}`;
     case "europe-long":
-      return `${dow}, ${day} ${mon} ${year} at ${timeStr(true)}`;
+      return `${dow}, ${day} ${mon} ${year}${atSep}${timeStr(true)}`;
     case "europe-short":
       return `${dowShort}, ${day} ${monShort} ${year}, ${timeStr(true)}`;
     case "social":
       return `${dowShort}, ${monShort} ${day} @ ${timeStr(true)}`;
     case "us-long":
     default:
-      return `${mon} ${day}, ${year} at ${timeStr(false)}`;
+      return `${mon} ${day}, ${year}${atSep}${timeStr(false)}`;
   }
 }
 
