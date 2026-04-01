@@ -386,19 +386,22 @@ export function useCountdown(config: CountdownConfig) {
     monthNamesList: config.monthNames,
     atWordStr: config.atWord,
   };
+  const showLiveDuration = config.showLiveDuration ?? false;
   const [state, setState] = useState(() => {
     const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
-    return { ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
+    const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
+    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
   });
   useEffect(() => {
     const tick = () => {
       const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
-      setState({ ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
+      const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
+      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord]);
+  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
   return state;
 }
 
