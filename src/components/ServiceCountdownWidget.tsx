@@ -483,16 +483,16 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
                 {pad(u.v)}
               </span>
               <span
-                className="text-[10px] md:text-xs uppercase tracking-wider mt-2"
-                style={{ color: config.labelColor }}
+                className="text-[10px] md:text-xs uppercase tracking-wider"
+                style={{ color: config.labelColor, marginTop: '4px' }}
               >
                 {u.l}
               </span>
             </div>
             {i < units.length - 1 && (
               <span
-                className="text-3xl md:text-5xl font-light -mt-4 flex-shrink-0"
-                style={{ color: config.separatorColor, width: "16px", textAlign: "center" }}
+                className="text-3xl md:text-5xl font-light flex-shrink-0"
+                style={{ color: config.separatorColor, width: "16px", textAlign: "center", marginTop: '-16px' }}
               >
                 :
               </span>
