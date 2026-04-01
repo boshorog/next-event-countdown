@@ -104,6 +104,7 @@ export interface CountdownConfig {
   dayNames?: string[];
   monthNames?: string[];
   atWord?: string;
+  showLiveDuration?: boolean;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
