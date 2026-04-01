@@ -317,7 +317,8 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     for (const target of candidates) {
       const elapsed = nowMs - target.getTime();
       if (elapsed >= 0 && elapsed < durationMs) {
-        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
+        const remaining = durationMs - elapsed;
+        return { ms: remaining, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
       }
     }
   }
@@ -331,7 +332,8 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
     if (elapsed >= 0 && elapsed < durationMs) {
-      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title, isLive: true };
+      const remaining = durationMs - elapsed;
+      return { ms: remaining, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title, isLive: true };
     }
   }
 
