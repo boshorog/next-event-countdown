@@ -435,24 +435,10 @@ const Index = () => {
   }
 
   if (!showAdmin) {
-    // Show gallery not found state if requested gallery doesn't exist
-    if (galleryNotFound) {
-      return (
-        <div className="w-full">
-          <GalleryNotFound />
-        </div>
-      );
-    }
-    // Show only the frontend gallery for regular WordPress visitors
+    // Frontend shortcode view: render countdown widget only
     return (
       <div className="w-full">
-        <PDFGallery 
-          items={currentItems} 
-          settings={settings}
-          showRatings={galleryRatingsEnabled}
-          lightboxEnabled={galleryLightboxEnabled}
-          galleryId={currentGallery?.id || 'default'}
-        />
+        <ServiceCountdownWidget config={countdownConfig} />
       </div>
     );
   }

@@ -104,6 +104,7 @@ export interface CountdownConfig {
   dayNames?: string[];
   monthNames?: string[];
   atWord?: string;
+  showLiveDuration?: boolean;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -316,7 +317,8 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     for (const target of candidates) {
       const elapsed = nowMs - target.getTime();
       if (elapsed >= 0 && elapsed < durationMs) {
-        return { ms: 0, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
+        const remaining = durationMs - elapsed;
+        return { ms: remaining, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
       }
     }
   }
@@ -330,7 +332,8 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const elapsed = nowMs - target.getTime();
     if (elapsed >= 0 && elapsed < durationMs) {
-      return { ms: 0, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title, isLive: true };
+      const remaining = durationMs - elapsed;
+      return { ms: remaining, fullDate: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title, isLive: true };
     }
   }
 
@@ -383,19 +386,22 @@ export function useCountdown(config: CountdownConfig) {
     monthNamesList: config.monthNames,
     atWordStr: config.atWord,
   };
+  const showLiveDuration = config.showLiveDuration ?? false;
   const [state, setState] = useState(() => {
     const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
-    return { ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
+    const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
+    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
   });
   useEffect(() => {
     const tick = () => {
       const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
-      setState({ ...msToTime(n.ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
+      const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
+      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord]);
+  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
   return state;
 }
 
@@ -483,16 +489,16 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
                 {pad(u.v)}
               </span>
               <span
-                className="text-[10px] md:text-xs uppercase tracking-wider mt-2"
-                style={{ color: config.labelColor }}
+                className="text-[10px] md:text-xs uppercase tracking-wider"
+                style={{ color: config.labelColor, marginTop: '4px' }}
               >
                 {u.l}
               </span>
             </div>
             {i < units.length - 1 && (
               <span
-                className="text-3xl md:text-5xl font-light -mt-4 flex-shrink-0"
-                style={{ color: config.separatorColor, width: "16px", textAlign: "center" }}
+                className="text-3xl md:text-5xl font-light flex-shrink-0"
+                style={{ color: config.separatorColor, width: "16px", textAlign: "center", marginTop: '-16px' }}
               >
                 :
               </span>

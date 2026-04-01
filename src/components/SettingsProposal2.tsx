@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
@@ -615,6 +615,19 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     <Checkbox 
                       checked={localConfig.showDate !== false}
                       onCheckedChange={(checked) => updateConfig({ showDate: checked === true })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <Timer className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Live Event Countdown</Label>
+                        <p className="text-xs text-muted-foreground">Show remaining time during a live event instead of 00:00:00</p>
+                      </div>
+                    </div>
+                    <Checkbox 
+                      checked={localConfig.showLiveDuration === true}
+                      onCheckedChange={(checked) => updateConfig({ showLiveDuration: checked === true })}
                     />
                   </div>
                 </div>

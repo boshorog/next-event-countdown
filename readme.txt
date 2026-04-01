@@ -5,7 +5,7 @@ Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -98,7 +98,13 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
-= 1.1.0 =
+= 1.1.1 =
+* Fixed shortcode frontend rendering — countdown widget now displays correctly on pages and posts
+* Improved default style alignment consistency between admin preview and frontend
+* Added "Live Event Countdown" toggle — show remaining event duration instead of 00:00:00
+* Bug fixes and visual refinements
+
+
 * Added multi-language support with 21 languages for all countdown labels, day names, and month names
 * Reorganized Other Settings into grouped sections (Layout, Regional, Visibility, Frame & Shape)
 * Added customizable day-of-week and month name labels
