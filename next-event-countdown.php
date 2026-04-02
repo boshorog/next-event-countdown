@@ -600,6 +600,8 @@ class NxEvtCd_Plugin {
      * Plugin deactivation
      */
     public static function deactivate() {
+        // Only remove transient metadata. Do NOT delete saved events,
+        // settings, or countdown configs — user may reactivate the plugin.
         delete_option('nxevtcd_version');
     }
     

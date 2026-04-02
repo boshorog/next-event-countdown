@@ -1480,7 +1480,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
           {showRenameWarning && (
             <div className="flex items-center justify-between gap-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-lg">
               <p className="text-sm text-amber-800 dark:text-amber-200">
-                <span className="font-medium">Gallery renamed.</span> If you already embedded this gallery, remember to update the shortcode in your page or post.
+                <span className="font-medium">Counter renamed.</span> If you already embedded this counter, remember to update the shortcode in your page or post.
               </p>
               <Button
                 variant="ghost"
