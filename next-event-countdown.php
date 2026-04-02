@@ -3,7 +3,7 @@
  * Plugin Name: Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.1.1' );
+define( 'NXEVTCD_VERSION', '1.1.2' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -585,16 +585,23 @@ class NxEvtCd_Plugin {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
         
+        // IMPORTANT: Only store the version number. Do NOT delete or reset
+        // nxevtcd_countdown_config_*, nxevtcd_settings, or nxevtcd_galleries
+        // options here — they must survive plugin updates.
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
-        // Set activation redirect
-        set_transient('nxevtcd_activation_redirect', true, 30);
+        // Set activation redirect (only on fresh install, not on update)
+        if (!get_option('nxevtcd_galleries')) {
+            set_transient('nxevtcd_activation_redirect', true, 30);
+        }
     }
     
     /**
      * Plugin deactivation
      */
     public static function deactivate() {
+        // Only remove transient metadata. Do NOT delete saved events,
+        // settings, or countdown configs — user may reactivate the plugin.
         delete_option('nxevtcd_version');
     }
     
