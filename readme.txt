@@ -98,6 +98,12 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.1.2 =
+* Improved update resilience — events and settings are fully preserved during plugin updates
+* Fixed rename notification text
+* Activation redirect now only triggers on fresh install, not on updates
+* Bug fixes
+
 = 1.1.1 =
 * Fixed shortcode frontend rendering — countdown widget now displays correctly on pages and posts
 * Improved default style alignment consistency between admin preview and frontend
