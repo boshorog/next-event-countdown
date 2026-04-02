@@ -705,6 +705,12 @@ class NxEvtCd_Plugin {
             case 'get_settings':
                 $this->handle_get_settings();
                 break;
+            case 'save_countdown_config':
+                $this->handle_save_countdown_config();
+                break;
+            case 'get_countdown_config':
+                $this->handle_get_countdown_config();
+                break;
             default:
                 wp_send_json_error('Invalid action');
         }
