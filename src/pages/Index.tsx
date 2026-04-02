@@ -350,6 +350,38 @@ const Index = () => {
       .catch(() => {});
   }, [galleryState.currentGalleryId]);
 
+  // Load countdown config from WP database (works for both admin and frontend shortcode)
+  useEffect(() => {
+    const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
+    const uParams = new URLSearchParams(window.location.search);
+    const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
+    const nc = wpData?.nonce || uParams.get('nonce') || '';
+    const reqName = uParams.get('name') || '';
+
+    if (!ajUrl || !nc) {
+      setCountdownConfigLoaded(true);
+      return;
+    }
+
+    const form = new FormData();
+    form.append('action', 'nxevtcd_action');
+    form.append('action_type', 'get_countdown_config');
+    form.append('nonce', nc);
+    form.append('gallery_id', reqName || galleryState.currentGalleryId || 'default');
+
+    fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success && data?.data?.countdown_config) {
+          setCountdownConfig({ ...defaultCountdownConfig, ...data.data.countdown_config });
+        }
+        setCountdownConfigLoaded(true);
+      })
+      .catch(() => {
+        setCountdownConfigLoaded(true);
+      });
+  }, [galleryState.currentGalleryId]);
+
   const copyShortcode = async () => {
     const currentGallery = galleryState.galleries.find(g => g.id === galleryState.currentGalleryId);
     const galleryName = currentGallery?.name || 'main';
