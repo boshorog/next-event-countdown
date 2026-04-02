@@ -262,55 +262,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                 </div>
               </div>
 
-              {/* Date Format */}
-              <div className="space-y-1.5 pt-6 border-t border-border">
-                <Label className="text-base font-semibold">Date Format</Label>
-                <p className="text-sm text-muted-foreground mb-4">Choose how the event date and time are displayed</p>
-                <div className="flex items-center gap-3">
-                  <Select
-                    value={localConfig.dateFormat || "us-long"}
-                    onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
-                  >
-                    <SelectTrigger className="flex-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DATE_FORMAT_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{opt.label}</span>
-                            <span className="text-xs text-muted-foreground">{opt.example}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="flex items-center border border-border rounded-md overflow-hidden shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => updateConfig({ use24h: false })}
-                      className={`px-3 py-2 text-sm font-medium transition-colors ${
-                        localConfig.use24h !== true
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground hover:bg-accent'
-                      }`}
-                    >
-                      12h
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateConfig({ use24h: true })}
-                      className={`px-3 py-2 text-sm font-medium transition-colors ${
-                        localConfig.use24h === true
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted text-muted-foreground hover:bg-accent'
-                      }`}
-                    >
-                      24h
-                    </button>
-                  </div>
-                </div>
-              </div>
+              {/* Date Format moved to Other Settings > Regional */}
 
               {/* "at" word for date formats */}
               <div className="space-y-1.5 pt-6 border-t border-border">
@@ -561,27 +513,85 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               {/* ── Regional ── */}
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Regional</p>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Globe className="w-4 h-4 text-muted-foreground" />
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-medium">Default Timezone</Label>
-                      <p className="text-xs text-muted-foreground">Applied to all newly created events</p>
+                <div className="space-y-5">
+                  {/* Date Format */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <CalendarDays className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Date Format</Label>
+                        <p className="text-xs text-muted-foreground">Choose how the event date and time are displayed</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Select
+                        value={localConfig.dateFormat || "us-long"}
+                        onValueChange={(v) => updateConfig({ dateFormat: v as DateFormatType })}
+                      >
+                        <SelectTrigger className="flex-1 h-9 text-sm">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {DATE_FORMAT_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              <div className="flex flex-col">
+                                <span className="font-medium">{opt.label}</span>
+                                <span className="text-xs text-muted-foreground">{opt.example}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <div className="flex items-center border border-border rounded-md overflow-hidden shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => updateConfig({ use24h: false })}
+                          className={`px-3 py-2 text-sm font-medium transition-colors ${
+                            localConfig.use24h !== true
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground hover:bg-accent'
+                          }`}
+                        >
+                          12h
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updateConfig({ use24h: true })}
+                          className={`px-3 py-2 text-sm font-medium transition-colors ${
+                            localConfig.use24h === true
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground hover:bg-accent'
+                          }`}
+                        >
+                          24h
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <Select
-                    value={localConfig.defaultTimezone || "America/New_York"}
-                    onValueChange={(v) => updateConfig({ defaultTimezone: v })}
-                  >
-                    <SelectTrigger className="h-9 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TIMEZONE_OPTIONS.map((tz) => (
-                        <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+
+                  {/* Default Timezone */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <Globe className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Default Timezone</Label>
+                        <p className="text-xs text-muted-foreground">Applied to all newly created events</p>
+                      </div>
+                    </div>
+                    <Select
+                      value={localConfig.defaultTimezone || "America/New_York"}
+                      onValueChange={(v) => updateConfig({ defaultTimezone: v })}
+                    >
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIMEZONE_OPTIONS.map((tz) => (
+                          <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 
