@@ -893,6 +893,36 @@ class NxEvtCd_Plugin {
         $settings = array_merge($defaults, is_array($settings) ? $settings : array());
         wp_send_json_success(array('settings' => $settings));
     }
+
+    private function handle_save_countdown_config() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+
+        // Use wp_unslash but NOT sanitize_text_field (which strips valid JSON chars)
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
+        $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
+        $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
+        $config = json_decode($config_json, true);
+
+        if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
+            update_option('nxevtcd_countdown_config_' . $gallery_id, $config);
+            wp_send_json_success('Countdown config saved');
+        } else {
+            wp_send_json_error('Invalid countdown config data');
+        }
+    }
+
+    private function handle_get_countdown_config() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
+        $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
+        $config = get_option('nxevtcd_countdown_config_' . $gallery_id, null);
+        if ($config === null) {
+            // Try the default key as fallback
+            $config = get_option('nxevtcd_countdown_config_default', null);
+        }
+        wp_send_json_success(array('countdown_config' => $config));
+    }
 }
 
 // Initialize the plugin only if WordPress is properly loaded
