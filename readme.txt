@@ -100,8 +100,6 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 = 1.1.2 =
 * Improved update resilience — events and settings are fully preserved during plugin updates
-* Fixed rename notification text
-* Activation redirect now only triggers on fresh install, not on updates
 * Bug fixes
 
 = 1.1.1 =
@@ -110,7 +108,7 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 * Added "Live Event Countdown" toggle — show remaining event duration instead of 00:00:00
 * Bug fixes and visual refinements
 
-
+= 1.1.0 =
 * Added multi-language support with 21 languages for all countdown labels, day names, and month names
 * Reorganized Other Settings into grouped sections (Layout, Regional, Visibility, Frame & Shape)
 * Added customizable day-of-week and month name labels
