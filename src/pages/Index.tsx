@@ -374,10 +374,29 @@ const Index = () => {
   // Ratings default: off. Lightbox default: on (expected gallery behavior).
   const galleryRatingsEnabled = toBoolean((settings as any)?.ratingsEnabled, false);
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
-  // Persist countdownConfig to localStorage whenever it changes
+  // Persist countdownConfig to localStorage and WP database whenever it changes
   useEffect(() => {
     try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
-  }, [countdownConfig]);
+    
+    // Only save to WP after initial load from server is complete
+    if (!countdownConfigLoaded) return;
+    
+    const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
+    const uParams = new URLSearchParams(window.location.search);
+    const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
+    const nc = wpData?.nonce || uParams.get('nonce') || '';
+    const isAdm = !!wpData?.isAdmin || uParams.get('admin') === 'true';
+    
+    if (ajUrl && nc && isAdm) {
+      const form = new FormData();
+      form.append('action', 'nxevtcd_action');
+      form.append('action_type', 'save_countdown_config');
+      form.append('nonce', nc);
+      form.append('gallery_id', galleryState.currentGalleryId || 'default');
+      form.append('countdown_config', JSON.stringify(countdownConfig));
+      fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form }).catch(() => {});
+    }
+  }, [countdownConfig, countdownConfigLoaded]);
 
 
   // Check if we should show admin interface (dev preview or WordPress admin)
