@@ -165,15 +165,27 @@ const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1 hour fallback
 /** Build a Date object representing `hour:minute` on a given date, in the specified IANA timezone. */
 function dateInTz(baseDate: Date, hour: number, minute: number, tz: string): Date {
   const y = baseDate.getFullYear();
-  const m = String(baseDate.getMonth() + 1).padStart(2, "0");
-  const d = String(baseDate.getDate()).padStart(2, "0");
-  const hh = String(hour).padStart(2, "0");
-  const mm = String(minute).padStart(2, "0");
-  const fakeUtc = new Date(`${y}-${m}-${d}T${hh}:${mm}:00Z`);
-  const tzStr = fakeUtc.toLocaleString("en-US", { timeZone: tz });
-  const tzDate = new Date(tzStr);
-  const offsetMs = fakeUtc.getTime() - tzDate.getTime();
-  return new Date(fakeUtc.getTime() + offsetMs);
+  const m = baseDate.getMonth();
+  const d = baseDate.getDate();
+
+  // Iterative approach: start with a UTC guess, then adjust based on
+  // what the target timezone actually shows at that instant.
+  let guess = new Date(Date.UTC(y, m, d, hour, minute, 0));
+  for (let i = 0; i < 2; i++) {
+    const fmt = new Intl.DateTimeFormat('en-US', {
+      timeZone: tz,
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric',
+      hour12: false,
+    });
+    const parts = fmt.formatToParts(guess);
+    const g = (t: string) => parseInt(parts.find(p => p.type === t)?.value || '0');
+    const tzH = g('hour') === 24 ? 0 : g('hour');
+    const shownUtc = Date.UTC(g('year'), g('month') - 1, g('day'), tzH, g('minute'), g('second'));
+    const wantUtc = Date.UTC(y, m, d, hour, minute, 0);
+    guess = new Date(guess.getTime() + (wantUtc - shownUtc));
+  }
+  return guess;
 }
 
 interface FormatOptions {
@@ -483,14 +495,14 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
           <div key={u.l} className="flex items-center">
             <div className="flex flex-col items-center" style={{ width: "clamp(72px, 18vw, 120px)" }}>
               <span
-                className="text-5xl md:text-7xl font-black tabular-nums leading-none"
-                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900 }}
+                className="text-5xl md:text-7xl tabular-nums leading-none"
+                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
               >
                 {pad(u.v)}
               </span>
               <span
                 className="text-[10px] md:text-xs uppercase tracking-wider"
-                style={{ color: config.labelColor, marginTop: '4px' }}
+                style={{ color: config.labelColor, marginTop: '8px' }}
               >
                 {u.l}
               </span>
