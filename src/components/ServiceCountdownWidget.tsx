@@ -495,14 +495,14 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
           <div key={u.l} className="flex items-center">
             <div className="flex flex-col items-center" style={{ width: "clamp(72px, 18vw, 120px)" }}>
               <span
-                className="text-5xl md:text-7xl font-black tabular-nums leading-none"
-                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900 }}
+                className="text-5xl md:text-7xl tabular-nums leading-none"
+                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
               >
                 {pad(u.v)}
               </span>
               <span
                 className="text-[10px] md:text-xs uppercase tracking-wider"
-                style={{ color: config.labelColor, marginTop: '4px' }}
+                style={{ color: config.labelColor, marginTop: '8px' }}
               >
                 {u.l}
               </span>
