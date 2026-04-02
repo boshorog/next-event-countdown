@@ -145,6 +145,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const [openSpecial, setOpenSpecial] = useState<number | null>(null);
   const recurringListRef = useRef<HTMLDivElement>(null);
   const specialListRef = useRef<HTMLDivElement>(null);
+  const use12h = config.use24h !== true;
 
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
