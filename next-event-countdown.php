@@ -585,10 +585,15 @@ class NxEvtCd_Plugin {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
         
+        // IMPORTANT: Only store the version number. Do NOT delete or reset
+        // nxevtcd_countdown_config_*, nxevtcd_settings, or nxevtcd_galleries
+        // options here — they must survive plugin updates.
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
-        // Set activation redirect
-        set_transient('nxevtcd_activation_redirect', true, 30);
+        // Set activation redirect (only on fresh install, not on update)
+        if (!get_option('nxevtcd_galleries')) {
+            set_transient('nxevtcd_activation_redirect', true, 30);
+        }
     }
     
     /**
