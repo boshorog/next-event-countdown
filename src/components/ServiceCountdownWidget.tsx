@@ -484,7 +484,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
             <div className="flex flex-col items-center" style={{ width: "clamp(72px, 18vw, 120px)" }}>
               <span
                 className="text-5xl md:text-7xl font-black tabular-nums leading-none"
-                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums" }}
+                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900 }}
               >
                 {pad(u.v)}
               </span>
