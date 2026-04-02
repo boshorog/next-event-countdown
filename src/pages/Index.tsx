@@ -85,6 +85,7 @@ const Index = () => {
     } catch {}
     return defaultCountdownConfig;
   });
+  const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
