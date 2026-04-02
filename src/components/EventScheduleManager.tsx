@@ -294,11 +294,38 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
         )}
 
         {/* Time + Duration fields */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className={`grid gap-3 ${use12h ? 'grid-cols-4' : 'grid-cols-3'}`}>
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
-            <Input type="number" min={0} max={23} value={s.hour} onChange={(e) => updateSchedule(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+            {use12h ? (
+              <Select value={String(to12h(s.hour).h12)} onValueChange={(v) => {
+                const ampm = to12h(s.hour).ampm;
+                updateSchedule(i, { hour: to24h(parseInt(v), ampm) });
+              }}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {[12,1,2,3,4,5,6,7,8,9,10,11].map(h => <SelectItem key={h} value={String(h)}>{h}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            ) : (
+              <Input type="number" min={0} max={23} value={s.hour} onChange={(e) => updateSchedule(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+            )}
           </div>
+          {use12h && (
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground">AM/PM</Label>
+              <Select value={to12h(s.hour).ampm} onValueChange={(v) => {
+                const h12 = to12h(s.hour).h12;
+                updateSchedule(i, { hour: to24h(h12, v as 'AM' | 'PM') });
+              }}>
+                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AM">AM</SelectItem>
+                  <SelectItem value="PM">PM</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="space-y-1.5">
             <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
             <Input type="number" min={0} max={59} value={s.minute} onChange={(e) => updateSchedule(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
