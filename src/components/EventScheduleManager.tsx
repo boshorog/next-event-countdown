@@ -98,6 +98,19 @@ const minimalCalendarClassNames = {
   day_hidden: "invisible",
 };
 
+/** Convert 24h hour to 12h format */
+function to12h(h24: number): { h12: number; ampm: 'AM' | 'PM' } {
+  const ampm = h24 >= 12 ? 'PM' : 'AM';
+  const h12 = h24 % 12 || 12;
+  return { h12, ampm };
+}
+
+/** Convert 12h format back to 24h */
+function to24h(h12: number, ampm: 'AM' | 'PM'): number {
+  if (ampm === 'AM') return h12 === 12 ? 0 : h12;
+  return h12 === 12 ? 12 : h12 + 12;
+}
+
 interface EventScheduleManagerProps {
   config: CountdownConfig;
   onChange: (config: CountdownConfig) => void;
