@@ -123,7 +123,7 @@ export const defaultCountdownConfig: CountdownConfig = {
     { recurrenceType: "weekly", day: 4, hour: 19, minute: 0, title: "Thursday Prayer Meeting", timezone: "America/New_York", duration: 60 },
   ],
   specialEvents: [],
-  bgColor: "#ffffff",
+  bgColor: "transparent",
   textColor: "#1a1a1a",
   digitColor: "#1a1a1a",
   separatorColor: "#d4d4d4",
