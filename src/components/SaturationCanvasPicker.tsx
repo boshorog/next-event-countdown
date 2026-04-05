@@ -148,6 +148,7 @@ const SaturationCanvasPicker = ({ color, onChange, trigger, extraContent }: Satu
             <Copy className="w-3.5 h-3.5" />
           </Button>
         </div>
+        {extraContent}
       </PopoverContent>
     </Popover>
   );
