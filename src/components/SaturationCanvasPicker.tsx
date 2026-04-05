@@ -43,9 +43,11 @@ interface SaturationCanvasPickerProps {
   onChange: (color: string) => void;
   /** Render prop for the trigger element. If not provided, uses a default swatch button. */
   trigger?: (color: string) => React.ReactNode;
+  /** Optional extra content rendered at the bottom of the popover */
+  extraContent?: React.ReactNode;
 }
 
-const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPickerProps) => {
+const SaturationCanvasPicker = ({ color, onChange, trigger, extraContent }: SaturationCanvasPickerProps) => {
   const hsl = hexToHSL(color);
   const canvasRef = useRef<HTMLDivElement>(null);
   const hueRef = useRef<HTMLDivElement>(null);
@@ -146,6 +148,7 @@ const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPi
             <Copy className="w-3.5 h-3.5" />
           </Button>
         </div>
+        {extraContent}
       </PopoverContent>
     </Popover>
   );

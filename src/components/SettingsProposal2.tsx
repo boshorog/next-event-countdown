@@ -448,22 +448,30 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                   <div className="space-y-2">
                     <Label className="text-sm">Background</Label>
                     <div className="flex items-center gap-2">
-                      {localConfig.bgColor === 'transparent' ? (
-                        <button
-                          className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow flex-shrink-0"
-                          style={{ background: 'repeating-conic-gradient(#d4d4d4 0% 25%, #fff 0% 50%) 50% / 12px 12px' }}
-                          onClick={() => updateConfig({ bgColor: '#ffffff' })}
-                          title="Currently transparent – click to pick a color"
-                        />
-                      ) : (
-                        <SaturationCanvasPicker
-                          color={localConfig.bgColor || '#ffffff'}
-                          onChange={(c) => updateConfig({ bgColor: c })}
-                          trigger={(c) => (
-                            <button className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow flex-shrink-0" style={{ backgroundColor: c }} />
-                          )}
-                        />
-                      )}
+                      <SaturationCanvasPicker
+                        color={localConfig.bgColor === 'transparent' ? '#ffffff' : (localConfig.bgColor || '#ffffff')}
+                        onChange={(c) => updateConfig({ bgColor: c })}
+                        trigger={(c) => (
+                          <button
+                            className="w-9 h-9 rounded-lg border border-border shadow-sm cursor-pointer hover:shadow-md transition-shadow flex-shrink-0"
+                            style={localConfig.bgColor === 'transparent'
+                              ? { background: 'repeating-conic-gradient(#d4d4d4 0% 25%, #fff 0% 50%) 50% / 12px 12px' }
+                              : { backgroundColor: c }
+                            }
+                          />
+                        )}
+                        extraContent={
+                          <label className="flex items-center gap-2 text-sm cursor-pointer select-none pt-1 border-t border-border mt-1">
+                            <input
+                              type="checkbox"
+                              checked={localConfig.bgColor === 'transparent'}
+                              onChange={(e) => updateConfig({ bgColor: e.target.checked ? 'transparent' : '#ffffff' })}
+                              className="rounded border-border accent-[hsl(var(--primary))]"
+                            />
+                            <span className="text-muted-foreground">Transparent background</span>
+                          </label>
+                        }
+                      />
                       <Input
                         value={localConfig.bgColor === 'transparent' ? 'transparent' : (localConfig.bgColor || '')}
                         onChange={(e) => updateConfig({ bgColor: e.target.value })}
@@ -471,15 +479,6 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                         className="font-mono flex-1"
                         disabled={localConfig.bgColor === 'transparent'}
                       />
-                      <label className="flex items-center gap-1.5 text-sm whitespace-nowrap cursor-pointer select-none">
-                        <input
-                          type="checkbox"
-                          checked={localConfig.bgColor === 'transparent'}
-                          onChange={(e) => updateConfig({ bgColor: e.target.checked ? 'transparent' : '#ffffff' })}
-                          className="rounded border-border"
-                        />
-                        Transparent
-                      </label>
                     </div>
                   </div>
                   {[
