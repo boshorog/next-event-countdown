@@ -490,18 +490,31 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
                           {use12h ? (
-                            <Select value={String(to12h(ev.hour).h12)} onValueChange={(v) => {
-                              const ampm = to12h(ev.hour).ampm;
-                              updateSpecial(i, { hour: to24h(parseInt(v), ampm) });
-                            }}>
-                              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                              <SelectContent>
-                                {[12,1,2,3,4,5,6,7,8,9,10,11].map(h => <SelectItem key={h} value={String(h)}>{h}</SelectItem>)}
-                              </SelectContent>
-                            </Select>
+                            <Input
+                              type="number"
+                              min={1}
+                              max={12}
+                              value={to12h(ev.hour).h12}
+                              onChange={(e) => {
+                                const val = parseInt(e.target.value) || 0;
+                                const ampm = to12h(ev.hour).ampm;
+                                if (val >= 1 && val <= 12) updateSpecial(i, { hour: to24h(val, ampm) });
+                              }}
+                              className={`h-8 text-sm ${(() => { const v = to12h(ev.hour).h12; return v < 1 || v > 12 ? 'border-red-500 focus-visible:ring-red-500' : ''; })()}`}
+                            />
                           ) : (
-                            <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => updateSpecial(i, { hour: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
+                            <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => {
+                              const val = parseInt(e.target.value) || 0;
+                              if (val >= 0 && val <= 23) updateSpecial(i, { hour: val });
+                            }} className={`h-8 text-sm ${ev.hour < 0 || ev.hour > 23 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
                           )}
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
+                          <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => {
+                            const val = parseInt(e.target.value) || 0;
+                            if (val >= 0 && val <= 59) updateSpecial(i, { minute: val });
+                          }} className={`h-8 text-sm ${ev.minute < 0 || ev.minute > 59 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
                         </div>
                         {use12h && (
                           <div className="space-y-1.5">
@@ -518,10 +531,6 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                             </Select>
                           </div>
                         )}
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
-                          <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => updateSpecial(i, { minute: parseInt(e.target.value) || 0 })} className="h-8 text-sm" />
-                        </div>
                         <div className="space-y-1.5">
                           <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
                           <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(i, { duration: parseInt(v) })}>
