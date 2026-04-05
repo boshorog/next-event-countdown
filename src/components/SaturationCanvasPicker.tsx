@@ -47,7 +47,7 @@ interface SaturationCanvasPickerProps {
   extraContent?: React.ReactNode;
 }
 
-const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPickerProps) => {
+const SaturationCanvasPicker = ({ color, onChange, trigger, extraContent }: SaturationCanvasPickerProps) => {
   const hsl = hexToHSL(color);
   const canvasRef = useRef<HTMLDivElement>(null);
   const hueRef = useRef<HTMLDivElement>(null);
