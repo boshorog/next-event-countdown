@@ -5,7 +5,7 @@ Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -97,6 +97,13 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 3. Live countdown widget on the front end.
 
 == Changelog ==
+
+= 1.1.3 =
+* Improved mobile responsiveness — countdown no longer clips on small screens
+* Fixed counter size setting persistence in frontend
+* Removed extra blank space below the countdown widget
+* Improved time input fields with validation highlighting
+* Bug fixes
 
 = 1.1.2 =
 * Improved update resilience — events and settings are fully preserved during plugin updates

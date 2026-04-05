@@ -459,64 +459,66 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <div
-      className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} p-8 text-center`}
-      style={{
-        backgroundColor: config.bgColor,
-        border: config.showBorder ? '1px solid #e5e7eb' : 'none',
-        borderRadius: `${radius}px`,
-        transform: `scale(${hs})`,
-        transformOrigin: 'top center',
-      }}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px' }}>
-        <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-        <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
-          {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
-        </span>
-        {config.showDate !== false && (
-          <span style={{ color: config.labelColor, fontSize: '18px' }}>
-            {t.fullDate}
+    <div style={{ overflow: 'hidden' }}>
+      <div
+        className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} p-8 text-center`}
+        style={{
+          backgroundColor: config.bgColor,
+          border: config.showBorder ? '1px solid #e5e7eb' : 'none',
+          borderRadius: `${radius}px`,
+          transform: hs !== 1 ? `scale(${hs})` : undefined,
+          transformOrigin: 'top center',
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px' }}>
+          <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
+          <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
+            {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
           </span>
+          {config.showDate !== false && (
+            <span style={{ color: config.labelColor, fontSize: '18px' }}>
+              {t.fullDate}
+            </span>
+          )}
+        </div>
+
+        {/* Service title */}
+        {config.showTitle !== false && t.title && (
+          <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px' }}>
+            {t.title}
+          </p>
         )}
-      </div>
 
-      {/* Service title */}
-      {config.showTitle !== false && t.title && (
-        <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px' }}>
-          {t.title}
-        </p>
-      )}
-
-      {/* Countdown digits */}
-      <div className="flex justify-center items-center">
-        {units.map((u, i) => (
-          <div key={u.l} className="flex items-center">
-            <div className="flex flex-col items-center" style={{ width: "clamp(72px, 18vw, 120px)" }}>
-              <span
-                className="text-5xl md:text-7xl tabular-nums leading-none"
-                style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
-              >
-                {pad(u.v)}
-              </span>
-              <span
-                className="text-[10px] md:text-xs uppercase tracking-wider"
-                style={{ color: config.labelColor, marginTop: '8px' }}
-              >
-                {u.l}
-              </span>
+        {/* Countdown digits */}
+        <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'hidden' }}>
+          {units.map((u, i) => (
+            <div key={u.l} className="flex items-center">
+              <div className="flex flex-col items-center" style={{ width: "clamp(60px, 18vw, 120px)" }}>
+                <span
+                  className="text-5xl md:text-7xl tabular-nums leading-none"
+                  style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
+                >
+                  {pad(u.v)}
+                </span>
+                <span
+                  className="text-[10px] md:text-xs uppercase tracking-wider"
+                  style={{ color: config.labelColor, marginTop: '8px' }}
+                >
+                  {u.l}
+                </span>
+              </div>
+              {i < units.length - 1 && (
+                <span
+                  className="text-3xl md:text-5xl font-light flex-shrink-0"
+                  style={{ color: config.separatorColor, width: "16px", textAlign: "center", marginTop: '-16px' }}
+                >
+                  :
+                </span>
+              )}
             </div>
-            {i < units.length - 1 && (
-              <span
-                className="text-3xl md:text-5xl font-light flex-shrink-0"
-                style={{ color: config.separatorColor, width: "16px", textAlign: "center", marginTop: '-16px' }}
-              >
-                :
-              </span>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
