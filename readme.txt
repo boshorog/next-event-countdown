@@ -98,6 +98,13 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.1.3 =
+* Improved mobile responsiveness — countdown no longer clips on small screens
+* Fixed counter size setting persistence in frontend
+* Removed extra blank space below the countdown widget
+* Improved time input fields with validation highlighting
+* Bug fixes
+
 = 1.1.2 =
 * Improved update resilience — events and settings are fully preserved during plugin updates
 * Bug fixes
