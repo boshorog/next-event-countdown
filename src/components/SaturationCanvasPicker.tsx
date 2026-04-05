@@ -43,6 +43,8 @@ interface SaturationCanvasPickerProps {
   onChange: (color: string) => void;
   /** Render prop for the trigger element. If not provided, uses a default swatch button. */
   trigger?: (color: string) => React.ReactNode;
+  /** Optional extra content rendered at the bottom of the popover */
+  extraContent?: React.ReactNode;
 }
 
 const SaturationCanvasPicker = ({ color, onChange, trigger }: SaturationCanvasPickerProps) => {
