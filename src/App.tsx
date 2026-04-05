@@ -61,8 +61,8 @@ const App = () => {
         body?.offsetHeight,
       ].filter((v): v is number => typeof v === 'number');
 
-      const raw = Math.max(...heights, 0) + 24; // small padding to avoid cutting the last row
-      const contentHeight = Math.ceil(raw / 8) * 8; // align to reduce micro-jitter
+      const raw = Math.max(...heights, 0) + 2; // minimal padding
+      const contentHeight = Math.ceil(raw / 4) * 4;
       return contentHeight;
     };
     
