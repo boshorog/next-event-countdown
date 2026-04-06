@@ -129,6 +129,7 @@ class NxEvtCd_Plugin {
 
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_shortcode('nxevtcd_countdown', array($this, 'display_countdown_shortcode'));
         
         // AJAX handlers
@@ -147,9 +148,6 @@ class NxEvtCd_Plugin {
         
         // Activation redirect for onboarding
         add_action('admin_init', array($this, 'activation_redirect'));
-        
-        // Hide other plugins' notices on our admin page
-        add_action('admin_print_styles', array($this, 'hide_other_plugin_notices'));
     }
     
     /**
