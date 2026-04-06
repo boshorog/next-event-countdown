@@ -171,33 +171,11 @@ class NxEvtCd_Plugin {
     }
     
     /**
-     * Hide admin notices from other plugins on our pages
+     * Register frontend assets for shortcode usage
      */
-    public function hide_other_plugin_notices() {
-        $screen = get_current_screen();
-        if (!$screen || strpos($screen->id, 'kindpixels-next-event-countdown') === false) {
-            return;
-        }
-        
-        echo '<style>
-            body.nxevtcd-admin-page #wpbody-content > .notice,
-            body.nxevtcd-admin-page #wpbody-content > .updated,
-            body.nxevtcd-admin-page #wpbody-content > div.notice,
-            body.nxevtcd-admin-page #wpbody-content > div.updated,
-            body.nxevtcd-admin-page .wrap > .notice,
-            body.nxevtcd-admin-page .wrap > .updated,
-            body.nxevtcd-admin-page .notice,
-            body.nxevtcd-admin-page .updated,
-            body.nxevtcd-admin-page div[class*="notice"],
-            body.nxevtcd-admin-page div[class*="update"] {
-                display: none !important;
-            }
-            body.nxevtcd-admin-page .notice-error,
-            body.nxevtcd-admin-page .notice-warning,
-            body.nxevtcd-admin-page .update-nag {
-                display: block !important;
-            }
-        </style>';
+    public function register_frontend_assets() {
+        wp_register_style('nxevtcd-frontend', false, array(), NXEVTCD_VERSION);
+        wp_register_script('nxevtcd-frontend', false, array(), NXEVTCD_VERSION, true);
     }
     
     /**
