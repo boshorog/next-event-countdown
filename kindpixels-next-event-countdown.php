@@ -881,8 +881,10 @@ class NxEvtCd_Plugin {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
         }
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
+            wp_die('Security check failed');
+        }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
         $settings_json = isset($_POST['settings']) ? sanitize_text_field(wp_unslash($_POST['settings'])) : '';
         $settings = json_decode($settings_json, true);
 
@@ -905,10 +907,11 @@ class NxEvtCd_Plugin {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
         }
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
+            wp_die('Security check failed');
+        }
 
-        // Use wp_unslash but NOT sanitize_text_field (which strips valid JSON chars)
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
-        $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
+        $config_json = isset($_POST['countdown_config']) ? sanitize_text_field(wp_unslash($_POST['countdown_config'])) : '';
         $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
         $config = json_decode($config_json, true);
 
@@ -921,7 +924,9 @@ class NxEvtCd_Plugin {
     }
 
     private function handle_get_countdown_config() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
+            wp_die('Security check failed');
+        }
         $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
         $config = get_option('nxevtcd_countdown_config_' . $gallery_id, null);
         if ($config === null) {
