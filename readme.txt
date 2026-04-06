@@ -1,4 +1,4 @@
-=== Next Event Countdown ===
+=== KindPixels Next Event Countdown ===
 Contributors: kindpixels
 Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Donate link: https://kindpixels.com/donate
