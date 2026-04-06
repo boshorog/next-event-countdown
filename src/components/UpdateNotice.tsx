@@ -105,7 +105,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     
     // Pro users: go to plugins page (Freemius handles updates there)
     if (license.isPro) {
-      const pluginsUrl = window.location.origin + '/wp-admin/plugins.php#next-event-countdown';
+      const pluginsUrl = window.location.origin + '/wp-admin/plugins.php#kindpixels-next-event-countdown';
       window.location.href = pluginsUrl;
       return;
     }
