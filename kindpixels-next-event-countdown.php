@@ -924,7 +924,9 @@ class NxEvtCd_Plugin {
     }
 
     private function handle_get_countdown_config() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
+            wp_die('Security check failed');
+        }
         $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
         $config = get_option('nxevtcd_countdown_config_' . $gallery_id, null);
         if ($config === null) {
