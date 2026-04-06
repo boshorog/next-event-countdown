@@ -122,10 +122,10 @@ export const BRANDING = {
   links: {
     website: 'https://kindpixels.com',
     support: 'https://kindpixels.com/support',
-    pricing: 'https://kindpixels.com/plugins/next-event-countdown-pro',
-    documentation: 'https://kindpixels.com/docs/next-event-countdown',
-    github: 'https://github.com/boshorog/next-event-countdown',
-    wordpressOrg: 'https://wordpress.org/plugins/next-event-countdown',
+    pricing: 'https://kindpixels.com/plugins/kindpixels-next-event-countdown-pro',
+    documentation: 'https://kindpixels.com/docs/kindpixels-next-event-countdown',
+    github: 'https://github.com/boshorog/kindpixels-next-event-countdown',
+    wordpressOrg: 'https://wordpress.org/plugins/kindpixels-next-event-countdown',
   },
 } as const;
 

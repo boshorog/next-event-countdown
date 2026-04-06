@@ -179,7 +179,7 @@ async function main() {
   }
   
   const version = getPluginVersion();
-  console.log(`\n🚀 Next Event Countdown Plugin Builder`);
+  console.log(`\n🚀 KindPixels Next Event Countdown Plugin Builder`);
   console.log(`   Version: ${version}`);
   console.log(`   Output:  ${OUTPUT_DIR}`);
   

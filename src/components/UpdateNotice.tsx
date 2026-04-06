@@ -115,7 +115,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     if (wpUpdates && typeof wpUpdates.updatePlugin === 'function') {
       // Use WordPress's built-in AJAX update mechanism
       wpUpdates.updatePlugin({
-        plugin: wpGlobal?.pluginBasename || 'next-event-countdown/next-event-countdown.php',
+        plugin: wpGlobal?.pluginBasename || 'kindpixels-next-event-countdown/kindpixels-next-event-countdown.php',
         slug: PLUGIN_SLUG,
         success: () => {
           setUpdating(false);
