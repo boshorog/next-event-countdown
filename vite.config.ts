@@ -19,12 +19,12 @@ const proBuildMarker = () => ({
       fs.writeFileSync(markerPath, 'pro');
       console.log('✓ Created .pro-build marker for Pro version');
       
-      // Update PHP header to show "Next Event Countdown Pro" for Pro builds
+      // Update PHP header to show "KindPixels Next Event Countdown Pro" for Pro builds
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         phpContent = phpContent.replace(
-          /Plugin Name:\s*Next Event Countdown\s*$/m,
-          'Plugin Name: Next Event Countdown Pro'
+          /Plugin Name:\s*KindPixels Next Event Countdown\s*$/m,
+          'Plugin Name: KindPixels Next Event Countdown Pro'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
         console.log('✓ Updated plugin header to "Next Event Countdown Pro"');
