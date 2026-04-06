@@ -492,15 +492,18 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <div style={{ overflow: 'hidden' }}>
+    <div style={{ overflow: 'hidden', width: '100%', maxWidth: '100%', boxSizing: 'border-box' as const }}>
       <div
-        className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} p-8 text-center`}
+        className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} text-center`}
         style={{
           backgroundColor: config.bgColor,
           border: config.showBorder ? '1px solid #e5e7eb' : 'none',
           borderRadius: `${radius}px`,
           transform: hs !== 1 ? `scale(${hs})` : undefined,
           transformOrigin: 'top center',
+          padding: 'clamp(16px, 4vw, 32px)',
+          boxSizing: 'border-box' as const,
+          maxWidth: '100%',
         }}
       >
         {/* Header */}
@@ -524,27 +527,27 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
         )}
 
         {/* Countdown digits */}
-        <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'hidden' }}>
+        <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%' }}>
           {units.map((u, i) => (
-            <div key={u.l} className="flex items-center">
-              <div className="flex flex-col items-center" style={{ width: "clamp(60px, 18vw, 120px)" }}>
+            <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
+              <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
                 <span
-                  className="text-5xl md:text-7xl tabular-nums leading-none"
-                  style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
+                  className="tabular-nums leading-none"
+                  style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
                 >
                   {pad(u.v)}
                 </span>
                 <span
-                  className="text-[10px] md:text-xs uppercase tracking-wider"
-                  style={{ color: config.labelColor, marginTop: '8px' }}
+                  className="uppercase tracking-wider"
+                  style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
                 >
                   {u.l}
                 </span>
               </div>
               {i < units.length - 1 && (
                 <span
-                  className="text-3xl md:text-5xl font-light flex-shrink-0"
-                  style={{ color: config.separatorColor, width: "16px", textAlign: "center", marginTop: '-16px' }}
+                  className="font-light flex-shrink-0"
+                  style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: 'clamp(1.5rem, 6vw, 3rem)' }}
                 >
                   :
                 </span>

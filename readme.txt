@@ -5,7 +5,7 @@ Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.1.3
+Stable tag: 1.1.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -97,6 +97,13 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 3. Live countdown widget on the front end.
 
 == Changelog ==
+
+= 1.1.5 =
+* Renamed plugin to "KindPixels Next Event Countdown" for WordPress.org uniqueness
+* Fixed Freemius wp.org compliance (is_premium set to false for free version)
+* Replaced all inline script/style tags with proper wp_enqueue and wp_add_inline_script/style
+* Improved mobile responsiveness — countdown digits now scale fluidly and no longer clip on small screens
+* Bug fixes
 
 = 1.1.3 =
 * Improved mobile responsiveness — countdown no longer clips on small screens
