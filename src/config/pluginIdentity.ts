@@ -15,7 +15,7 @@
  * 6. Update BRANDING section (colors, links, credits)
  * 
  * IMPORTANT: After changing this file, also update:
- * - next-event-countdown.php → Search/replace the prefix
+ * - kindpixels-next-event-countdown.php → Search/replace the prefix
  * - readme.txt → Update plugin name and descriptions
  * - vite.config.ts → Update base path if slug changes
  * ============================================================================
@@ -29,7 +29,7 @@
  * WordPress plugin slug (folder name, shortcode prefix, option names)
  * Example: 'next-event-countdown' → [nxevtcd_countdown] shortcode
  */
-export const PLUGIN_SLUG = 'next-event-countdown';
+export const PLUGIN_SLUG = 'kindpixels-next-event-countdown';
 
 /**
  * Short prefix for PHP functions, AJAX actions, DB options, CSS classes
@@ -57,16 +57,16 @@ export const JS_GLOBAL_LEGACY = null;
 /**
  * Plugin display name in WordPress admin (Free version)
  */
-export const PLUGIN_NAME = 'Next Event Countdown';
+export const PLUGIN_NAME = 'KindPixels Next Event Countdown';
 
 /**
  * Plugin display name for Pro version
  */
-export const PRO_NAME = 'Next Event Countdown Pro';
+export const PRO_NAME = 'KindPixels Next Event Countdown Pro';
 
 /**
  * Plugin version - update this for each release
- * Also update in: next-event-countdown.php, readme.txt
+ * Also update in: kindpixels-next-event-countdown.php, readme.txt
  */
 export const PLUGIN_VERSION = '1.1.4';
 
@@ -122,10 +122,10 @@ export const BRANDING = {
   links: {
     website: 'https://kindpixels.com',
     support: 'https://kindpixels.com/support',
-    pricing: 'https://kindpixels.com/plugins/next-event-countdown-pro',
-    documentation: 'https://kindpixels.com/docs/next-event-countdown',
-    github: 'https://github.com/boshorog/next-event-countdown',
-    wordpressOrg: 'https://wordpress.org/plugins/next-event-countdown',
+    pricing: 'https://kindpixels.com/plugins/kindpixels-next-event-countdown-pro',
+    documentation: 'https://kindpixels.com/docs/kindpixels-next-event-countdown',
+    github: 'https://github.com/boshorog/kindpixels-next-event-countdown',
+    wordpressOrg: 'https://wordpress.org/plugins/kindpixels-next-event-countdown',
   },
 } as const;
 

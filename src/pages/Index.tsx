@@ -696,7 +696,7 @@ const Index = () => {
                   <ExternalLink className="w-3 h-3" />
                 </a>
                 <a 
-                  href="https://wordpress.org/plugins/next-event-countdown/#reviews" 
+                  href="https://wordpress.org/plugins/kindpixels-next-event-countdown/#reviews" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"

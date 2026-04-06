@@ -12,22 +12,22 @@ const proBuildMarker = () => ({
   closeBundle() {
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
-    const phpPath = path.resolve(__dirname, 'next-event-countdown.php');
+    const phpPath = path.resolve(__dirname, 'kindpixels-next-event-countdown.php');
     
     if (isPro) {
       // Create marker file for Pro build
       fs.writeFileSync(markerPath, 'pro');
       console.log('✓ Created .pro-build marker for Pro version');
       
-      // Update PHP header to show "Next Event Countdown Pro" for Pro builds
+      // Update PHP header to show "KindPixels Next Event Countdown Pro" for Pro builds
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         phpContent = phpContent.replace(
-          /Plugin Name:\s*Next Event Countdown\s*$/m,
-          'Plugin Name: Next Event Countdown Pro'
+          /Plugin Name:\s*KindPixels Next Event Countdown\s*$/m,
+          'Plugin Name: KindPixels Next Event Countdown Pro'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
-        console.log('✓ Updated plugin header to "Next Event Countdown Pro"');
+        console.log('✓ Updated plugin header to "KindPixels Next Event Countdown Pro"');
       }
     } else {
       // Ensure no marker exists for Free build
@@ -39,8 +39,8 @@ const proBuildMarker = () => ({
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         phpContent = phpContent.replace(
-          /Plugin Name:\s*Next Event Countdown Pro\s*$/m,
-          'Plugin Name: Next Event Countdown'
+          /Plugin Name:\s*KindPixels Next Event Countdown Pro\s*$/m,
+          'Plugin Name: KindPixels Next Event Countdown'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }
@@ -51,7 +51,7 @@ const proBuildMarker = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/wp-content/plugins/next-event-countdown/dist/' : '/',
+  base: mode === 'production' ? '/wp-content/plugins/kindpixels-next-event-countdown/dist/' : '/',
   server: {
     host: "::",
     port: 8080,

@@ -462,7 +462,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                     <h4 className="font-medium mb-2">Useful Links</h4>
                     <ul className="space-y-2">
                       <li>
-                        <a href="https://kindpixels.com/plugins/next-event-countdown/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a href="https://kindpixels.com/plugins/kindpixels-next-event-countdown/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                           Plugin Website →
                         </a>
                       </li>

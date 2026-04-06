@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Next Event Countdown
+ * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
  * Version: 1.1.4
@@ -8,7 +8,7 @@
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: next-event-countdown
+ * Text Domain: kindpixels-next-event-countdown
  * Requires at least: 5.8
  * Tested up to: 6.9
  */
@@ -44,7 +44,7 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
 
                 'id'                  => '25492',
 
-                'slug'                => 'next-event-countdown',
+                'slug'                => 'kindpixels-next-event-countdown',
 
                 'type'                => 'plugin',
 
@@ -72,7 +72,7 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
 
                 'menu'                => array(
 
-                    'slug'           => 'next-event-countdown-manager',
+                    'slug'           => 'kindpixels-kindpixels-next-event-countdown-manager',
 
                     'support'        => false,
 
@@ -110,7 +110,7 @@ function nxevtcd_after_license_change( $plan_change ) {
     set_transient( 'nxevtcd_license_changed', time(), 300 );
     
     $redirect_url = add_query_arg( array(
-        'page'          => 'next-event-countdown-manager',
+        'page'          => 'kindpixels-next-event-countdown-manager',
         'license_updated' => time(),
     ), admin_url( 'admin.php' ) );
     
@@ -164,7 +164,7 @@ class NxEvtCd_Plugin {
             '',
             'Countdown',
             'manage_options',
-            'next-event-countdown',
+            'kindpixels-next-event-countdown',
             array($this, 'render_admin_page'),
             $icon_base64,
             100
@@ -177,7 +177,7 @@ class NxEvtCd_Plugin {
      */
     public function hide_other_plugin_notices() {
         $screen = get_current_screen();
-        if (!$screen || strpos($screen->id, 'next-event-countdown') === false) {
+        if (!$screen || strpos($screen->id, 'kindpixels-next-event-countdown') === false) {
             return;
         }
         
@@ -234,7 +234,7 @@ class NxEvtCd_Plugin {
      * Enqueue scripts and styles for admin page
      */
     public function enqueue_admin_scripts($hook_suffix) {
-        if ($hook_suffix !== 'toplevel_page_next-event-countdown') {
+        if ($hook_suffix !== 'toplevel_page_kindpixels-next-event-countdown') {
             return;
         }
         
@@ -341,7 +341,7 @@ class NxEvtCd_Plugin {
         ));
     }
     public function assets_not_found_notice() {
-        echo '<div class="notice notice-error"><p>Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
+        echo '<div class="notice notice-error"><p>KindPixels Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
     }
     
     /**
@@ -349,7 +349,7 @@ class NxEvtCd_Plugin {
      */
     public function render_admin_page() {
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'next-event-countdown'));
+            wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'kindpixels-next-event-countdown'));
         }
         
         echo '<script>document.body.classList.add("nxevtcd-admin-page");</script>';
@@ -624,7 +624,7 @@ class NxEvtCd_Plugin {
             return;
         }
         
-        wp_safe_redirect(admin_url('admin.php?page=next-event-countdown'));
+        wp_safe_redirect(admin_url('admin.php?page=kindpixels-next-event-countdown'));
         exit;
     }
     
@@ -659,7 +659,7 @@ class NxEvtCd_Plugin {
             }
         }
         
-        $dashboard_link = '<a href="' . esc_url(admin_url('admin.php?page=next-event-countdown')) . '">Dashboard</a>';
+        $dashboard_link = '<a href="' . esc_url(admin_url('admin.php?page=kindpixels-next-event-countdown')) . '">Dashboard</a>';
         array_unshift($links, $dashboard_link);
         
         $is_pro = false;
@@ -814,7 +814,7 @@ class NxEvtCd_Plugin {
                     $ts = time();
                     set_transient( 'nxevtcd_license_changed', $ts, 300 );
                     $redirect_url = add_query_arg( array(
-                        'page'             => 'next-event-countdown',
+                        'page'             => 'kindpixels-next-event-countdown',
                         'license_activated' => '1',
                         'license_updated'   => $ts,
                     ), admin_url( 'admin.php' ) );

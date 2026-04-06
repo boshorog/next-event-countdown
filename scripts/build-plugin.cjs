@@ -21,14 +21,14 @@ const path = require('path');
 const archiver = require('archiver');
 
 // Plugin configuration
-const PLUGIN_SLUG = 'next-event-countdown';
+const PLUGIN_SLUG = 'kindpixels-next-event-countdown';
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const OUTPUT_DIR = path.join(ROOT_DIR, 'releases');
 
 // Files/folders to include in the ZIP (relative to project root)
 const INCLUDE_FILES = [
-  'next-event-countdown.php',
+  'kindpixels-next-event-countdown.php',
   'readme.txt',
   'dist/',
   'freemius/',
@@ -47,11 +47,11 @@ const EXCLUDE_PATTERNS = [
  * Get plugin version from main PHP file
  */
 function getPluginVersion() {
-  const phpFile = path.join(ROOT_DIR, 'next-event-countdown.php');
+  const phpFile = path.join(ROOT_DIR, 'kindpixels-next-event-countdown.php');
   const content = fs.readFileSync(phpFile, 'utf8');
   const match = content.match(/Version:\s*([0-9.]+)/i);
   if (!match) {
-    throw new Error('Could not find version in next-event-countdown.php');
+    throw new Error('Could not find version in kindpixels-next-event-countdown.php');
   }
   return match[1];
 }
@@ -179,7 +179,7 @@ async function main() {
   }
   
   const version = getPluginVersion();
-  console.log(`\n🚀 Next Event Countdown Plugin Builder`);
+  console.log(`\n🚀 KindPixels Next Event Countdown Plugin Builder`);
   console.log(`   Version: ${version}`);
   console.log(`   Output:  ${OUTPUT_DIR}`);
   
