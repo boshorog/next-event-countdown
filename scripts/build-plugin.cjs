@@ -51,7 +51,7 @@ function getPluginVersion() {
   const content = fs.readFileSync(phpFile, 'utf8');
   const match = content.match(/Version:\s*([0-9.]+)/i);
   if (!match) {
-    throw new Error('Could not find version in next-event-countdown.php');
+    throw new Error('Could not find version in kindpixels-next-event-countdown.php');
   }
   return match[1];
 }
