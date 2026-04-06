@@ -19,6 +19,8 @@ export interface ServiceSchedule {
   monthlyWeek?: number;
   // monthly-date: day of month (1-31)
   monthlyDay?: number;
+  // optional end date (ISO yyyy-mm-dd) — schedule stops after this date
+  endDate?: string;
 }
 
 export interface SpecialEvent {
@@ -313,6 +315,13 @@ export function getScheduleCandidates(s: ServiceSchedule, now: Date, count: numb
       const dt = new Date(actualYear, actualMonth, clampedDay);
       candidates.push(dateInTz(dt, s.hour, s.minute, tz));
     }
+  }
+
+  // Filter out candidates past the end date
+  if (s.endDate) {
+    const [ey, em, ed] = s.endDate.split("-").map(Number);
+    const endLimit = new Date(ey, em - 1, ed, 23, 59, 59);
+    return candidates.filter(c => c <= endLimit);
   }
 
   return candidates;
