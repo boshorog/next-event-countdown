@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star } from "lucide-react";
+import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -162,6 +162,20 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
 
   const defaultTz = config.defaultTimezone || "America/New_York";
 
+  // Auto-remove past special events (event date + duration has passed)
+  useEffect(() => {
+    const now = new Date();
+    const filtered = config.specialEvents.filter((ev) => {
+      const [y, m, d] = ev.date.split("-").map(Number);
+      const evEnd = new Date(y, m - 1, d, ev.hour, ev.minute);
+      evEnd.setMinutes(evEnd.getMinutes() + (ev.duration || 60));
+      return evEnd.getTime() > now.getTime();
+    });
+    if (filtered.length < config.specialEvents.length) {
+      update("specialEvents", filtered);
+    }
+  }, [config.specialEvents]);
+
   const addSchedule = () => {
     update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
     setOpenRecurring(config.schedules.length);
@@ -178,6 +192,19 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const removeSpecial = (idx: number) => {
     update("specialEvents", config.specialEvents.filter((_, i) => i !== idx));
     if (openSpecial === idx) setOpenSpecial(null);
+  };
+
+  const duplicateSpecial = (idx: number) => {
+    const ev = config.specialEvents[idx];
+    const [y, m, d] = ev.date.split("-").map(Number);
+    const nextDay = new Date(y, m - 1, d);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const newDate = nextDay.toISOString().slice(0, 10);
+    const newEv = { ...ev, date: newDate };
+    const updated = [...config.specialEvents];
+    updated.splice(idx + 1, 0, newEv);
+    update("specialEvents", updated);
+    setOpenSpecial(idx + 1);
   };
 
   const addSpecial = () => {
@@ -456,13 +483,23 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                           <p className="text-xs text-muted-foreground truncate">{specialSummary(ev)}</p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost" size="sm"
-                        onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
-                        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                          title="Duplicate event (+1 day)"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </button>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
