@@ -57,12 +57,12 @@ export const JS_GLOBAL_LEGACY = null;
 /**
  * Plugin display name in WordPress admin (Free version)
  */
-export const PLUGIN_NAME = 'Next Event Countdown';
+export const PLUGIN_NAME = 'KindPixels Next Event Countdown';
 
 /**
  * Plugin display name for Pro version
  */
-export const PRO_NAME = 'Next Event Countdown Pro';
+export const PRO_NAME = 'KindPixels Next Event Countdown Pro';
 
 /**
  * Plugin version - update this for each release
