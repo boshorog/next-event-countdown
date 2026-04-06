@@ -21,7 +21,7 @@ const path = require('path');
 const archiver = require('archiver');
 
 // Plugin configuration
-const PLUGIN_SLUG = 'next-event-countdown';
+const PLUGIN_SLUG = 'kindpixels-next-event-countdown';
 const ROOT_DIR = path.resolve(__dirname, '..');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const OUTPUT_DIR = path.join(ROOT_DIR, 'releases');
