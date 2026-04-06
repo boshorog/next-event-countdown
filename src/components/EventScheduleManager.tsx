@@ -162,34 +162,8 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
 
   const defaultTz = config.defaultTimezone || "America/New_York";
 
-  // Auto-remove past special events (event date + duration has passed)
-  useEffect(() => {
-    const now = new Date();
-    const filtered = config.specialEvents.filter((ev) => {
-      const [y, m, d] = ev.date.split("-").map(Number);
-      const evEnd = new Date(y, m - 1, d, ev.hour, ev.minute);
-      evEnd.setMinutes(evEnd.getMinutes() + (ev.duration || 60));
-      return evEnd.getTime() > now.getTime();
-    });
-    if (filtered.length < config.specialEvents.length) {
-      update("specialEvents", filtered);
-    }
-  }, [config.specialEvents]);
-
-  // Auto-remove recurring events whose end date has passed
-  useEffect(() => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const filtered = config.schedules.filter((s) => {
-      if (!s.endDate) return true;
-      const [y, m, d] = s.endDate.split("-").map(Number);
-      const end = new Date(y, m - 1, d, 23, 59, 59);
-      return end.getTime() >= today.getTime();
-    });
-    if (filtered.length < config.schedules.length) {
-      update("schedules", filtered);
-    }
-  }, [config.schedules]);
+  // Note: Auto-cleanup of past events is handled on initial config load in Index.tsx,
+  // not here, so events aren't removed before the user saves.
 
   const addSchedule = () => {
     update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
