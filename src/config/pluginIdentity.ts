@@ -29,7 +29,7 @@
  * WordPress plugin slug (folder name, shortcode prefix, option names)
  * Example: 'next-event-countdown' → [nxevtcd_countdown] shortcode
  */
-export const PLUGIN_SLUG = 'next-event-countdown';
+export const PLUGIN_SLUG = 'kindpixels-next-event-countdown';
 
 /**
  * Short prefix for PHP functions, AJAX actions, DB options, CSS classes
