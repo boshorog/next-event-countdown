@@ -58,7 +58,7 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * Multiple locations / venues within the same website
 * Priority support
 
-For a full comparison, visit [kindpixels.com/plugins/next-event-countdown-pro](https://kindpixels.com/plugins/next-event-countdown-pro).
+For a full comparison, visit [kindpixels.com/plugins/kindpixels-next-event-countdown-pro](https://kindpixels.com/plugins/kindpixels-next-event-countdown-pro).
 
 == Installation ==
 
@@ -171,7 +171,7 @@ All display settings are configured in the plugin dashboard — no shortcode par
 = Source Code =
 
 The full source code is available on GitHub:
-https://github.com/boshorog/next-event-countdown
+https://github.com/boshorog/kindpixels-next-event-countdown
 
 = Support =
 
