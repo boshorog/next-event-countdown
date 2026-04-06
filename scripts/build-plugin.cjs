@@ -47,7 +47,7 @@ const EXCLUDE_PATTERNS = [
  * Get plugin version from main PHP file
  */
 function getPluginVersion() {
-  const phpFile = path.join(ROOT_DIR, 'next-event-countdown.php');
+  const phpFile = path.join(ROOT_DIR, 'kindpixels-next-event-countdown.php');
   const content = fs.readFileSync(phpFile, 'utf8');
   const match = content.match(/Version:\s*([0-9.]+)/i);
   if (!match) {
