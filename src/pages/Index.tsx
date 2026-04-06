@@ -357,6 +357,7 @@ const Index = () => {
     const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
     const nc = wpData?.nonce || uParams.get('nonce') || '';
     const reqName = uParams.get('name') || '';
+    const configGalleryId = galleryState.currentGalleryId || reqName || 'default';
 
     if (!ajUrl || !nc) {
       setCountdownConfigLoaded(true);
@@ -367,7 +368,7 @@ const Index = () => {
     form.append('action', 'nxevtcd_action');
     form.append('action_type', 'get_countdown_config');
     form.append('nonce', nc);
-    form.append('gallery_id', reqName || galleryState.currentGalleryId || 'default');
+    form.append('gallery_id', configGalleryId);
 
     fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form })
       .then((res) => res.json())
