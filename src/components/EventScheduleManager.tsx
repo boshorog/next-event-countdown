@@ -176,6 +176,21 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     }
   }, [config.specialEvents]);
 
+  // Auto-remove recurring events whose end date has passed
+  useEffect(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const filtered = config.schedules.filter((s) => {
+      if (!s.endDate) return true;
+      const [y, m, d] = s.endDate.split("-").map(Number);
+      const end = new Date(y, m - 1, d, 23, 59, 59);
+      return end.getTime() >= today.getTime();
+    });
+    if (filtered.length < config.schedules.length) {
+      update("schedules", filtered);
+    }
+  }, [config.schedules]);
+
   const addSchedule = () => {
     update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
     setOpenRecurring(config.schedules.length);
