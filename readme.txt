@@ -99,7 +99,6 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 == Changelog ==
 
 = 1.1.5 =
-* Renamed plugin to "KindPixels Next Event Countdown" for WordPress.org uniqueness
 * Fixed Freemius wp.org compliance (is_premium set to false for free version)
 * Replaced all inline script/style tags with proper wp_enqueue and wp_add_inline_script/style
 * Improved mobile responsiveness — countdown digits now scale fluidly and no longer clip on small screens
