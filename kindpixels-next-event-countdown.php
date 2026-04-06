@@ -881,8 +881,10 @@ class NxEvtCd_Plugin {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
         }
+        if (!isset($_POST['nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['nonce'])), 'nxevtcd_nonce')) {
+            wp_die('Security check failed');
+        }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified in handle_nxevtcd_ajax()
         $settings_json = isset($_POST['settings']) ? sanitize_text_field(wp_unslash($_POST['settings'])) : '';
         $settings = json_decode($settings_json, true);
 
