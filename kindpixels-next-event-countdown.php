@@ -382,26 +382,29 @@ class NxEvtCd_Plugin {
             'frameToken' => $frame_token,
         ), $index_url);
 
-        $iframe_id = 'nxevtcd-iframe-' . uniqid();
-        $html  = '<div class="nxevtcd-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
-        $html .= '<style>
+        // Enqueue frontend styles (CSS added only once, even with multiple shortcodes)
+        wp_enqueue_style('nxevtcd-frontend');
+        $frontend_css = '
     .nxevtcd-iframe-container{overflow:hidden!important;width:100%;position:relative;}
     .nxevtcd-iframe-container iframe{display:block;width:100%!important;border:0!important;overflow:hidden!important;scrolling:no!important;-webkit-overflow-scrolling:auto!important;-ms-overflow-style:none!important;scrollbar-width:none!important;}
     .nxevtcd-iframe-container iframe::-webkit-scrollbar{display:none!important;width:0!important;height:0!important;background:transparent!important;}
     @media (max-width:768px){
       .nxevtcd-iframe-container{overflow:hidden!important; width:100%!important; max-width:100%!important; box-sizing:border-box!important; position:relative!important; left:0!important; right:0!important; margin-left:0!important; margin-right:0!important; padding-left:0!important; padding-right:0!important; transform:none!important;} 
       .nxevtcd-iframe-container iframe{overflow:hidden!important;scrolling:no!important;width:100%!important;max-width:100%!important;margin:0!important;}
-    }
-    </style>';
-        $html .= '<iframe id="' . esc_attr($iframe_id) . '" src="' . esc_url($src) . '" scrolling="no" loading="lazy" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-downloads" style="height:1px;min-height:1px;overflow:hidden;"></iframe>';
-        $html .= '</div>';
-        
-        $html .= '<script>(function(){
-      var iframe = document.getElementById("' . $iframe_id . '");
-      var container = document.getElementById("' . $iframe_id . '-container");
+    }';
+        wp_add_inline_style('nxevtcd-frontend', $frontend_css);
+
+        // Enqueue frontend script and add per-instance inline JS
+        wp_enqueue_script('nxevtcd-frontend');
+
+        $iframe_id = 'nxevtcd-iframe-' . uniqid();
+
+        $inline_js = '(function(){
+      var iframe = document.getElementById("' . esc_js($iframe_id) . '");
+      var container = document.getElementById("' . esc_js($iframe_id) . '-container");
       if(!iframe || !container) return;
 
-      var token = "' . $frame_token . '";
+      var token = "' . esc_js($frame_token) . '";
 
       var originalContainerStyle = container.getAttribute("style") || "";
       var originalIframeStyle = iframe.getAttribute("style") || "";
@@ -561,7 +564,12 @@ class NxEvtCd_Plugin {
           iframe.contentWindow.postMessage({type:"nxevtcd:height-check", token: token}, "*");
         }
       }, 700);
-    })();</script>';
+    })();';
+        wp_add_inline_script('nxevtcd-frontend', $inline_js);
+
+        $html  = '<div class="nxevtcd-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
+        $html .= '<iframe id="' . esc_attr($iframe_id) . '" src="' . esc_url($src) . '" scrolling="no" loading="lazy" referrerpolicy="no-referrer-when-downgrade" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-downloads" style="height:1px;min-height:1px;overflow:hidden;"></iframe>';
+        $html .= '</div>';
 
         return $html;
     }
