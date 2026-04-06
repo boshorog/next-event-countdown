@@ -12,7 +12,7 @@ const proBuildMarker = () => ({
   closeBundle() {
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
-    const phpPath = path.resolve(__dirname, 'next-event-countdown.php');
+    const phpPath = path.resolve(__dirname, 'kindpixels-next-event-countdown.php');
     
     if (isPro) {
       // Create marker file for Pro build
