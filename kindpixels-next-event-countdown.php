@@ -315,6 +315,32 @@ class NxEvtCd_Plugin {
             'updateUrl' => $update_url,
             'pluginBasename' => plugin_basename( __FILE__ ),
         ));
+
+        // Admin page inline styles (notice hiding + page chrome)
+        $admin_inline_css = '
+            body.nxevtcd-admin-page #wpbody-content > .notice,
+            body.nxevtcd-admin-page #wpbody-content > .updated,
+            body.nxevtcd-admin-page #wpbody-content > div.notice,
+            body.nxevtcd-admin-page #wpbody-content > div.updated,
+            body.nxevtcd-admin-page .wrap > .notice,
+            body.nxevtcd-admin-page .wrap > .updated,
+            body.nxevtcd-admin-page .notice,
+            body.nxevtcd-admin-page .updated,
+            body.nxevtcd-admin-page div[class*="notice"],
+            body.nxevtcd-admin-page div[class*="update"] {
+                display: none !important;
+            }
+            body.nxevtcd-admin-page .notice-error,
+            body.nxevtcd-admin-page .notice-warning,
+            body.nxevtcd-admin-page .update-nag {
+                display: block !important;
+            }
+            .wrap > h1:first-child { display: none !important; }
+        ';
+        wp_add_inline_style('nxevtcd-admin', $admin_inline_css);
+
+        // Admin page inline script (add body class)
+        wp_add_inline_script('nxevtcd-admin', 'document.body.classList.add("nxevtcd-admin-page");', 'before');
     }
     public function assets_not_found_notice() {
         echo '<div class="notice notice-error"><p>KindPixels Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
@@ -328,8 +354,6 @@ class NxEvtCd_Plugin {
             wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'kindpixels-next-event-countdown'));
         }
         
-        echo '<script>document.body.classList.add("nxevtcd-admin-page");</script>';
-        echo '<style>.wrap > h1:first-child { display: none !important; }</style>';
         echo '<div class="wrap nxevtcd-admin-page">';
         echo '<div id="nxevtcd-root" style="margin-top: 0;"></div>';
         echo '</div>';
