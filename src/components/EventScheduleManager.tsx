@@ -212,9 +212,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const duplicateSpecial = (idx: number) => {
     const ev = config.specialEvents[idx];
     const [y, m, d] = ev.date.split("-").map(Number);
-    const nextDay = new Date(y, m - 1, d);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const newDate = nextDay.toISOString().slice(0, 10);
+    const nextDay = new Date(y, m - 1, d + 1);
+    const ny = nextDay.getFullYear();
+    const nm = String(nextDay.getMonth() + 1).padStart(2, "0");
+    const nd = String(nextDay.getDate()).padStart(2, "0");
+    const newDate = `${ny}-${nm}-${nd}`;
     const newEv = { ...ev, date: newDate };
     const updated = [...config.specialEvents];
     updated.splice(idx + 1, 0, newEv);
