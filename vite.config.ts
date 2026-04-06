@@ -51,7 +51,7 @@ const proBuildMarker = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/wp-content/plugins/next-event-countdown/dist/' : '/',
+  base: mode === 'production' ? '/wp-content/plugins/kindpixels-next-event-countdown/dist/' : '/',
   server: {
     host: "::",
     port: 8080,

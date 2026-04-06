@@ -62,9 +62,9 @@ For a full comparison, visit [kindpixels.com/plugins/next-event-countdown-pro](h
 
 == Installation ==
 
-1. In your WordPress dashboard, go to **Plugins → Add New**, search for **Next Event Countdown**, then click **Install Now** and **Activate**.
-2. Alternatively, upload the `next-event-countdown` folder to `/wp-content/plugins/` via FTP, then activate it from the Plugins menu.
-3. Go to **Next Event Countdown** in your admin sidebar to set up your first counter.
+1. In your WordPress dashboard, go to **Plugins → Add New**, search for **KindPixels Next Event Countdown**, then click **Install Now** and **Activate**.
+2. Alternatively, upload the `kindpixels-next-event-countdown` folder to `/wp-content/plugins/` via FTP, then activate it from the Plugins menu.
+3. Go to **KindPixels Next Event Countdown** in your admin sidebar to set up your first counter.
 4. Add your events (e.g., Sunday Service at 10:00 AM, Wednesday Study at 7:00 PM).
 5. Copy the shortcode `[nxevtcd_countdown name="my-counter"]` and paste it into any page, post, or widget area.
 

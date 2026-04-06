@@ -15,7 +15,7 @@
  * 6. Update BRANDING section (colors, links, credits)
  * 
  * IMPORTANT: After changing this file, also update:
- * - next-event-countdown.php → Search/replace the prefix
+ * - kindpixels-next-event-countdown.php → Search/replace the prefix
  * - readme.txt → Update plugin name and descriptions
  * - vite.config.ts → Update base path if slug changes
  * ============================================================================
