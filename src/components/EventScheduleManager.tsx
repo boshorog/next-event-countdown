@@ -521,7 +521,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                           variant="ghost" size="sm"
                           onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
                           className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                          title="Duplicate event (+1 day)"
+                          title="Duplicate event"
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
