@@ -364,12 +364,14 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
   let nearestTitle = "";
   let nearestIsSpecial = false;
 
+  console.log('[NEC] getNextService called, specialEvents count:', specialEvents.length, 'schedules count:', schedules.length);
   for (const ev of specialEvents) {
     const tz = ev.timezone || DEFAULT_TIMEZONE;
     const [y, m, d] = ev.date.split("-").map(Number);
     const base = new Date(y, m - 1, d);
     const target = dateInTz(base, ev.hour, ev.minute, tz);
     const ms = target.getTime() - nowMs;
+    console.log('[NEC] Special event:', ev.title, 'date:', ev.date, 'target:', target.toISOString(), 'ms:', ms, 'future:', ms > 0);
     if (ms > 0 && ms < nearest) {
       nearest = ms;
       nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts);
