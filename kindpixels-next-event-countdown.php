@@ -50,11 +50,9 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
 
                 'public_key'          => 'pk_4f0cdea63e183645cd7daa2d59bd9',
 
-                'is_premium'          => true,
+                'is_premium'          => false,
 
                 'premium_suffix'      => 'PRO',
-
-                // If your plugin is a serviceware, set this option to false.
 
                 'has_premium_version' => true,
 
@@ -64,15 +62,9 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
 
                 'is_org_compliant'    => true,
 
-                // Automatically removed in the free version. If you're not using the
-
-                // auto-generated free version, delete this line before uploading to wp.org.
-
-                'wp_org_gatekeeper'   => 'OA7#BoRiBNqdf52FvzEf!!074aRLPs8fspif$7K1#4u4Csys1fQlCecVcUTOs2mcpeVHi#C2j9d09fOTvbC0HloPT7fFee5WdS3G',
-
                 'menu'                => array(
 
-                    'slug'           => 'kindpixels-kindpixels-next-event-countdown-manager',
+                    'slug'           => 'kindpixels-next-event-countdown-manager',
 
                     'support'        => false,
 
