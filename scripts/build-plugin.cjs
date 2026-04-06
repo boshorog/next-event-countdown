@@ -28,7 +28,7 @@ const OUTPUT_DIR = path.join(ROOT_DIR, 'releases');
 
 // Files/folders to include in the ZIP (relative to project root)
 const INCLUDE_FILES = [
-  'next-event-countdown.php',
+  'kindpixels-next-event-countdown.php',
   'readme.txt',
   'dist/',
   'freemius/',
