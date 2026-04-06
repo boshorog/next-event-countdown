@@ -322,20 +322,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
   const now = new Date();
   const nowMs = now.getTime();
 
-  // Check all schedules for live status
-  for (const s of schedules) {
-    const durationMs = (s.duration || 60) * 60 * 1000;
-    const candidates = getScheduleCandidates(s, now, 2);
-    for (const target of candidates) {
-      const elapsed = nowMs - target.getTime();
-      if (elapsed >= 0 && elapsed < durationMs) {
-        const remaining = durationMs - elapsed;
-        return { ms: remaining, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
-      }
-    }
-  }
-
-  // Check special events for live status
+  // Check special events for live status FIRST (they always take priority)
   for (const ev of specialEvents) {
     const tz = ev.timezone || DEFAULT_TIMEZONE;
     const [y, m, d] = ev.date.split("-").map(Number);
@@ -349,10 +336,24 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     }
   }
 
-  // Find next upcoming
+  // Check recurring schedules for live status
+  for (const s of schedules) {
+    const durationMs = (s.duration || 60) * 60 * 1000;
+    const candidates = getScheduleCandidates(s, now, 2);
+    for (const target of candidates) {
+      const elapsed = nowMs - target.getTime();
+      if (elapsed >= 0 && elapsed < durationMs) {
+        const remaining = durationMs - elapsed;
+        return { ms: remaining, fullDate: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title, isLive: true };
+      }
+    }
+  }
+
+  // Find next upcoming — special events take priority over recurring at same time
   let nearest = Infinity;
   let nearestDate = "";
   let nearestTitle = "";
+  let nearestIsSpecial = false;
 
   for (const ev of specialEvents) {
     const tz = ev.timezone || DEFAULT_TIMEZONE;
@@ -364,6 +365,7 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
       nearest = ms;
       nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts);
       nearestTitle = ev.title;
+      nearestIsSpecial = true;
     }
   }
 
@@ -371,10 +373,32 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     const candidates = getScheduleCandidates(s, now, 4);
     for (const target of candidates) {
       const ms = target.getTime() - nowMs;
+      // Only use recurring if it's strictly sooner (special wins ties)
       if (ms > 0 && ms < nearest) {
-        nearest = ms;
-        nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts);
-        nearestTitle = s.title;
+        // Check if a special event overlaps this time slot — if so, skip
+        const sStart = target.getTime();
+        const sDurationMs = (s.duration || 60) * 60 * 1000;
+        const sEnd = sStart + sDurationMs;
+        let overlapsSpecial = false;
+        for (const ev of specialEvents) {
+          const tz = ev.timezone || DEFAULT_TIMEZONE;
+          const [ey, em, ed] = ev.date.split("-").map(Number);
+          const eBase = new Date(ey, em - 1, ed);
+          const eTarget = dateInTz(eBase, ev.hour, ev.minute, tz);
+          const eDurationMs = (ev.duration || 60) * 60 * 1000;
+          const eStart = eTarget.getTime();
+          const eEnd = eStart + eDurationMs;
+          if (eStart < sEnd && eEnd > sStart) {
+            overlapsSpecial = true;
+            break;
+          }
+        }
+        if (!overlapsSpecial) {
+          nearest = ms;
+          nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts);
+          nearestTitle = s.title;
+          nearestIsSpecial = false;
+        }
       }
     }
   }
