@@ -180,6 +180,19 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     if (openSpecial === idx) setOpenSpecial(null);
   };
 
+  const duplicateSpecial = (idx: number) => {
+    const ev = config.specialEvents[idx];
+    const [y, m, d] = ev.date.split("-").map(Number);
+    const nextDay = new Date(y, m - 1, d);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const newDate = nextDay.toISOString().slice(0, 10);
+    const newEv = { ...ev, date: newDate };
+    const updated = [...config.specialEvents];
+    updated.splice(idx + 1, 0, newEv);
+    update("specialEvents", updated);
+    setOpenSpecial(idx + 1);
+  };
+
   const addSpecial = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
