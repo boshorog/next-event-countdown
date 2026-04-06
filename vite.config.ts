@@ -40,12 +40,17 @@ const proBuildMarker = () => ({
         fs.unlinkSync(markerPath);
       }
       
-      // Restore original plugin name for Free builds
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
+        // Restore plugin name for Free
         phpContent = phpContent.replace(
           /Plugin Name:\s*KindPixels Next Event Countdown Pro\s*$/m,
           'Plugin Name: KindPixels Next Event Countdown'
+        );
+        // Ensure is_premium is false for Free builds
+        phpContent = phpContent.replace(
+          "'is_premium'          => true,",
+          "'is_premium'          => false,"
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }
