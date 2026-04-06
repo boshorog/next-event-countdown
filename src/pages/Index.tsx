@@ -373,7 +373,27 @@ const Index = () => {
       .then((res) => res.json())
       .then((data) => {
         if (data?.success && data?.data?.countdown_config) {
-          setCountdownConfig({ ...defaultCountdownConfig, ...data.data.countdown_config });
+          const loaded = { ...defaultCountdownConfig, ...data.data.countdown_config };
+          // Clean up past special events and expired recurring schedules on load
+          const now = new Date();
+          if (loaded.specialEvents?.length) {
+            loaded.specialEvents = loaded.specialEvents.filter((ev: any) => {
+              const [y, m, d] = ev.date.split("-").map(Number);
+              const evEnd = new Date(y, m - 1, d, ev.hour, ev.minute);
+              evEnd.setMinutes(evEnd.getMinutes() + (ev.duration || 60));
+              return evEnd.getTime() > now.getTime();
+            });
+          }
+          if (loaded.schedules?.length) {
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            loaded.schedules = loaded.schedules.filter((s: any) => {
+              if (!s.endDate) return true;
+              const [y, m, d] = s.endDate.split("-").map(Number);
+              const end = new Date(y, m - 1, d, 23, 59, 59);
+              return end.getTime() >= today.getTime();
+            });
+          }
+          setCountdownConfig(loaded);
         }
         setCountdownConfigLoaded(true);
       })
