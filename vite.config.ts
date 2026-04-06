@@ -27,7 +27,7 @@ const proBuildMarker = () => ({
           'Plugin Name: KindPixels Next Event Countdown Pro'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
-        console.log('✓ Updated plugin header to "Next Event Countdown Pro"');
+        console.log('✓ Updated plugin header to "KindPixels Next Event Countdown Pro"');
       }
     } else {
       // Ensure no marker exists for Free build
