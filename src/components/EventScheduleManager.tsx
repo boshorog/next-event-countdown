@@ -212,9 +212,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const duplicateSpecial = (idx: number) => {
     const ev = config.specialEvents[idx];
     const [y, m, d] = ev.date.split("-").map(Number);
-    const nextDay = new Date(y, m - 1, d);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const newDate = nextDay.toISOString().slice(0, 10);
+    const nextDay = new Date(y, m - 1, d + 1);
+    const ny = nextDay.getFullYear();
+    const nm = String(nextDay.getMonth() + 1).padStart(2, "0");
+    const nd = String(nextDay.getDate()).padStart(2, "0");
+    const newDate = `${ny}-${nm}-${nd}`;
     const newEv = { ...ev, date: newDate };
     const updated = [...config.specialEvents];
     updated.splice(idx + 1, 0, newEv);
@@ -519,7 +521,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                           variant="ghost" size="sm"
                           onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
                           className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                          title="Duplicate event (+1 day)"
+                          title="Duplicate event"
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
