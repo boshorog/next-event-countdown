@@ -19,6 +19,8 @@ export interface ServiceSchedule {
   monthlyWeek?: number;
   // monthly-date: day of month (1-31)
   monthlyDay?: number;
+  // optional end date (ISO yyyy-mm-dd) — schedule stops after this date
+  endDate?: string;
 }
 
 export interface SpecialEvent {
