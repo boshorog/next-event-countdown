@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star } from "lucide-react";
+import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
