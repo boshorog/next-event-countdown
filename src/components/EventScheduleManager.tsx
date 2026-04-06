@@ -469,13 +469,23 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                           <p className="text-xs text-muted-foreground truncate">{specialSummary(ev)}</p>
                         </div>
                       </div>
-                      <Button
-                        variant="ghost" size="sm"
-                        onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
-                        className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </Button>
+                      <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                          title="Duplicate event (+1 day)"
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </button>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
