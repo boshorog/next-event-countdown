@@ -39,8 +39,8 @@ const proBuildMarker = () => ({
       if (fs.existsSync(phpPath)) {
         let phpContent = fs.readFileSync(phpPath, 'utf8');
         phpContent = phpContent.replace(
-          /Plugin Name:\s*Next Event Countdown Pro\s*$/m,
-          'Plugin Name: Next Event Countdown'
+          /Plugin Name:\s*KindPixels Next Event Countdown Pro\s*$/m,
+          'Plugin Name: KindPixels Next Event Countdown'
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }
