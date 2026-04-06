@@ -317,6 +317,13 @@ export function getScheduleCandidates(s: ServiceSchedule, now: Date, count: numb
     }
   }
 
+  // Filter out candidates past the end date
+  if (s.endDate) {
+    const [ey, em, ed] = s.endDate.split("-").map(Number);
+    const endLimit = new Date(ey, em - 1, ed, 23, 59, 59);
+    return candidates.filter(c => c <= endLimit);
+  }
+
   return candidates;
 }
 

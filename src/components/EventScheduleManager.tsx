@@ -390,6 +390,22 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Select>
           </div>
         </div>
+        {/* End Date */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-medium text-muted-foreground">End Date (optional)</Label>
+            {s.endDate && (
+              <button
+                className="text-xs text-muted-foreground hover:text-destructive transition-colors"
+                onClick={() => updateSchedule(i, { endDate: undefined })}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          <DatePickerField value={s.endDate || ""} onChange={(date) => updateSchedule(i, { endDate: date })} />
+          <p className="text-[10px] text-muted-foreground">Leave empty to repeat indefinitely</p>
+        </div>
       </>
     );
   };
