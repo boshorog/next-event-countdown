@@ -715,6 +715,15 @@ class NxEvtCd_Plugin {
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
                 break;
+            case 'save_galleries':
+                $this->handle_save_galleries();
+                break;
+            case 'get_galleries':
+                $this->handle_get_galleries();
+                break;
+            case 'reset_galleries':
+                $this->handle_reset_galleries();
+                break;
             default:
                 wp_send_json_error('Invalid action');
         }
@@ -910,6 +919,17 @@ class NxEvtCd_Plugin {
 
         $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
         $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
+
+        // Server-side enforcement: free version can only save to the first/default gallery
+        if (!$this->is_pro_license() && $gallery_id !== 'default') {
+            // Check if this gallery_id is the first (and only allowed) gallery
+            $galleries = get_option('nxevtcd_galleries', array());
+            $first_id = is_array($galleries) && !empty($galleries) ? $galleries[0]['id'] : 'default';
+            if ($gallery_id !== $first_id) {
+                wp_send_json_error('Multiple counters require a Pro license');
+            }
+        }
+
         $config = json_decode($config_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
@@ -932,6 +952,105 @@ class NxEvtCd_Plugin {
             $config = get_option('nxevtcd_countdown_config_default', null);
         }
         wp_send_json_success(array('countdown_config' => $config));
+    }
+
+    /**
+     * Check if the current installation is a Pro license (Freemius).
+     */
+    private function is_pro_license() {
+        if (function_exists('nxevtcd_fs')) {
+            $fs = nxevtcd_fs();
+            if (is_object($fs)) {
+                if (method_exists($fs, 'can_use_premium_code') && $fs->can_use_premium_code()) {
+                    return true;
+                }
+                if (method_exists($fs, 'is_paying') && $fs->is_paying()) {
+                    return true;
+                }
+                if (method_exists($fs, 'is_plan') && $fs->is_plan('professional', true)) {
+                    return true;
+                }
+                if (method_exists($fs, 'is_trial') && $fs->is_trial()) {
+                    return true;
+                }
+            }
+        }
+        // Also check if the plugin header declares Pro (build-time flag)
+        $plugin_data = get_file_data(__FILE__, array('Name' => 'Plugin Name'));
+        if (!empty($plugin_data['Name']) && strpos($plugin_data['Name'], 'Pro') !== false) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Handle saving galleries list.
+     * Free version: limited to 1 gallery/counter.
+     */
+    private function handle_save_galleries() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+
+        $galleries_json = isset($_POST['galleries']) ? wp_unslash($_POST['galleries']) : '[]';
+        $galleries = json_decode($galleries_json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($galleries)) {
+            wp_send_json_error('Invalid galleries data');
+        }
+
+        // Server-side enforcement: free version limited to 1 counter
+        if (!$this->is_pro_license() && count($galleries) > 1) {
+            $galleries = array(reset($galleries)); // Keep only the first gallery
+        }
+
+        // Sanitize each gallery entry
+        $sanitized = array();
+        foreach ($galleries as $gallery) {
+            if (!is_array($gallery)) continue;
+            $sanitized[] = array(
+                'id'        => isset($gallery['id']) ? sanitize_text_field($gallery['id']) : '',
+                'name'      => isset($gallery['name']) ? sanitize_text_field($gallery['name']) : '',
+                'items'     => isset($gallery['items']) && is_array($gallery['items']) ? $gallery['items'] : array(),
+                'createdAt' => isset($gallery['createdAt']) ? sanitize_text_field($gallery['createdAt']) : '',
+            );
+        }
+
+        $current_gallery_id = isset($_POST['current_gallery_id']) ? sanitize_text_field(wp_unslash($_POST['current_gallery_id'])) : '';
+
+        update_option('nxevtcd_galleries', $sanitized);
+        if ($current_gallery_id) {
+            update_option('nxevtcd_current_gallery_id', $current_gallery_id);
+        }
+
+        wp_send_json_success('Galleries saved');
+    }
+
+    /**
+     * Handle fetching galleries list.
+     */
+    private function handle_get_galleries() {
+        $galleries = get_option('nxevtcd_galleries', array());
+        if (!is_array($galleries)) {
+            $galleries = array();
+        }
+        $current_gallery_id = get_option('nxevtcd_current_gallery_id', '');
+        wp_send_json_success(array(
+            'galleries'          => $galleries,
+            'current_gallery_id' => $current_gallery_id,
+        ));
+    }
+
+    /**
+     * Handle resetting galleries.
+     */
+    private function handle_reset_galleries() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+        delete_option('nxevtcd_galleries');
+        delete_option('nxevtcd_current_gallery_id');
+        wp_send_json_success('Galleries reset');
     }
 
     /**
