@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { isDevPreview } from '@/config/pluginIdentity';
+import { isProBuild } from '@/config/buildFlags';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -522,9 +523,9 @@ const Index = () => {
         {/* Logo Header */}
         <div className="px-6 pt-6 pb-6">
           <div className="flex items-center gap-3">
-            <img src={countdownLogo} alt={license.isPro ? "Next Event Countdown Pro" : "Next Event Countdown"} className="h-9 w-auto" />
+            <img src={countdownLogo} alt={(license.isPro || isProBuild()) ? "Next Event Countdown Pro" : "Next Event Countdown"} className="h-9 w-auto" />
             <div className="flex items-baseline gap-2">
-              <h1 className="text-2xl text-slate-800"><span className="font-bold">{license.isPro ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
+              <h1 className="text-2xl text-slate-800"><span className="font-bold">{(license.isPro || isProBuild()) ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
               <span className="text-xs text-slate-400">v{PLUGIN_VERSION}</span>
             </div>
           </div>
