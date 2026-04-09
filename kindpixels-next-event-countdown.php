@@ -715,6 +715,15 @@ class NxEvtCd_Plugin {
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
                 break;
+            case 'save_galleries':
+                $this->handle_save_galleries();
+                break;
+            case 'get_galleries':
+                $this->handle_get_galleries();
+                break;
+            case 'reset_galleries':
+                $this->handle_reset_galleries();
+                break;
             default:
                 wp_send_json_error('Invalid action');
         }
