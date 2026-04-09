@@ -365,8 +365,8 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label className="text-base font-medium">Counter Scale</Label>
-                    <p className="text-sm text-muted-foreground">Resize header, digits, labels, and spacing together</p>
+                    <Label className="text-base font-medium">Overall Scale</Label>
+                    <p className="text-sm text-muted-foreground">Resize the entire countdown widget proportionally</p>
                   </div>
                   <span className="text-sm font-medium text-primary">{Math.round((localConfig.headerScale ?? 1) * 100)}%</span>
                 </div>
@@ -378,6 +378,35 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                   step={5}
                   className="w-full"
                 />
+              </div>
+
+              <div className="border-t pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-base font-medium">Header / Digits Balance</Label>
+                    <p className="text-sm text-muted-foreground">Shift emphasis between the header area and the countdown digits</p>
+                  </div>
+                  <span className="text-xs font-medium text-muted-foreground tabular-nums w-24 text-right">
+                    {(() => {
+                      const bal = localConfig.headerDigitBalance ?? 50;
+                      if (bal === 50) return 'Balanced';
+                      if (bal < 50) return `Header +${50 - bal}%`;
+                      return `Digits +${bal - 50}%`;
+                    })()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12 text-right">Header</span>
+                  <Slider
+                    value={[localConfig.headerDigitBalance ?? 50]}
+                    onValueChange={(v) => updateConfig({ headerDigitBalance: v[0] })}
+                    min={0}
+                    max={100}
+                    step={2}
+                    className="flex-1"
+                  />
+                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12">Digits</span>
+                </div>
               </div>
             </CardContent>
           </Card>

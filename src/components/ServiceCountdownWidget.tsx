@@ -95,6 +95,7 @@ export interface CountdownConfig {
   cardBgColor?: string;
   showBorder: boolean;
   headerScale: number;
+  headerDigitBalance?: number; // 0-100, 50=equal, <50=header bigger, >50=digits bigger
   counterStyle?: string;
   use24h?: boolean;
   showTitle?: boolean;
@@ -507,54 +508,64 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px' }}>
-          <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-          <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
-            {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
-          </span>
-          {config.showDate !== false && (
-            <span style={{ color: config.labelColor, fontSize: '18px' }}>
-              {t.fullDate}
-            </span>
-          )}
-        </div>
-
-        {/* Service title */}
-        {config.showTitle !== false && t.title && (
-          <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px' }}>
-            {t.title}
-          </p>
-        )}
-
-        {/* Countdown digits */}
-        <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%' }}>
-          {units.map((u, i) => (
-            <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
-              <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
-                <span
-                  className="tabular-nums leading-none"
-                  style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
-                >
-                  {pad(u.v)}
+        {(() => {
+          const bal = config.headerDigitBalance ?? 50;
+          const headerFactor = 1 + (50 - bal) * 0.012; // <50 = bigger header
+          const digitFactor = 1 + (bal - 50) * 0.012;  // >50 = bigger digits
+          return (
+            <>
+              <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
+                <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
+                <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
+                  {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
                 </span>
-                <span
-                  className="uppercase tracking-wider"
-                  style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
-                >
-                  {u.l}
-                </span>
+                {config.showDate !== false && (
+                  <span style={{ color: config.labelColor, fontSize: '18px' }}>
+                    {t.fullDate}
+                  </span>
+                )}
               </div>
-              {i < units.length - 1 && (
-                <span
-                  className="font-light flex-shrink-0"
-                  style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: 'clamp(1.5rem, 6vw, 3rem)' }}
-                >
-                  :
-                </span>
+
+              {/* Service title */}
+              {config.showTitle !== false && t.title && (
+                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
+                  {t.title}
+                </p>
               )}
-            </div>
-          ))}
-        </div>
+
+              {/* Countdown digits */}
+              <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%', transform: digitFactor !== 1 ? `scale(${digitFactor})` : undefined, transformOrigin: 'center center' }}>
+                {units.map((u, i) => (
+                  <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
+                    <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
+                      <span
+                        className="tabular-nums leading-none"
+                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
+                      >
+                        {pad(u.v)}
+                      </span>
+                      <span
+                        className="uppercase tracking-wider"
+                        style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
+                      >
+                        {u.l}
+                      </span>
+                    </div>
+                    {i < units.length - 1 && (
+                      <span
+                        className="font-light flex-shrink-0"
+                        style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: 'clamp(1.5rem, 6vw, 3rem)' }}
+                      >
+                        :
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          );
+        })()}
+
       </div>
     </div>
   );
