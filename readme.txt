@@ -98,6 +98,7 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 == Changelog ==
 
 = 1.1.6 =
+* Fixed several WordPress Directory compliance issues
 * Added Header / Digits Balance slider — shift visual emphasis between the header area and countdown digits
 * Server-side Pro enforcement for multi-counter limits
 * Pro UI gating improvements for WordPress builds
