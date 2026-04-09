@@ -933,6 +933,42 @@ class NxEvtCd_Plugin {
         }
         wp_send_json_success(array('countdown_config' => $config));
     }
+
+    /**
+     * Recursively sanitize countdown config data per-field.
+     * Strings are sanitized, booleans/integers/floats are cast, arrays are recursed.
+     */
+    private function sanitize_countdown_config($data) {
+        if (!is_array($data)) {
+            if (is_bool($data)) {
+                return $data;
+            }
+            if (is_int($data)) {
+                return intval($data);
+            }
+            if (is_float($data)) {
+                return floatval($data);
+            }
+            return sanitize_text_field($data);
+        }
+
+        $sanitized = array();
+        foreach ($data as $key => $value) {
+            $safe_key = sanitize_text_field($key);
+            if (is_array($value)) {
+                $sanitized[$safe_key] = $this->sanitize_countdown_config($value);
+            } elseif (is_bool($value)) {
+                $sanitized[$safe_key] = (bool) $value;
+            } elseif (is_int($value)) {
+                $sanitized[$safe_key] = intval($value);
+            } elseif (is_float($value)) {
+                $sanitized[$safe_key] = floatval($value);
+            } else {
+                $sanitized[$safe_key] = sanitize_text_field($value);
+            }
+        }
+        return $sanitized;
+    }
 }
 
 // Initialize the plugin only if WordPress is properly loaded
