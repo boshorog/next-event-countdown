@@ -95,6 +95,7 @@ export interface CountdownConfig {
   cardBgColor?: string;
   showBorder: boolean;
   headerScale: number;
+  headerDigitBalance?: number; // 0-100, 50=equal, <50=header bigger, >50=digits bigger
   counterStyle?: string;
   use24h?: boolean;
   showTitle?: boolean;
