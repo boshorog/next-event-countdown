@@ -581,9 +581,6 @@ class NxEvtCd_Plugin {
      * Plugin activation
      */
     public static function activate() {
-        if (!function_exists('wp_mkdir_p')) {
-            require_once(ABSPATH . 'wp-admin/includes/file.php');
-        }
         
         // IMPORTANT: Only store the version number. Do NOT delete or reset
         // nxevtcd_countdown_config_*, nxevtcd_settings, or nxevtcd_galleries
@@ -911,12 +908,13 @@ class NxEvtCd_Plugin {
             wp_die('Security check failed');
         }
 
-        $config_json = isset($_POST['countdown_config']) ? sanitize_text_field(wp_unslash($_POST['countdown_config'])) : '';
+        $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
         $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
         $config = json_decode($config_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
-            update_option('nxevtcd_countdown_config_' . $gallery_id, $config);
+            $sanitized = $this->sanitize_countdown_config($config);
+            update_option('nxevtcd_countdown_config_' . $gallery_id, $sanitized);
             wp_send_json_success('Countdown config saved');
         } else {
             wp_send_json_error('Invalid countdown config data');
