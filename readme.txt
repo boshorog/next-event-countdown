@@ -1,7 +1,6 @@
 === KindPixels Next Event Countdown ===
 Contributors: kindpixels
 Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
-Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
@@ -177,7 +176,7 @@ All display settings are configured in the plugin dashboard — no shortcode par
 = Source Code =
 
 The full source code is available on GitHub:
-https://github.com/boshorog/kindpixels-next-event-countdown
+https://github.com/boshorog/next-event-countdown
 
 = Support =
 
