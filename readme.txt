@@ -97,11 +97,16 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.1.7 =
+* Removed all artificial feature restrictions from the free version — unlimited counters now available for all users
+* Renamed all internal "gallery" references to "counter" for consistency
+* Improved data sanitization: all nested counter data is now recursively sanitized before storage
+* Added automatic data migration from legacy "gallery" option keys to new "counter" keys
+* Version bump and compliance fixes for WordPress.org guidelines
+
 = 1.1.6 =
 * Fixed several WordPress Directory compliance issues
 * Added Header / Digits Balance slider — shift visual emphasis between the header area and countdown digits
-* Server-side Pro enforcement for multi-counter limits
-* Pro UI gating improvements for WordPress builds
 
 = 1.1.5 =
 * Fixed Freemius wp.org compliance (is_premium set to false for free version)

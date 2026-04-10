@@ -10,13 +10,13 @@
  * - npm run build:pro   → For paying customers (all features)
  * 
  * FREE VERSION:
- * - 1 counter (venue/shortcode)
+ * - Unlimited counters (unrestricted)
  * - Unlimited recurring & special events
  * - 1 countdown style
  * 
  * PRO VERSION:
- * - Multiple counters for different locations
  * - Counter Styles settings menu
+ * - Analytics dashboard
  * - Priority support
  * 
  * @module buildFlags
@@ -44,10 +44,9 @@ const isDevPro = getDevModePro();
 export const BUILD_FLAGS = {
   /**
    * Multi-counter management (+ button in breadcrumb, counter selector)
-   * - Free: false → Single counter only
-   * - Pro: true → Unlimited counters for different locations
+   * Always enabled — free version supports unlimited counters
    */
-  MULTI_GALLERY_UI: BUILD_VARIANT === 'pro' || isDevPro,
+  MULTI_GALLERY_UI: true,
 
   /**
    * Bulk upload UI (not used in countdown plugin)

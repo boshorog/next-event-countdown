@@ -1,4 +1,5 @@
-// Gallery types for multi-gallery functionality
+// Counter types for multi-counter functionality
+// NOTE: Type aliases maintained for backward compatibility with "Gallery" naming
 
 export interface PDF {
   id: string;
@@ -15,16 +16,28 @@ export interface Divider {
   text: string;
 }
 
-export type GalleryItem = PDF | Divider;
+export type CounterItem = PDF | Divider;
+export type GalleryItem = CounterItem; // backward compat
 
-export interface Gallery {
+export interface Counter {
   id: string;
   name: string;
-  items: GalleryItem[];
+  items: CounterItem[];
   createdAt: string;
 }
+export type Gallery = Counter; // backward compat
 
+export interface CounterState {
+  counters: Counter[];
+  currentCounterId: string;
+  /** @deprecated Use counters */
+  galleries?: Counter[];
+  /** @deprecated Use currentCounterId */
+  currentGalleryId?: string;
+}
+
+// GalleryState keeps the old field names for backward compat across the codebase
 export interface GalleryState {
-  galleries: Gallery[];
+  galleries: Counter[];
   currentGalleryId: string;
 }

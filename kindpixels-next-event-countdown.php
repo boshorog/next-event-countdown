@@ -3,7 +3,7 @@
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.1.6
+ * Version: 1.1.7
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.1.6' );
+define( 'NXEVTCD_VERSION', '1.1.7' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -574,6 +574,19 @@ class NxEvtCd_Plugin {
         if (!empty($stored_version) && $stored_version === NXEVTCD_VERSION) {
             return;
         }
+
+        // Migrate legacy "gallery" option keys to "counter" keys
+        $old_galleries = get_option('nxevtcd_galleries');
+        if ($old_galleries !== false && get_option('nxevtcd_counters') === false) {
+            update_option('nxevtcd_counters', $old_galleries);
+            delete_option('nxevtcd_galleries');
+        }
+        $old_id = get_option('nxevtcd_current_gallery_id');
+        if ($old_id !== false && get_option('nxevtcd_current_counter_id') === false) {
+            update_option('nxevtcd_current_counter_id', $old_id);
+            delete_option('nxevtcd_current_gallery_id');
+        }
+
         update_option('nxevtcd_version', NXEVTCD_VERSION);
     }
     
@@ -588,7 +601,7 @@ class NxEvtCd_Plugin {
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
         // Set activation redirect (only on fresh install, not on update)
-        if (!get_option('nxevtcd_galleries')) {
+        if (!get_option('nxevtcd_counters') && !get_option('nxevtcd_galleries')) {
             set_transient('nxevtcd_activation_redirect', true, 30);
         }
     }
@@ -715,14 +728,17 @@ class NxEvtCd_Plugin {
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
                 break;
-            case 'save_galleries':
-                $this->handle_save_galleries();
+            case 'save_counters':
+            case 'save_galleries': // legacy compat
+                $this->handle_save_counters();
                 break;
-            case 'get_galleries':
-                $this->handle_get_galleries();
+            case 'get_counters':
+            case 'get_galleries': // legacy compat
+                $this->handle_get_counters();
                 break;
-            case 'reset_galleries':
-                $this->handle_reset_galleries();
+            case 'reset_counters':
+            case 'reset_galleries': // legacy compat
+                $this->handle_reset_counters();
                 break;
             default:
                 wp_send_json_error('Invalid action');
@@ -891,11 +907,12 @@ class NxEvtCd_Plugin {
             wp_die('Security check failed');
         }
 
-        $settings_json = isset($_POST['settings']) ? sanitize_text_field(wp_unslash($_POST['settings'])) : '';
+        $settings_json = isset($_POST['settings']) ? wp_unslash($_POST['settings']) : '';
         $settings = json_decode($settings_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($settings)) {
-            update_option('nxevtcd_settings', $settings);
+            $sanitized = $this->sanitize_countdown_config($settings);
+            update_option('nxevtcd_settings', $sanitized);
             wp_send_json_success('Settings saved');
         } else {
             wp_send_json_error('Invalid settings data');
@@ -918,23 +935,13 @@ class NxEvtCd_Plugin {
         }
 
         $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
-        $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
-
-        // Server-side enforcement: free version can only save to the first/default gallery
-        if (!$this->is_pro_license() && $gallery_id !== 'default') {
-            // Check if this gallery_id is the first (and only allowed) gallery
-            $galleries = get_option('nxevtcd_galleries', array());
-            $first_id = is_array($galleries) && !empty($galleries) ? $galleries[0]['id'] : 'default';
-            if ($gallery_id !== $first_id) {
-                wp_send_json_error('Multiple counters require a Pro license');
-            }
-        }
+        $counter_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
 
         $config = json_decode($config_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
             $sanitized = $this->sanitize_countdown_config($config);
-            update_option('nxevtcd_countdown_config_' . $gallery_id, $sanitized);
+            update_option('nxevtcd_countdown_config_' . $counter_id, $sanitized);
             wp_send_json_success('Countdown config saved');
         } else {
             wp_send_json_error('Invalid countdown config data');
@@ -955,102 +962,111 @@ class NxEvtCd_Plugin {
     }
 
     /**
-     * Check if the current installation is a Pro license (Freemius).
+     * Sanitize a single counter item (event entry).
      */
-    private function is_pro_license() {
-        if (function_exists('nxevtcd_fs')) {
-            $fs = nxevtcd_fs();
-            if (is_object($fs)) {
-                if (method_exists($fs, 'can_use_premium_code') && $fs->can_use_premium_code()) {
-                    return true;
-                }
-                if (method_exists($fs, 'is_paying') && $fs->is_paying()) {
-                    return true;
-                }
-                if (method_exists($fs, 'is_plan') && $fs->is_plan('professional', true)) {
-                    return true;
-                }
-                if (method_exists($fs, 'is_trial') && $fs->is_trial()) {
-                    return true;
-                }
+    private function sanitize_counter_item($item) {
+        if (!is_array($item)) return array();
+        $sanitized = array();
+        foreach ($item as $key => $value) {
+            $safe_key = sanitize_text_field($key);
+            if (is_array($value)) {
+                $sanitized[$safe_key] = $this->sanitize_counter_item($value);
+            } elseif (is_bool($value)) {
+                $sanitized[$safe_key] = (bool) $value;
+            } elseif (is_int($value)) {
+                $sanitized[$safe_key] = intval($value);
+            } elseif (is_float($value)) {
+                $sanitized[$safe_key] = floatval($value);
+            } elseif (in_array($safe_key, array('pdfUrl', 'thumbnail'), true)) {
+                $sanitized[$safe_key] = esc_url_raw($value);
+            } else {
+                $sanitized[$safe_key] = sanitize_text_field($value);
             }
         }
-        // Also check if the plugin header declares Pro (build-time flag)
-        $plugin_data = get_file_data(__FILE__, array('Name' => 'Plugin Name'));
-        if (!empty($plugin_data['Name']) && strpos($plugin_data['Name'], 'Pro') !== false) {
-            return true;
-        }
-        return false;
+        return $sanitized;
     }
 
     /**
-     * Handle saving galleries list.
-     * Free version: limited to 1 gallery/counter.
+     * Handle saving counters list.
+     * No feature restrictions — unlimited counters for all users.
      */
-    private function handle_save_galleries() {
+    private function handle_save_counters() {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
         }
 
-        $galleries_json = isset($_POST['galleries']) ? wp_unslash($_POST['galleries']) : '[]';
-        $galleries = json_decode($galleries_json, true);
+        $counters_json = isset($_POST['galleries']) ? wp_unslash($_POST['galleries']) : '[]';
+        $counters = json_decode($counters_json, true);
 
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($galleries)) {
-            wp_send_json_error('Invalid galleries data');
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($counters)) {
+            wp_send_json_error('Invalid counters data');
         }
 
-        // Server-side enforcement: free version limited to 1 counter
-        if (!$this->is_pro_license() && count($galleries) > 1) {
-            $galleries = array(reset($galleries)); // Keep only the first gallery
-        }
-
-        // Sanitize each gallery entry
+        // Recursively sanitize each counter entry including nested items
         $sanitized = array();
-        foreach ($galleries as $gallery) {
-            if (!is_array($gallery)) continue;
+        foreach ($counters as $counter) {
+            if (!is_array($counter)) continue;
+            $sanitized_items = array();
+            if (isset($counter['items']) && is_array($counter['items'])) {
+                foreach ($counter['items'] as $item) {
+                    $sanitized_items[] = $this->sanitize_counter_item($item);
+                }
+            }
             $sanitized[] = array(
-                'id'        => isset($gallery['id']) ? sanitize_text_field($gallery['id']) : '',
-                'name'      => isset($gallery['name']) ? sanitize_text_field($gallery['name']) : '',
-                'items'     => isset($gallery['items']) && is_array($gallery['items']) ? $gallery['items'] : array(),
-                'createdAt' => isset($gallery['createdAt']) ? sanitize_text_field($gallery['createdAt']) : '',
+                'id'        => isset($counter['id']) ? sanitize_text_field($counter['id']) : '',
+                'name'      => isset($counter['name']) ? sanitize_text_field($counter['name']) : '',
+                'items'     => $sanitized_items,
+                'createdAt' => isset($counter['createdAt']) ? sanitize_text_field($counter['createdAt']) : '',
             );
         }
 
-        $current_gallery_id = isset($_POST['current_gallery_id']) ? sanitize_text_field(wp_unslash($_POST['current_gallery_id'])) : '';
+        $current_counter_id = isset($_POST['current_gallery_id']) ? sanitize_text_field(wp_unslash($_POST['current_gallery_id'])) : '';
 
-        update_option('nxevtcd_galleries', $sanitized);
-        if ($current_gallery_id) {
-            update_option('nxevtcd_current_gallery_id', $current_gallery_id);
+        update_option('nxevtcd_counters', $sanitized);
+        if ($current_counter_id) {
+            update_option('nxevtcd_current_counter_id', $current_counter_id);
         }
 
-        wp_send_json_success('Galleries saved');
+        wp_send_json_success('Counters saved');
     }
 
     /**
-     * Handle fetching galleries list.
+     * Handle fetching counters list.
+     * Returns data using legacy field names for frontend compatibility.
      */
-    private function handle_get_galleries() {
-        $galleries = get_option('nxevtcd_galleries', array());
-        if (!is_array($galleries)) {
-            $galleries = array();
+    private function handle_get_counters() {
+        // Try new key first, fall back to legacy key
+        $counters = get_option('nxevtcd_counters', null);
+        if ($counters === null) {
+            $counters = get_option('nxevtcd_galleries', array());
         }
-        $current_gallery_id = get_option('nxevtcd_current_gallery_id', '');
+        if (!is_array($counters)) {
+            $counters = array();
+        }
+        $current_counter_id = get_option('nxevtcd_current_counter_id', '');
+        if (empty($current_counter_id)) {
+            $current_counter_id = get_option('nxevtcd_current_gallery_id', '');
+        }
+        // Return with legacy field names for frontend compatibility
         wp_send_json_success(array(
-            'galleries'          => $galleries,
-            'current_gallery_id' => $current_gallery_id,
+            'galleries'          => $counters,
+            'current_gallery_id' => $current_counter_id,
         ));
     }
 
     /**
-     * Handle resetting galleries.
+     * Handle resetting counters.
      */
-    private function handle_reset_galleries() {
+    private function handle_reset_counters() {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
         }
+        delete_option('nxevtcd_counters');
+        delete_option('nxevtcd_current_counter_id');
+        // Also clean up legacy keys
         delete_option('nxevtcd_galleries');
         delete_option('nxevtcd_current_gallery_id');
-        wp_send_json_success('Galleries reset');
+        wp_send_json_success('Counters reset');
     }
 
     /**
