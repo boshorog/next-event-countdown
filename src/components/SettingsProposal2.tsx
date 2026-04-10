@@ -711,7 +711,6 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                   );
                 })()}
               </div>
-              </div>
 
               <div className="border-t" />
 
