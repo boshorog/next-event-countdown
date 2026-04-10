@@ -517,7 +517,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <div style={{ overflow: 'hidden', width: '100%', maxWidth: '100%', boxSizing: 'border-box' as const }}>
+    <div style={{ overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' as const, ...sizingStyle, width: sizingStyle.width || '100%' }}>
       <div
         className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} text-center`}
         style={{
