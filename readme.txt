@@ -13,7 +13,7 @@ A beautiful countdown widget that automatically shows the next upcoming event, i
 
 == Description ==
 
-**Stop manually updating countdown timers.** Next Event Countdown automatically cycles through your events and always displays the one coming up next. Set it once, and it runs forever.
+**Stop manually updating countdown timers!** Next Event Countdown automatically cycles through your events and always displays the one coming up next. Set it once, and it runs forever.
 
 Whether you run a gym, a church, a school, a co-working space, a community center, or a weekly meetup — if you have events that repeat, this plugin keeps your visitors informed without any manual work.
 
@@ -35,7 +35,6 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 = Key Features =
 
 * **Recurring Events** – Define one-time or weekly recurring events. The widget always shows the nearest one.
-* **Multiple Counter Styles** – From minimal to bold LED, elegant serif, radial progress, and more.
 * **Live Ticking** – Real-time countdown updates every second.
 * **Fully Customizable** – Colors, labels, fonts, and icons — all configurable from the admin panel.
 * **Responsive** – Looks great on desktop, tablet, and mobile.
@@ -52,12 +51,12 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * Multiple date formats and timezone support
 
 **Pro version adds:**
-* Unlimited counters
-* 5+ premium countdown styles (LED Dots, Radial Progress, Gradient Glass, Card Blocks, Elegant Serif)
+* Unlimited counters on your website
+* 5+ premium countdown styles
 * Multiple locations / venues within the same website
 * Priority support
 
-For a full comparison, visit [kindpixels.com/plugins/kindpixels-next-event-countdown-pro](https://kindpixels.com/plugins/kindpixels-next-event-countdown-pro).
+For a full comparison, visit [kindpixels.com/plugins/kindpixels-next-event-countdown](https://kindpixels.com/plugins/kindpixels-next-event-countdown).
 
 == Installation ==
 
@@ -98,16 +97,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 == Changelog ==
 
 = 1.1.7 =
-* Removed all artificial feature restrictions from the free version — unlimited counters now available for all users
-* Renamed all internal "gallery" references to "counter" for consistency
+* Compliance fixes for WordPress.org guidelines
 * Improved data sanitization: all nested counter data is now recursively sanitized before storage
-* Added automatic data migration from legacy "gallery" option keys to new "counter" keys
-* Added granular typography controls — independent sizes for Header, Digits, Labels, and Separators
-* Added per-element position offset — individually reposition header, title, date, and digits
-* Added overall scale slider for resizing the entire counter widget
-* Added "Show Header & Icon" visibility toggle — hide the header row to display only the countdown
-* Fixed counter height slider to properly stretch content vertically
-* Version bump and compliance fixes for WordPress.org guidelines
+* Bug fixes
 
 = 1.1.6 =
 * Fixed several WordPress Directory compliance issues
