@@ -605,6 +605,44 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                   </div>
                 </div>
               </div>
+
+              <div className="border-t" />
+
+              {/* Live Preview */}
+              <div className="space-y-2">
+                <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Live Preview</Label>
+                <div
+                  className="relative rounded-xl border-2 border-dashed border-border bg-muted/10 overflow-hidden"
+                  style={{ minHeight: '160px', maxWidth: '100%' }}
+                >
+                  {/* Grid background */}
+                  <div
+                    className="absolute inset-0 opacity-[0.04]"
+                    style={{
+                      backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+                      backgroundSize: '20px 20px',
+                    }}
+                  />
+                  {/* Center crosshair */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                    <div className="w-px h-6 bg-primary/20 absolute left-1/2 -translate-x-1/2 -top-3" />
+                    <div className="h-px w-6 bg-primary/20 absolute top-1/2 -translate-y-1/2 -left-3" />
+                  </div>
+                  {/* Counter widget */}
+                  <div
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      marginLeft: `${localConfig.offsetX ?? 0}px`,
+                      marginTop: `${localConfig.offsetY ?? 0}px`,
+                    }}
+                  >
+                    <ServiceCountdownWidget config={localConfig} />
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground italic">
+                  Grid shows the embed frame center. Use Position Offset to shift the counter.
+                </p>
+              </div>
             </CardContent>
           </Card>
         );
