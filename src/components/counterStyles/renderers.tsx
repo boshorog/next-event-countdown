@@ -21,21 +21,21 @@ export const ClassicRenderer: React.FC<CounterStyleRenderProps> = (p) => {
     <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center flex-wrap gap-2 mb-1">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
-        <span className="font-semibold text-sm text-foreground">{p.headerLabel}:</span>
-        <span className="text-sm text-muted-foreground">{p.eventDate}</span>
+        <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}:</span>
+        <span className="text-muted-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.eventDate}</span>
       </div>
-      <p className="italic text-sm text-muted-foreground mb-6">{p.eventTitle}</p>
+      <p className="italic text-muted-foreground mb-6" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.eventTitle}</p>
       <div className="flex justify-center items-center gap-1">
         {units.map((u, i) => (
           <div key={u.l} className="flex items-center">
             <div className="flex flex-col items-center" style={{ minWidth: 56 }}>
-              <span className="text-4xl tabular-nums leading-none text-foreground" style={{ fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>{pad(u.v)}</span>
-              <span className="text-[9px] uppercase tracking-wider text-muted-foreground" style={{ marginTop: '6px' }}>{u.l}</span>
+              <span className="tabular-nums leading-none text-foreground" style={{ fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'var(--digit-font-size, 36px)' }}>{pad(u.v)}</span>
+              <span className="uppercase tracking-wider text-muted-foreground" style={{ marginTop: '6px', fontSize: 'var(--label-font-size, 9px)' }}>{u.l}</span>
             </div>
             {i < 3 && (
               <span
-                className="text-2xl font-light text-border"
-                style={{ marginTop: '-16px', marginLeft: '2px', marginRight: '2px' }}
+                className="font-light text-border"
+                style={{ marginTop: '-16px', marginLeft: '2px', marginRight: '2px', fontSize: 'calc(var(--digit-font-size, 36px) * 0.67)' }}
               >:</span>
             )}
           </div>
@@ -53,18 +53,18 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
     <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center gap-2 mb-1">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
-        <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
+        <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
       </div>
-      <p className="text-xs text-muted-foreground mb-5">{p.eventTitle}</p>
+      <p className="text-muted-foreground mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.eventTitle}</p>
       <div className="grid grid-cols-4 gap-2 mb-4 max-w-[280px] mx-auto">
         {units.map((u) => (
           <div key={u.l} className="bg-muted/60 rounded-xl py-3 flex flex-col items-center justify-center shadow-sm">
-            <div className="text-2xl font-bold font-mono text-foreground tabular-nums">{pad(u.v)}</div>
-            <div className="text-[8px] uppercase tracking-[0.15em] text-muted-foreground mt-1">{u.l}</div>
+            <div className="font-bold font-mono text-foreground tabular-nums" style={{ fontSize: 'var(--digit-font-size, 24px)' }}>{pad(u.v)}</div>
+            <div className="uppercase text-muted-foreground mt-1" style={{ fontSize: 'var(--label-font-size, 8px)', letterSpacing: '0.15em' }}>{u.l}</div>
           </div>
         ))}
       </div>
-      <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center justify-center gap-1.5 text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 8px)' }}>
         <Clock className="w-3 h-3" />
         <span>{p.eventDate}</span>
       </div>
