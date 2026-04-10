@@ -84,15 +84,6 @@ export const GallerySelector = ({
   }, [galleries.length, currentGalleryId]);
 
   const handleCreateGallery = () => {
-    if (!BUILD_FLAGS.MULTI_GALLERY_UI) {
-      toast({
-        title: "Pro Feature Required",
-        description: "Multiple counters require the Pro addon. Upgrade to Pro for unlimited counters.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!newGalleryName.trim()) {
       toast({
         title: "Error",
@@ -242,8 +233,8 @@ export const GallerySelector = ({
       </Button>
 
 
-      {/* Add Gallery button - Pro only */}
-      {BUILD_FLAGS.MULTI_GALLERY_UI && (
+      {/* Add Counter button - always available */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button
