@@ -44,9 +44,10 @@ const isDevPro = getDevModePro();
 export const BUILD_FLAGS = {
   /**
    * Multi-counter management (+ button in breadcrumb, counter selector)
-   * Always enabled — free version supports unlimited counters
+   * - Free: false → Single counter only (code tree-shaken from free bundle)
+   * - Pro: true → Unlimited counters
    */
-  MULTI_GALLERY_UI: true,
+  MULTI_GALLERY_UI: BUILD_VARIANT === 'pro' || isDevPro,
 
   /**
    * Bulk upload UI (not used in countdown plugin)
