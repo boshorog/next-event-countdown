@@ -934,23 +934,13 @@ class NxEvtCd_Plugin {
         }
 
         $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
-        $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
-
-        // Server-side enforcement: free version can only save to the first/default gallery
-        if (!$this->is_pro_license() && $gallery_id !== 'default') {
-            // Check if this gallery_id is the first (and only allowed) gallery
-            $galleries = get_option('nxevtcd_galleries', array());
-            $first_id = is_array($galleries) && !empty($galleries) ? $galleries[0]['id'] : 'default';
-            if ($gallery_id !== $first_id) {
-                wp_send_json_error('Multiple counters require a Pro license');
-            }
-        }
+        $counter_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
 
         $config = json_decode($config_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
             $sanitized = $this->sanitize_countdown_config($config);
-            update_option('nxevtcd_countdown_config_' . $gallery_id, $sanitized);
+            update_option('nxevtcd_countdown_config_' . $counter_id, $sanitized);
             wp_send_json_success('Countdown config saved');
         } else {
             wp_send_json_error('Invalid countdown config data');
