@@ -87,9 +87,9 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
     <div className="w-full rounded-2xl p-6 text-center bg-background">
       <div className="flex items-center justify-center gap-2 mb-0.5">
         <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
-        <span className="font-semibold text-sm text-foreground">{p.headerLabel}</span>
+        <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
       </div>
-      <p className="text-xs text-muted-foreground italic mb-5">{p.eventTitle}</p>
+      <p className="text-muted-foreground italic mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.eventTitle}</p>
       <div className="flex items-center justify-center gap-5 mb-4">
         {items.map(({ v, l, max }) => {
           const pct = (v / max) * 100;
@@ -100,14 +100,14 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
                 <circle cx="40" cy="40" r={r} fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${c}`} strokeDashoffset={`${c - (c * pct) / 100}`} strokeLinecap="round" className="text-primary" />
               </svg>
               <div className="text-center z-10">
-                <div className="text-xl font-bold font-mono leading-none text-foreground">{v}</div>
-                <div className="text-[8px] uppercase tracking-wider text-muted-foreground mt-1">{l}</div>
+                <div className="font-bold font-mono leading-none text-foreground" style={{ fontSize: 'var(--digit-font-size, 20px)' }}>{v}</div>
+                <div className="uppercase tracking-wider text-muted-foreground mt-1" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{l}</div>
               </div>
             </div>
           );
         })}
       </div>
-      <p className="text-xs text-muted-foreground">{p.eventDate}</p>
+      <p className="text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 12px)' }}>{p.eventDate}</p>
     </div>
   );
 };
@@ -120,19 +120,19 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
     <div className="w-full rounded-2xl overflow-hidden border border-border">
       <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)` }}>
         <Icon className="w-4 h-4 text-white/90" />
-        <span className="text-sm font-semibold text-white">{p.headerLabel}</span>
-        <span className="text-xs text-white/70 ml-auto">{p.eventTitle}</span>
+        <span className="font-semibold text-white" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
+        <span className="text-white/70 ml-auto" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.eventTitle}</span>
       </div>
       <div className="bg-background p-5 space-y-4">
         <div className="flex items-center justify-center gap-2">
           {units.map((u) => (
             <div key={u.l} className="rounded-xl px-3 py-2.5 text-center min-w-[52px]" style={{ background: `linear-gradient(135deg, ${p.iconColor}1a, ${p.iconColor}1a)` }}>
-              <div className="text-xl font-bold font-mono text-primary">{pad(u.v)}</div>
-              <div className="text-[8px] text-muted-foreground uppercase tracking-wider mt-0.5">{u.l}</div>
+              <div className="font-bold font-mono text-primary" style={{ fontSize: 'var(--digit-font-size, 20px)' }}>{pad(u.v)}</div>
+              <div className="text-muted-foreground uppercase tracking-wider mt-0.5" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{u.l}</div>
             </div>
           ))}
         </div>
-        <p className="text-center text-xs text-muted-foreground">{p.eventDate}</p>
+        <p className="text-center text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 12px)' }}>{p.eventDate}</p>
       </div>
     </div>
   );
@@ -145,13 +145,13 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   return (
     <div className="w-full rounded-2xl p-6 bg-background text-center">
       <Icon className="w-6 h-6 mx-auto mb-2" style={{ color: p.iconColor }} />
-      <h3 className="text-lg font-black text-foreground tracking-tight">{p.eventTitle}</h3>
-      <p className="text-xs text-muted-foreground mb-5">{p.headerLabel} · {p.eventDate}</p>
+      <h3 className="font-black text-foreground tracking-tight" style={{ fontSize: 'var(--header-font-size, 18px)' }}>{p.eventTitle}</h3>
+      <p className="text-muted-foreground mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.headerLabel} · {p.eventDate}</p>
       <div className="flex items-center justify-center gap-5">
         {units.map((u) => (
           <div key={u.l} className="text-center">
-            <div className="text-4xl font-black font-mono leading-none text-foreground">{pad(u.v)}</div>
-            <div className="text-[7px] font-bold tracking-[0.3em] text-muted-foreground mt-1.5 uppercase">{u.l}</div>
+            <div className="font-black font-mono leading-none text-foreground" style={{ fontSize: 'var(--digit-font-size, 36px)' }}>{pad(u.v)}</div>
+            <div className="font-bold text-muted-foreground mt-1.5 uppercase" style={{ fontSize: 'var(--label-font-size, 7px)', letterSpacing: '0.3em' }}>{u.l}</div>
           </div>
         ))}
       </div>
@@ -167,29 +167,29 @@ export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(34,197,94,0.2)' }}>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: '#22c55e', boxShadow: '0 0 6px rgba(34,197,94,0.5)' }} />
-          <span className="text-sm font-mono font-semibold" style={{ color: '#22c55e' }}>{p.headerLabel.toUpperCase()}</span>
+          <span className="font-mono font-semibold" style={{ color: '#22c55e', fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel.toUpperCase()}</span>
         </div>
-        <span className="text-xs font-mono font-medium" style={{ color: 'rgba(34,197,94,0.85)' }}>{p.eventTitle}</span>
+        <span className="font-mono font-medium" style={{ color: 'rgba(34,197,94,0.85)', fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.eventTitle}</span>
       </div>
       <div className="px-5 py-5 text-center">
         <div className="flex items-center justify-center max-w-[360px] mx-auto">
           {units.map((u, i) => (
             <React.Fragment key={u.l}>
               <div className="flex flex-col items-center" style={{ minWidth: 56 }}>
-                <div className="font-mono text-3xl font-bold tabular-nums" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)' }}>
+                <div className="font-mono font-bold tabular-nums" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)', fontSize: 'var(--digit-font-size, 30px)' }}>
                   {pad(u.v)}
                 </div>
-                <span className="text-[9px] font-mono tracking-widest uppercase mt-1.5" style={{ color: 'rgba(34,197,94,0.7)' }}>{u.l}</span>
+                <span className="font-mono tracking-widest uppercase mt-1.5" style={{ color: 'rgba(34,197,94,0.7)', fontSize: 'var(--label-font-size, 9px)' }}>{u.l}</span>
               </div>
               {i < 3 && (
-                <span className="font-mono text-2xl font-bold mx-1 self-start" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)', lineHeight: '36px' }}>:</span>
+                <span className="font-mono font-bold mx-1 self-start" style={{ color: '#22c55e', textShadow: '0 0 10px rgba(34,197,94,0.4)', lineHeight: '36px', fontSize: 'calc(var(--digit-font-size, 30px) * 0.8)' }}>:</span>
               )}
             </React.Fragment>
           ))}
         </div>
       </div>
       <div className="px-5 py-3 text-center" style={{ borderTop: '1px solid rgba(34,197,94,0.2)' }}>
-        <span className="text-xs font-mono font-medium" style={{ color: 'rgba(34,197,94,0.7)' }}>{p.eventDate}</span>
+        <span className="font-mono font-medium" style={{ color: 'rgba(34,197,94,0.7)', fontSize: 'var(--label-font-size, 12px)' }}>{p.eventDate}</span>
       </div>
     </div>
   );
@@ -202,27 +202,24 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   return (
     <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center">
       <div className="flex items-center gap-8">
-        {/* Right-aligned header info */}
         <div className="flex flex-col items-end text-right flex-shrink-0">
           <div className="flex items-center gap-2 mb-1">
             <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
-            <span className="text-sm" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 600, color: 'inherit' }}>{p.headerLabel}</span>
+            <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 600, color: 'inherit', fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
           </div>
-          <p className="text-xs italic text-muted-foreground mb-1">{p.eventTitle}</p>
-          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground italic">
+          <p className="italic text-muted-foreground mb-1" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)' }}>{p.eventTitle}</p>
+          <div className="flex items-center gap-1.5 text-muted-foreground italic" style={{ fontSize: 'var(--label-font-size, 11px)' }}>
             <Clock className="w-3 h-3" />
             <span>{p.eventDate}</span>
           </div>
         </div>
-        {/* Divider */}
         <div className="w-px h-16 bg-border/50 flex-shrink-0" />
-        {/* Counter */}
         <div className="flex items-center gap-5 flex-1">
           {units.map((u, i) => (
             <div key={u.l} className="flex items-center gap-5">
               <div className="text-center">
-                <div className="text-3xl font-light text-foreground" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>{pad(u.v)}</div>
-                <div className="text-[8px] tracking-[0.15em] text-muted-foreground italic mt-1">{u.l}</div>
+                <div className="font-light text-foreground" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'var(--digit-font-size, 30px)' }}>{pad(u.v)}</div>
+                <div className="tracking-[0.15em] text-muted-foreground italic mt-1" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{u.l}</div>
               </div>
               {i < 3 && <div className="w-px h-10 bg-border/50" />}
             </div>
