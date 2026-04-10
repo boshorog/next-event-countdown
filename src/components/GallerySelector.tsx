@@ -273,7 +273,6 @@ export const GallerySelector = ({
             </div>
           </DialogContent>
         </Dialog>
-      )}
     </>
   );
 
