@@ -171,6 +171,37 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
     setLocalConfig(prev => ({ ...prev, ...partial }));
   };
 
+  const LivePreviewPane = () => (
+    <div className="space-y-2 pt-4 border-t border-border">
+      <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Live Preview</Label>
+      <div
+        className="relative rounded-xl border-2 border-dashed border-border bg-muted/10 overflow-hidden"
+        style={{ minHeight: '220px', maxWidth: '100%' }}
+      >
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+          }}
+        />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="w-px h-6 bg-primary/20 absolute left-1/2 -translate-x-1/2 -top-3" />
+          <div className="h-px w-6 bg-primary/20 absolute top-1/2 -translate-y-1/2 -left-3" />
+        </div>
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            marginLeft: `${localConfig.offsetX ?? 0}px`,
+            marginTop: `${localConfig.offsetY ?? 0}px`,
+          }}
+        >
+          <ServiceCountdownWidget config={localConfig} />
+        </div>
+      </div>
+    </div>
+  );
+
   const sidebarItems = [
     ...(BUILD_FLAGS.COUNTER_STYLES ? [{ id: 'counter-styles', label: 'Counter Styles', icon: LayoutGrid, pro: true }] : []),
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
