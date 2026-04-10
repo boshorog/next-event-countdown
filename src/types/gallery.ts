@@ -30,5 +30,14 @@ export type Gallery = Counter; // backward compat
 export interface CounterState {
   counters: Counter[];
   currentCounterId: string;
+  /** @deprecated Use counters */
+  galleries?: Counter[];
+  /** @deprecated Use currentCounterId */
+  currentGalleryId?: string;
 }
-export type GalleryState = CounterState; // backward compat
+
+// GalleryState keeps the old field names for backward compat across the codebase
+export interface GalleryState {
+  galleries: Counter[];
+  currentGalleryId: string;
+}
