@@ -1,453 +1,368 @@
 /**
- * Counter Size Showcase
- * 6 visual concepts for enriching the Counter Size settings area.
+ * Counter Size Showcase — Combined Option 5+6
+ * Granular typography + compact layout + aspect ratio lock + positioning + live preview
  * Access via ?showcase=counter-size
  */
 
 import { useState } from "react";
-import { Maximize2, Ruler, Move, RatioIcon, SlidersHorizontal, Box } from "lucide-react";
+import { Ruler, Lock, Unlock, Move, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
 import { Slider } from "./ui/slider";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { ToggleGroup, ToggleGroupItem } from "./ui/toggle-group";
+import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import ServiceCountdownWidget, { defaultCountdownConfig } from "./ServiceCountdownWidget";
+import { COUNTER_STYLE_OPTIONS, type CounterStyleId } from "./counterStyles/types";
 
-const MiniPreview = ({ style }: { style?: React.CSSProperties }) => (
-  <div className="rounded-lg border border-border overflow-hidden bg-muted/20 p-3 flex justify-center">
-    <div style={style}>
-      <ServiceCountdownWidget config={defaultCountdownConfig} />
-    </div>
-  </div>
-);
+const CounterSizeShowcase = () => {
+  // Style selector
+  const [styleId, setStyleId] = useState<CounterStyleId>("default");
 
-// ─── Option 1: Unified Scale + Dimensions Panel ───
-const Option1 = () => {
-  const [scale, setScale] = useState(100);
-  const [balance, setBalance] = useState(50);
-  const [maxWidth, setMaxWidth] = useState(800);
-  const [unit, setUnit] = useState<"px" | "%">("px");
+  // Typography (from Option 5)
+  const [headerSize, setHeaderSize] = useState(14);
+  const [digitSize, setDigitSize] = useState(36);
+  const [labelSize, setLabelSize] = useState(9);
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Maximize2 className="w-4 h-4" />
-          Option 1 — Scale + Max Width
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Keeps the existing scale slider + balance, adds a max-width constraint with px/% toggle
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Overall Scale */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Overall Scale</Label>
-            <span className="text-sm font-medium text-primary tabular-nums">{scale}%</span>
-          </div>
-          <Slider value={[scale]} onValueChange={(v) => setScale(v[0])} min={50} max={200} step={5} />
-        </div>
-
-        {/* Header/Digits Balance */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Header / Digits Balance</Label>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {balance === 50 ? 'Balanced' : balance < 50 ? `Header +${50 - balance}%` : `Digits +${balance - 50}%`}
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12 text-right">Header</span>
-            <Slider value={[balance]} onValueChange={(v) => setBalance(v[0])} min={0} max={100} step={2} className="flex-1" />
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12">Digits</span>
-          </div>
-        </div>
-
-        {/* Max Width */}
-        <div className="border-t pt-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Max Width</Label>
-            <ToggleGroup type="single" value={unit} onValueChange={(v) => v && setUnit(v as "px" | "%")} size="sm" className="bg-muted rounded-lg p-0.5">
-              <ToggleGroupItem value="px" className="text-xs px-2 h-7 rounded-md data-[state=on]:bg-background data-[state=on]:shadow-sm">px</ToggleGroupItem>
-              <ToggleGroupItem value="%" className="text-xs px-2 h-7 rounded-md data-[state=on]:bg-background data-[state=on]:shadow-sm">%</ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          <div className="flex items-center gap-3">
-            <Slider
-              value={[unit === "px" ? maxWidth : Math.round(maxWidth / 8)]}
-              onValueChange={(v) => setMaxWidth(unit === "px" ? v[0] : v[0] * 8)}
-              min={unit === "px" ? 300 : 30}
-              max={unit === "px" ? 1200 : 100}
-              step={unit === "px" ? 10 : 5}
-              className="flex-1"
-            />
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                value={unit === "px" ? maxWidth : Math.round(maxWidth / 8)}
-                onChange={(e) => setMaxWidth(unit === "px" ? Number(e.target.value) : Number(e.target.value) * 8)}
-                className="w-20 h-8 text-sm text-right"
-              />
-              <span className="text-xs text-muted-foreground w-6">{unit}</span>
-            </div>
-          </div>
-        </div>
-
-        <MiniPreview style={{ maxWidth: `${maxWidth}px`, transform: `scale(${scale / 100})`, transformOrigin: 'top center', width: '100%' }} />
-      </CardContent>
-    </Card>
-  );
-};
-
-// ─── Option 2: Width × Height with Aspect Ratio Lock ───
-const Option2 = () => {
+  // Dimensions
   const [width, setWidth] = useState(600);
-  const [height, setHeight] = useState(200);
+  const [height, setHeight] = useState(220);
   const [lockRatio, setLockRatio] = useState(false);
-  const ratio = 600 / 200;
+  const baseRatio = 600 / 220;
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Box className="w-4 h-4" />
-          Option 2 — Width × Height with Lock
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Explicit pixel dimensions with optional aspect-ratio lock. Familiar to designers.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="text-sm">Width (px)</Label>
-            <Input
-              type="number"
-              value={width}
-              onChange={(e) => {
-                const w = Number(e.target.value);
-                setWidth(w);
-                if (lockRatio) setHeight(Math.round(w / ratio));
-              }}
-              className="h-9"
-            />
-            <Slider value={[width]} onValueChange={(v) => { setWidth(v[0]); if (lockRatio) setHeight(Math.round(v[0] / ratio)); }} min={200} max={1200} step={10} />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-sm">Height (px)</Label>
-            <Input
-              type="number"
-              value={height}
-              onChange={(e) => {
-                const h = Number(e.target.value);
-                setHeight(h);
-                if (lockRatio) setWidth(Math.round(h * ratio));
-              }}
-              className="h-9"
-            />
-            <Slider value={[height]} onValueChange={(v) => { setHeight(v[0]); if (lockRatio) setWidth(Math.round(v[0] * ratio)); }} min={80} max={500} step={5} />
-          </div>
-        </div>
+  // Position offsets (px)
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
 
-        <div className="flex items-center gap-2">
-          <Switch checked={lockRatio} onCheckedChange={setLockRatio} />
-          <Label className="text-sm flex items-center gap-1.5">
-            <RatioIcon className="w-3.5 h-3.5" />
-            Lock aspect ratio
-          </Label>
-        </div>
-
-        <MiniPreview style={{ width: `${width}px`, height: `${height}px`, overflow: 'hidden', margin: '0 auto' }} />
-      </CardContent>
-    </Card>
-  );
-};
-
-// ─── Option 3: Preset Sizes + Custom ───
-const Option3 = () => {
-  const [preset, setPreset] = useState<string>("medium");
-  const [customWidth, setCustomWidth] = useState(600);
-  const presets = {
-    compact: { label: "Compact", width: 360, desc: "Sidebar / widget area" },
-    medium: { label: "Medium", width: 600, desc: "Content column" },
-    large: { label: "Large", width: 900, desc: "Full section" },
-    full: { label: "Full Width", width: 1200, desc: "Edge to edge" },
-    custom: { label: "Custom", width: customWidth, desc: "Set your own" },
+  const handleWidthChange = (w: number) => {
+    setWidth(w);
+    if (lockRatio) setHeight(Math.round(w / baseRatio));
   };
-  const activeWidth = presets[preset as keyof typeof presets]?.width ?? 600;
+  const handleHeightChange = (h: number) => {
+    setHeight(h);
+    if (lockRatio) setWidth(Math.round(h * baseRatio));
+  };
+
+  const resetAll = () => {
+    setHeaderSize(14);
+    setDigitSize(36);
+    setLabelSize(9);
+    setWidth(600);
+    setHeight(220);
+    setLockRatio(false);
+    setOffsetX(0);
+    setOffsetY(0);
+  };
+
+  const config = {
+    ...defaultCountdownConfig,
+    counterStyle: styleId,
+  };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <SlidersHorizontal className="w-4 h-4" />
-          Option 3 — Preset Sizes
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Quick-pick common sizes with optional custom override. Best for non-technical users.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid grid-cols-5 gap-2">
-          {Object.entries(presets).map(([key, { label, desc }]) => (
+    <div className="min-h-screen bg-background p-8">
+      <div className="max-w-5xl mx-auto space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-1">Counter Size & Position — Combined Panel</h1>
+          <p className="text-sm text-muted-foreground">
+            Granular control over every element: typography, dimensions, aspect ratio, and position within the embed frame.
+          </p>
+        </div>
+
+        {/* Style selector pills */}
+        <div className="flex flex-wrap gap-2">
+          {COUNTER_STYLE_OPTIONS.map((s) => (
             <button
-              key={key}
-              onClick={() => setPreset(key)}
-              className={`rounded-xl border p-3 text-left transition-all ${
-                preset === key
-                  ? 'border-primary bg-primary/5 shadow-sm'
-                  : 'border-border hover:border-primary/30 hover:bg-muted/30'
+              key={s.id}
+              onClick={() => setStyleId(s.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                styleId === s.id
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border text-muted-foreground hover:border-primary/30"
               }`}
             >
-              <span className={`text-xs font-semibold ${preset === key ? 'text-primary' : 'text-foreground'}`}>{label}</span>
-              <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{desc}</p>
+              {s.name}
+              {s.pro && <span className="ml-1 text-[9px] opacity-60">PRO</span>}
             </button>
           ))}
         </div>
 
-        {preset === "custom" && (
-          <div className="flex items-center gap-3 pl-1">
-            <Label className="text-sm w-16">Width</Label>
-            <Slider value={[customWidth]} onValueChange={(v) => setCustomWidth(v[0])} min={200} max={1200} step={10} className="flex-1" />
-            <Input type="number" value={customWidth} onChange={(e) => setCustomWidth(Number(e.target.value))} className="w-20 h-8 text-sm text-right" />
-            <span className="text-xs text-muted-foreground">px</span>
-          </div>
-        )}
-
-        <MiniPreview style={{ maxWidth: `${activeWidth}px`, margin: '0 auto', width: '100%' }} />
-      </CardContent>
-    </Card>
-  );
-};
-
-// ─── Option 4: Visual Resize Handle ───
-const Option4 = () => {
-  const [width, setWidth] = useState(600);
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Move className="w-4 h-4" />
-          Option 4 — Drag to Resize
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          A visual resize handle on the preview itself. Users drag to see the result live. Most intuitive.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-3">
-          <Slider value={[width]} onValueChange={(v) => setWidth(v[0])} min={280} max={1000} step={10} className="flex-1" />
-          <span className="text-sm font-mono text-muted-foreground tabular-nums w-16 text-right">{width}px</span>
-        </div>
-
-        <div className="relative bg-muted/20 rounded-lg border border-border p-4 flex justify-center">
-          <div
-            className="relative border-2 border-dashed border-primary/30 rounded-lg p-4 transition-all"
-            style={{ width: `${width}px`, maxWidth: '100%' }}
-          >
-            <ServiceCountdownWidget config={defaultCountdownConfig} />
-            {/* Resize grip indicator */}
-            <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-5 h-10 bg-primary/10 border border-primary/30 rounded-md flex items-center justify-center cursor-ew-resize">
-              <div className="flex flex-col gap-0.5">
-                <div className="w-0.5 h-3 bg-primary/40 rounded-full" />
-                <div className="w-0.5 h-3 bg-primary/40 rounded-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="text-xs text-muted-foreground text-center">
-          In the actual settings, the edge handle would be draggable
-        </p>
-      </CardContent>
-    </Card>
-  );
-};
-
-// ─── Option 5: Font Size Controls (Header + Digits independently) ───
-const Option5 = () => {
-  const [headerSize, setHeaderSize] = useState(18);
-  const [digitSize, setDigitSize] = useState(48);
-  const [labelSize, setLabelSize] = useState(10);
-  const [maxWidth, setMaxWidth] = useState(700);
-
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Ruler className="w-4 h-4" />
-          Option 5 — Granular Typography + Width
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Separate font size controls for header, digits, and labels — plus a max-width. Maximum control for power users.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Header Text</Label>
-              <span className="text-xs text-muted-foreground tabular-nums">{headerSize}px</span>
-            </div>
-            <Slider value={[headerSize]} onValueChange={(v) => setHeaderSize(v[0])} min={10} max={32} step={1} />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Digit Size</Label>
-              <span className="text-xs text-muted-foreground tabular-nums">{digitSize}px</span>
-            </div>
-            <Slider value={[digitSize]} onValueChange={(v) => setDigitSize(v[0])} min={20} max={96} step={2} />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs">Label Size</Label>
-              <span className="text-xs text-muted-foreground tabular-nums">{labelSize}px</span>
-            </div>
-            <Slider value={[labelSize]} onValueChange={(v) => setLabelSize(v[0])} min={6} max={18} step={1} />
-          </div>
-        </div>
-
-        <div className="border-t pt-4 space-y-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs">Max Width</Label>
-            <span className="text-xs text-muted-foreground tabular-nums">{maxWidth}px</span>
-          </div>
-          <Slider value={[maxWidth]} onValueChange={(v) => setMaxWidth(v[0])} min={280} max={1200} step={10} />
-        </div>
-
-        <div className="rounded-lg border border-border bg-muted/20 p-4 flex justify-center">
-          <div style={{ maxWidth: `${maxWidth}px`, width: '100%' }}>
-            {/* Simulated custom-sized counter */}
-            <div className="w-full rounded-2xl p-6 text-center bg-background border border-border">
-              <div className="flex items-center justify-center flex-wrap gap-2 mb-1">
-                <span className="font-semibold" style={{ fontSize: `${headerSize}px` }}>Next Service:</span>
-                <span className="text-muted-foreground" style={{ fontSize: `${headerSize}px` }}>May 25, 2025</span>
-              </div>
-              <p className="italic text-muted-foreground mb-6" style={{ fontSize: `${headerSize - 2}px` }}>Sunday Morning Worship</p>
-              <div className="flex justify-center items-center gap-1">
-                {[{ v: "12", l: "Days" }, { v: "08", l: "Hours" }, { v: "45", l: "Minutes" }, { v: "23", l: "Seconds" }].map((u, i) => (
-                  <div key={u.l} className="flex items-center">
-                    <div className="flex flex-col items-center" style={{ minWidth: `${digitSize * 1.2}px` }}>
-                      <span className="tabular-nums leading-none text-foreground" style={{ fontSize: `${digitSize}px`, fontWeight: 900 }}>{u.v}</span>
-                      <span className="uppercase tracking-wider text-muted-foreground" style={{ fontSize: `${labelSize}px`, marginTop: '6px' }}>{u.l}</span>
+        {/* Main layout: Controls + Preview */}
+        <div className="grid grid-cols-[380px_1fr] gap-6 items-start">
+          {/* ─── Controls Panel ─── */}
+          <Card className="sticky top-8">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center justify-between text-sm">
+                <span className="flex items-center gap-2">
+                  <Ruler className="w-4 h-4" />
+                  Size & Position
+                </span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={resetAll}>
+                        <RotateCcw className="w-3.5 h-3.5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Reset all to defaults</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              {/* ── Typography Section ── */}
+              <div className="space-y-3">
+                <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Typography</Label>
+                
+                {/* Header Text */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Header Text</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={headerSize}
+                        onChange={(e) => setHeaderSize(Number(e.target.value))}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
                     </div>
-                    {i < 3 && <span className="font-light text-border" style={{ fontSize: `${digitSize * 0.6}px`, marginTop: `-${digitSize * 0.3}px` }}>:</span>}
                   </div>
-                ))}
+                  <Slider value={[headerSize]} onValueChange={(v) => setHeaderSize(v[0])} min={8} max={32} step={1} />
+                </div>
+
+                {/* Digit Size */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Digit Size</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={digitSize}
+                        onChange={(e) => setDigitSize(Number(e.target.value))}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[digitSize]} onValueChange={(v) => setDigitSize(v[0])} min={16} max={96} step={2} />
+                </div>
+
+                {/* Label Size */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Label Size</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={labelSize}
+                        onChange={(e) => setLabelSize(Number(e.target.value))}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[labelSize]} onValueChange={(v) => setLabelSize(v[0])} min={6} max={18} step={1} />
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
 
-// ─── Option 6: Compact All-in-One Panel ───
-const Option6 = () => {
-  const [scale, setScale] = useState(100);
-  const [balance, setBalance] = useState(50);
-  const [maxWidth, setMaxWidth] = useState(800);
-  const [minHeight, setMinHeight] = useState(0);
+              {/* Divider */}
+              <div className="border-t" />
 
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <SlidersHorizontal className="w-4 h-4" />
-          Option 6 — Compact Unified Panel
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Everything in a dense, single panel. All controls visible at once without scrolling. Good for power users who want quick access.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-          {/* Scale */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium">Scale</Label>
-              <span className="text-[11px] font-mono text-primary">{scale}%</span>
-            </div>
-            <Slider value={[scale]} onValueChange={(v) => setScale(v[0])} min={50} max={200} step={5} />
-          </div>
+              {/* ── Dimensions Section ── */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Dimensions</Label>
+                  <button
+                    onClick={() => setLockRatio(!lockRatio)}
+                    className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-colors ${
+                      lockRatio
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {lockRatio ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                    Lock ratio
+                  </button>
+                </div>
 
-          {/* Max Width */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium">Max Width</Label>
-              <div className="flex items-center gap-1">
-                <Input type="number" value={maxWidth} onChange={(e) => setMaxWidth(Number(e.target.value))} className="w-16 h-6 text-[11px] text-right px-1.5" />
-                <span className="text-[10px] text-muted-foreground">px</span>
+                {/* Width */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Width</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={width}
+                        onChange={(e) => handleWidthChange(Number(e.target.value))}
+                        className="w-16 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[width]} onValueChange={(v) => handleWidthChange(v[0])} min={200} max={1200} step={10} />
+                </div>
+
+                {/* Height */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Height</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={height}
+                        onChange={(e) => handleHeightChange(Number(e.target.value))}
+                        className="w-16 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[height]} onValueChange={(v) => handleHeightChange(v[0])} min={80} max={500} step={5} />
+                </div>
               </div>
-            </div>
-            <Slider value={[maxWidth]} onValueChange={(v) => setMaxWidth(v[0])} min={280} max={1200} step={10} />
-          </div>
 
-          {/* Balance */}
-          <div className="space-y-1.5">
+              {/* Divider */}
+              <div className="border-t" />
+
+              {/* ── Position Section ── */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Move className="w-3 h-3" />
+                      Position Offset
+                    </span>
+                  </Label>
+                  {(offsetX !== 0 || offsetY !== 0) && (
+                    <button
+                      onClick={() => { setOffsetX(0); setOffsetY(0); }}
+                      className="text-[10px] text-muted-foreground hover:text-foreground"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                {/* Visual position pad */}
+                <div className="flex items-center gap-4">
+                  {/* Direction pad */}
+                  <div className="grid grid-cols-3 gap-0.5 w-fit">
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOffsetY((v) => v - 5)}>
+                      <ArrowUp className="w-3 h-3" />
+                    </Button>
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOffsetX((v) => v - 5)}>
+                      <ArrowLeft className="w-3 h-3" />
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-[9px] font-mono" onClick={() => { setOffsetX(0); setOffsetY(0); }}>
+                      ·
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOffsetX((v) => v + 5)}>
+                      <ArrowRight className="w-3 h-3" />
+                    </Button>
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOffsetY((v) => v + 5)}>
+                      <ArrowDown className="w-3 h-3" />
+                    </Button>
+                    <div />
+                  </div>
+
+                  {/* Numeric inputs */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-[10px] w-4 text-muted-foreground">X</Label>
+                      <Slider value={[offsetX]} onValueChange={(v) => setOffsetX(v[0])} min={-200} max={200} step={1} className="flex-1" />
+                      <div className="flex items-center gap-0.5">
+                        <Input
+                          type="number"
+                          value={offsetX}
+                          onChange={(e) => setOffsetX(Number(e.target.value))}
+                          className="w-14 h-6 text-[11px] text-right px-1.5"
+                        />
+                        <span className="text-[9px] text-muted-foreground">px</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Label className="text-[10px] w-4 text-muted-foreground">Y</Label>
+                      <Slider value={[offsetY]} onValueChange={(v) => setOffsetY(v[0])} min={-200} max={200} step={1} className="flex-1" />
+                      <div className="flex items-center gap-0.5">
+                        <Input
+                          type="number"
+                          value={offsetY}
+                          onChange={(e) => setOffsetY(Number(e.target.value))}
+                          className="w-14 h-6 text-[11px] text-right px-1.5"
+                        />
+                        <span className="text-[9px] text-muted-foreground">px</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* ─── Live Preview ─── */}
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium">Header / Digits</Label>
-              <span className="text-[10px] text-muted-foreground tabular-nums">
-                {balance === 50 ? 'Even' : balance < 50 ? `H+${50 - balance}` : `D+${balance - 50}`}
+              <Label className="text-xs text-muted-foreground">
+                Live Preview — {width} × {height}px
+                {(offsetX !== 0 || offsetY !== 0) && ` · offset (${offsetX}, ${offsetY})`}
+              </Label>
+              <span className="text-[10px] text-muted-foreground font-mono">
+                {COUNTER_STYLE_OPTIONS.find((s) => s.id === styleId)?.name}
               </span>
             </div>
-            <Slider value={[balance]} onValueChange={(v) => setBalance(v[0])} min={0} max={100} step={2} />
-          </div>
+            
+            {/* Preview frame simulating the iframe embed area */}
+            <div
+              className="relative rounded-xl border-2 border-dashed border-border bg-muted/10 overflow-hidden"
+              style={{ width: `${Math.min(width, 800)}px`, height: `${height + 40}px`, maxWidth: '100%' }}
+            >
+              {/* Grid background for visual reference */}
+              <div
+                className="absolute inset-0 opacity-[0.04]"
+                style={{
+                  backgroundImage: 'linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)',
+                  backgroundSize: '20px 20px',
+                }}
+              />
+              
+              {/* Center crosshair */}
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+                <div className="w-px h-6 bg-primary/20 absolute left-1/2 -translate-x-1/2 -top-3" />
+                <div className="h-px w-6 bg-primary/20 absolute top-1/2 -translate-y-1/2 -left-3" />
+              </div>
 
-          {/* Min Height */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium">Min Height</Label>
-              <div className="flex items-center gap-1">
-                <Input type="number" value={minHeight} onChange={(e) => setMinHeight(Number(e.target.value))} className="w-16 h-6 text-[11px] text-right px-1.5" />
-                <span className="text-[10px] text-muted-foreground">px</span>
+              {/* Counter widget with offset */}
+              <div
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                style={{
+                  marginLeft: `${offsetX}px`,
+                  marginTop: `${offsetY}px`,
+                }}
+              >
+                <div
+                  style={{
+                    ['--header-font-size' as string]: `${headerSize}px`,
+                    ['--digit-font-size' as string]: `${digitSize}px`,
+                    ['--label-font-size' as string]: `${labelSize}px`,
+                  }}
+                >
+                  <ServiceCountdownWidget config={config} />
+                </div>
               </div>
             </div>
-            <Slider value={[minHeight]} onValueChange={(v) => setMinHeight(v[0])} min={0} max={400} step={10} />
+
+            {/* Info hint */}
+            <p className="text-[11px] text-muted-foreground italic">
+              The grid and crosshair show the center of the embed frame. Use Position Offset to shift the counter from center.
+              Typography sizes are CSS custom properties that each counter style renderer will consume.
+            </p>
           </div>
         </div>
-
-        <MiniPreview style={{
-          maxWidth: `${maxWidth}px`,
-          minHeight: minHeight > 0 ? `${minHeight}px` : undefined,
-          transform: `scale(${scale / 100})`,
-          transformOrigin: 'top center',
-          width: '100%',
-          margin: '0 auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }} />
-      </CardContent>
-    </Card>
-  );
-};
-
-// ─── Showcase Wrapper ───
-const CounterSizeShowcase = () => {
-  return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-4xl mx-auto space-y-10">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Counter Size Settings — Design Options</h1>
-          <p className="text-muted-foreground">
-            6 concepts for enriching the Counter Size area with more granular controls (width, height, typography).
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Note: The "Overall Scale" and "Header/Digits Balance" already exist. These options explore how to extend them.
-          </p>
-        </div>
-
-        <Option1 />
-        <Option2 />
-        <Option3 />
-        <Option4 />
-        <Option5 />
-        <Option6 />
       </div>
     </div>
   );
