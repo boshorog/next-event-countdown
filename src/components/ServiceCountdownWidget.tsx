@@ -108,6 +108,15 @@ export interface CountdownConfig {
   monthNames?: string[];
   atWord?: string;
   showLiveDuration?: boolean;
+  // Granular sizing
+  headerFontSize?: number;   // px
+  digitFontSize?: number;    // px
+  labelFontSize?: number;    // px
+  counterWidth?: number;     // px
+  counterHeight?: number;    // px
+  lockAspectRatio?: boolean;
+  offsetX?: number;          // px
+  offsetY?: number;          // px
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
