@@ -21,6 +21,9 @@ export interface CounterStyleRenderProps {
   labelHours: string;
   labelMinutes: string;
   labelSeconds: string;
+  showHeader?: boolean;
+  showTitle?: boolean;
+  showDate?: boolean;
 }
 
 export const COUNTER_STYLE_OPTIONS: CounterStyleOption[] = [
