@@ -12,6 +12,7 @@ import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
+import ServiceCountdownWidget from '@/components/ServiceCountdownWidget';
 import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
 import {
   DropdownMenu,
