@@ -3,7 +3,7 @@
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.1.6
+ * Version: 1.1.7
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.1.6' );
+define( 'NXEVTCD_VERSION', '1.1.7' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -574,6 +574,19 @@ class NxEvtCd_Plugin {
         if (!empty($stored_version) && $stored_version === NXEVTCD_VERSION) {
             return;
         }
+
+        // Migrate legacy "gallery" option keys to "counter" keys
+        $old_galleries = get_option('nxevtcd_galleries');
+        if ($old_galleries !== false && get_option('nxevtcd_counters') === false) {
+            update_option('nxevtcd_counters', $old_galleries);
+            delete_option('nxevtcd_galleries');
+        }
+        $old_id = get_option('nxevtcd_current_gallery_id');
+        if ($old_id !== false && get_option('nxevtcd_current_counter_id') === false) {
+            update_option('nxevtcd_current_counter_id', $old_id);
+            delete_option('nxevtcd_current_gallery_id');
+        }
+
         update_option('nxevtcd_version', NXEVTCD_VERSION);
     }
     
@@ -588,7 +601,7 @@ class NxEvtCd_Plugin {
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
         // Set activation redirect (only on fresh install, not on update)
-        if (!get_option('nxevtcd_galleries')) {
+        if (!get_option('nxevtcd_counters') && !get_option('nxevtcd_galleries')) {
             set_transient('nxevtcd_activation_redirect', true, 30);
         }
     }
