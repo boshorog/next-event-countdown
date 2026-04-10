@@ -479,23 +479,38 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   // Use Pro style renderer if available and not default
   const StyledRenderer = styleId !== 'default' ? STYLE_RENDERERS[styleId] : null;
 
+  // Sizing CSS variables
+  const sizingStyle: React.CSSProperties & Record<string, string> = {};
+  if (config.headerFontSize) sizingStyle['--header-font-size'] = `${config.headerFontSize}px`;
+  if (config.digitFontSize) sizingStyle['--digit-font-size'] = `${config.digitFontSize}px`;
+  if (config.labelFontSize) sizingStyle['--label-font-size'] = `${config.labelFontSize}px`;
+  if (config.counterWidth) sizingStyle.width = `${config.counterWidth}px`;
+  if (config.counterHeight) sizingStyle.minHeight = `${config.counterHeight}px`;
+  if (config.offsetX || config.offsetY) {
+    sizingStyle.position = 'relative';
+    sizingStyle.left = `${config.offsetX || 0}px`;
+    sizingStyle.top = `${config.offsetY || 0}px`;
+  }
+
   if (StyledRenderer) {
     return (
-      <StyledRenderer
-        days={t.days}
-        hours={t.hours}
-        minutes={t.minutes}
-        seconds={t.seconds}
-        headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
-        eventTitle={t.title}
-        eventDate={t.fullDate}
-        iconColor={config.iconColor}
-        icon={Icon}
-        labelDays={config.labelDays || "Days"}
-        labelHours={config.labelHours || "Hours"}
-        labelMinutes={config.labelMinutes || "Minutes"}
-        labelSeconds={config.labelSeconds || "Seconds"}
-      />
+      <div style={sizingStyle}>
+        <StyledRenderer
+          days={t.days}
+          hours={t.hours}
+          minutes={t.minutes}
+          seconds={t.seconds}
+          headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+          eventTitle={t.title}
+          eventDate={t.fullDate}
+          iconColor={config.iconColor}
+          icon={Icon}
+          labelDays={config.labelDays || "Days"}
+          labelHours={config.labelHours || "Hours"}
+          labelMinutes={config.labelMinutes || "Minutes"}
+          labelSeconds={config.labelSeconds || "Seconds"}
+        />
+      </div>
     );
   }
 
