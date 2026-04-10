@@ -540,11 +540,11 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
             <>
               <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
                 <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-                <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
+                <span className="font-semibold" style={{ color: config.textColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
                   {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
                 </span>
                 {config.showDate !== false && (
-                  <span style={{ color: config.labelColor, fontSize: '18px' }}>
+                  <span style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
                     {t.fullDate}
                   </span>
                 )}
@@ -552,7 +552,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
 
               {/* Service title */}
               {config.showTitle !== false && t.title && (
-                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
+                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
                   {t.title}
                 </p>
               )}
@@ -564,13 +564,13 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
                     <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
                       <span
                         className="tabular-nums leading-none"
-                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
+                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: config.digitFontSize ? `${config.digitFontSize}px` : 'clamp(2.5rem, 10vw, 4.5rem)' }}
                       >
                         {pad(u.v)}
                       </span>
                       <span
                         className="uppercase tracking-wider"
-                        style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
+                        style={{ color: config.labelColor, marginTop: '8px', fontSize: config.labelFontSize ? `${config.labelFontSize}px` : 'clamp(8px, 2vw, 12px)' }}
                       >
                         {u.l}
                       </span>
