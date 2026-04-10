@@ -108,6 +108,15 @@ export interface CountdownConfig {
   monthNames?: string[];
   atWord?: string;
   showLiveDuration?: boolean;
+  // Granular sizing
+  headerFontSize?: number;   // px
+  digitFontSize?: number;    // px
+  labelFontSize?: number;    // px
+  counterWidth?: number;     // px
+  counterHeight?: number;    // px
+  lockAspectRatio?: boolean;
+  offsetX?: number;          // px
+  offsetY?: number;          // px
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -470,30 +479,45 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   // Use Pro style renderer if available and not default
   const StyledRenderer = styleId !== 'default' ? STYLE_RENDERERS[styleId] : null;
 
+  // Sizing CSS variables
+  const sizingStyle: React.CSSProperties & Record<string, string> = {};
+  if (config.headerFontSize) sizingStyle['--header-font-size'] = `${config.headerFontSize}px`;
+  if (config.digitFontSize) sizingStyle['--digit-font-size'] = `${config.digitFontSize}px`;
+  if (config.labelFontSize) sizingStyle['--label-font-size'] = `${config.labelFontSize}px`;
+  if (config.counterWidth) sizingStyle.width = `${config.counterWidth}px`;
+  if (config.counterHeight) sizingStyle.minHeight = `${config.counterHeight}px`;
+  if (config.offsetX || config.offsetY) {
+    sizingStyle.position = 'relative';
+    sizingStyle.left = `${config.offsetX || 0}px`;
+    sizingStyle.top = `${config.offsetY || 0}px`;
+  }
+
   if (StyledRenderer) {
     return (
-      <StyledRenderer
-        days={t.days}
-        hours={t.hours}
-        minutes={t.minutes}
-        seconds={t.seconds}
-        headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
-        eventTitle={t.title}
-        eventDate={t.fullDate}
-        iconColor={config.iconColor}
-        icon={Icon}
-        labelDays={config.labelDays || "Days"}
-        labelHours={config.labelHours || "Hours"}
-        labelMinutes={config.labelMinutes || "Minutes"}
-        labelSeconds={config.labelSeconds || "Seconds"}
-      />
+      <div style={sizingStyle}>
+        <StyledRenderer
+          days={t.days}
+          hours={t.hours}
+          minutes={t.minutes}
+          seconds={t.seconds}
+          headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+          eventTitle={t.title}
+          eventDate={t.fullDate}
+          iconColor={config.iconColor}
+          icon={Icon}
+          labelDays={config.labelDays || "Days"}
+          labelHours={config.labelHours || "Hours"}
+          labelMinutes={config.labelMinutes || "Minutes"}
+          labelSeconds={config.labelSeconds || "Seconds"}
+        />
+      </div>
     );
   }
 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <div style={{ overflow: 'hidden', width: '100%', maxWidth: '100%', boxSizing: 'border-box' as const }}>
+    <div style={{ overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' as const, ...sizingStyle, width: sizingStyle.width || '100%' }}>
       <div
         className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} text-center`}
         style={{
@@ -516,11 +540,11 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
             <>
               <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
                 <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-                <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
+                <span className="font-semibold" style={{ color: config.textColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
                   {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
                 </span>
                 {config.showDate !== false && (
-                  <span style={{ color: config.labelColor, fontSize: '18px' }}>
+                  <span style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
                     {t.fullDate}
                   </span>
                 )}
@@ -528,7 +552,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
 
               {/* Service title */}
               {config.showTitle !== false && t.title && (
-                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
+                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
                   {t.title}
                 </p>
               )}
@@ -540,13 +564,13 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
                     <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
                       <span
                         className="tabular-nums leading-none"
-                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
+                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: config.digitFontSize ? `${config.digitFontSize}px` : 'clamp(2.5rem, 10vw, 4.5rem)' }}
                       >
                         {pad(u.v)}
                       </span>
                       <span
                         className="uppercase tracking-wider"
-                        style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
+                        style={{ color: config.labelColor, marginTop: '8px', fontSize: config.labelFontSize ? `${config.labelFontSize}px` : 'clamp(8px, 2vw, 12px)' }}
                       >
                         {u.l}
                       </span>

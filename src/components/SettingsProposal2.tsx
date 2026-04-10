@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer, Lock, Unlock, Move, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
@@ -354,58 +354,255 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
       case 'size':
         return (
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Maximize2 className="w-5 h-5" />
-                Counter Size
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Maximize2 className="w-5 h-5" />
+                  Counter Size & Position
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 w-7 p-0"
+                  onClick={() => {
+                    updateConfig({
+                      headerFontSize: undefined,
+                      digitFontSize: undefined,
+                      labelFontSize: undefined,
+                      counterWidth: undefined,
+                      counterHeight: undefined,
+                      lockAspectRatio: undefined,
+                      offsetX: undefined,
+                      offsetY: undefined,
+                    });
+                  }}
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                </Button>
               </CardTitle>
-              <p className="text-sm text-muted-foreground">Scale the entire countdown widget proportionally</p>
+              <p className="text-sm text-muted-foreground">Granular control over typography, dimensions, and position</p>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-5">
+              {/* Typography */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-base font-medium">Overall Scale</Label>
-                    <p className="text-sm text-muted-foreground">Resize the entire countdown widget proportionally</p>
+                <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Typography</Label>
+
+                {/* Header Text */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Header Text</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.headerFontSize ?? 14}
+                        onChange={(e) => updateConfig({ headerFontSize: Number(e.target.value) })}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
                   </div>
-                  <span className="text-sm font-medium text-primary">{Math.round((localConfig.headerScale ?? 1) * 100)}%</span>
+                  <Slider value={[localConfig.headerFontSize ?? 14]} onValueChange={(v) => updateConfig({ headerFontSize: v[0] })} min={8} max={32} step={1} />
                 </div>
-                <Slider
-                  value={[(localConfig.headerScale ?? 1) * 100]}
-                  onValueChange={(v) => updateConfig({ headerScale: v[0] / 100 })}
-                  min={50}
-                  max={200}
-                  step={5}
-                  className="w-full"
-                />
+
+                {/* Digit Size */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Digit Size</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.digitFontSize ?? 36}
+                        onChange={(e) => updateConfig({ digitFontSize: Number(e.target.value) })}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[localConfig.digitFontSize ?? 36]} onValueChange={(v) => updateConfig({ digitFontSize: v[0] })} min={16} max={96} step={2} />
+                </div>
+
+                {/* Label Size */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Label Size</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.labelFontSize ?? 9}
+                        onChange={(e) => updateConfig({ labelFontSize: Number(e.target.value) })}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[localConfig.labelFontSize ?? 9]} onValueChange={(v) => updateConfig({ labelFontSize: v[0] })} min={6} max={18} step={1} />
+                </div>
               </div>
 
-              <div className="border-t pt-4 space-y-3">
+              <div className="border-t" />
+
+              {/* Dimensions */}
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <Label className="text-base font-medium">Header / Digits Balance</Label>
-                    <p className="text-sm text-muted-foreground">Shift emphasis between the header area and the countdown digits</p>
-                  </div>
-                  <span className="text-xs font-medium text-muted-foreground tabular-nums w-24 text-right">
-                    {(() => {
-                      const bal = localConfig.headerDigitBalance ?? 50;
-                      if (bal === 50) return 'Balanced';
-                      if (bal < 50) return `Header +${50 - bal}%`;
-                      return `Digits +${bal - 50}%`;
-                    })()}
-                  </span>
+                  <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Dimensions</Label>
+                  <button
+                    onClick={() => updateConfig({ lockAspectRatio: !(localConfig.lockAspectRatio ?? false) })}
+                    className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-md transition-colors ${
+                      localConfig.lockAspectRatio
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {localConfig.lockAspectRatio ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                    Lock ratio
+                  </button>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12 text-right">Header</span>
+
+                {/* Width */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Width</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.counterWidth ?? 600}
+                        onChange={(e) => {
+                          const w = Number(e.target.value);
+                          const updates: any = { counterWidth: w };
+                          if (localConfig.lockAspectRatio) {
+                            updates.counterHeight = Math.round(w / ((localConfig.counterWidth ?? 600) / (localConfig.counterHeight ?? 220)));
+                          }
+                          updateConfig(updates);
+                        }}
+                        className="w-16 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
                   <Slider
-                    value={[localConfig.headerDigitBalance ?? 50]}
-                    onValueChange={(v) => updateConfig({ headerDigitBalance: v[0] })}
-                    min={0}
-                    max={100}
-                    step={2}
-                    className="flex-1"
+                    value={[localConfig.counterWidth ?? 600]}
+                    onValueChange={(v) => {
+                      const w = v[0];
+                      const updates: any = { counterWidth: w };
+                      if (localConfig.lockAspectRatio) {
+                        updates.counterHeight = Math.round(w / ((localConfig.counterWidth ?? 600) / (localConfig.counterHeight ?? 220)));
+                      }
+                      updateConfig(updates);
+                    }}
+                    min={200} max={1200} step={10}
                   />
-                  <span className="text-[10px] text-muted-foreground uppercase tracking-wider w-12">Digits</span>
+                </div>
+
+                {/* Height */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Height</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.counterHeight ?? 220}
+                        onChange={(e) => {
+                          const h = Number(e.target.value);
+                          const updates: any = { counterHeight: h };
+                          if (localConfig.lockAspectRatio) {
+                            updates.counterWidth = Math.round(h * ((localConfig.counterWidth ?? 600) / (localConfig.counterHeight ?? 220)));
+                          }
+                          updateConfig(updates);
+                        }}
+                        className="w-16 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider
+                    value={[localConfig.counterHeight ?? 220]}
+                    onValueChange={(v) => {
+                      const h = v[0];
+                      const updates: any = { counterHeight: h };
+                      if (localConfig.lockAspectRatio) {
+                        updates.counterWidth = Math.round(h * ((localConfig.counterWidth ?? 600) / (localConfig.counterHeight ?? 220)));
+                      }
+                      updateConfig(updates);
+                    }}
+                    min={80} max={500} step={5}
+                  />
+                </div>
+              </div>
+
+              <div className="border-t" />
+
+              {/* Position Offset */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <Move className="w-3 h-3" />
+                      Position Offset
+                    </span>
+                  </Label>
+                  {((localConfig.offsetX ?? 0) !== 0 || (localConfig.offsetY ?? 0) !== 0) && (
+                    <button
+                      onClick={() => updateConfig({ offsetX: 0, offsetY: 0 })}
+                      className="text-[10px] text-muted-foreground hover:text-foreground"
+                    >
+                      Reset
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-4">
+                  {/* Direction pad */}
+                  <div className="grid grid-cols-3 gap-0.5 w-fit">
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetY: (localConfig.offsetY ?? 0) - 5 })}>
+                      <ArrowUp className="w-3 h-3" />
+                    </Button>
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetX: (localConfig.offsetX ?? 0) - 5 })}>
+                      <ArrowLeft className="w-3 h-3" />
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-[9px] font-mono" onClick={() => updateConfig({ offsetX: 0, offsetY: 0 })}>
+                      ·
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetX: (localConfig.offsetX ?? 0) + 5 })}>
+                      <ArrowRight className="w-3 h-3" />
+                    </Button>
+                    <div />
+                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetY: (localConfig.offsetY ?? 0) + 5 })}>
+                      <ArrowDown className="w-3 h-3" />
+                    </Button>
+                    <div />
+                  </div>
+
+                  {/* Numeric inputs */}
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Label className="text-[10px] w-4 text-muted-foreground">X</Label>
+                      <Slider value={[localConfig.offsetX ?? 0]} onValueChange={(v) => updateConfig({ offsetX: v[0] })} min={-200} max={200} step={1} className="flex-1" />
+                      <div className="flex items-center gap-0.5">
+                        <Input
+                          type="number"
+                          value={localConfig.offsetX ?? 0}
+                          onChange={(e) => updateConfig({ offsetX: Number(e.target.value) })}
+                          className="w-14 h-6 text-[11px] text-right px-1.5"
+                        />
+                        <span className="text-[9px] text-muted-foreground">px</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Label className="text-[10px] w-4 text-muted-foreground">Y</Label>
+                      <Slider value={[localConfig.offsetY ?? 0]} onValueChange={(v) => updateConfig({ offsetY: v[0] })} min={-200} max={200} step={1} className="flex-1" />
+                      <div className="flex items-center gap-0.5">
+                        <Input
+                          type="number"
+                          value={localConfig.offsetY ?? 0}
+                          onChange={(e) => updateConfig({ offsetY: Number(e.target.value) })}
+                          className="w-14 h-6 text-[11px] text-right px-1.5"
+                        />
+                        <span className="text-[9px] text-muted-foreground">px</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
