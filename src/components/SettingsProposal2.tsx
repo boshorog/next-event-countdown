@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer, Lock, Unlock, Move, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
+import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer, Lock, Unlock, Move, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCcw, PanelTop } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
@@ -120,6 +120,9 @@ const CounterStyleLivePreview = ({ config, Renderer }: { config: CountdownConfig
       labelHours={config.labelHours || 'Hours'}
       labelMinutes={config.labelMinutes || 'Minutes'}
       labelSeconds={config.labelSeconds || 'Seconds'}
+      showHeader={config.showHeader !== false}
+      showTitle={config.showTitle !== false}
+      showDate={config.showDate !== false}
     />
   );
 };
@@ -128,6 +131,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
   const config = countdownConfig || defaultCountdownConfig;
   const [localConfig, setLocalConfig] = useState<CountdownConfig>(config);
   const [activeSection, setActiveSection] = useState(BUILD_FLAGS.COUNTER_STYLES ? 'counter-styles' : 'colors');
+  const [offsetTarget, setOffsetTarget] = useState<string>('counter');
   const [saveScope, setSaveScope] = useState<'current' | 'all'>('current');
   const { toast } = useToast();
   const license = useLicense();
@@ -403,11 +407,14 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       headerFontSize: undefined,
                       digitFontSize: undefined,
                       labelFontSize: undefined,
+                      separatorFontSize: undefined,
                       counterWidth: undefined,
                       counterHeight: undefined,
                       lockAspectRatio: undefined,
                       offsetX: undefined,
                       offsetY: undefined,
+                      overallScale: undefined,
+                      elementOffsets: undefined,
                     });
                   }}
                 >
@@ -470,6 +477,23 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     </div>
                   </div>
                   <Slider value={[localConfig.labelFontSize ?? 9]} onValueChange={(v) => updateConfig({ labelFontSize: v[0] })} min={6} max={18} step={1} />
+                </div>
+
+                {/* Separator (:) Size */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Separator (:)</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.separatorFontSize ?? 24}
+                        onChange={(e) => updateConfig({ separatorFontSize: Number(e.target.value) })}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                      />
+                      <span className="text-[10px] text-muted-foreground">px</span>
+                    </div>
+                  </div>
+                  <Slider value={[localConfig.separatorFontSize ?? 24]} onValueChange={(v) => updateConfig({ separatorFontSize: v[0] })} min={10} max={64} step={1} />
                 </div>
               </div>
 
@@ -561,6 +585,24 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                     min={80} max={500} step={5}
                   />
                 </div>
+
+                {/* Overall Scale */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs">Overall Scale</Label>
+                    <div className="flex items-center gap-1">
+                      <Input
+                        type="number"
+                        value={localConfig.overallScale ?? 1}
+                        onChange={(e) => updateConfig({ overallScale: Number(e.target.value) })}
+                        className="w-14 h-6 text-[11px] text-right px-1.5"
+                        step={0.05}
+                      />
+                      <span className="text-[10px] text-muted-foreground">×</span>
+                    </div>
+                  </div>
+                  <Slider value={[(localConfig.overallScale ?? 1) * 100]} onValueChange={(v) => updateConfig({ overallScale: v[0] / 100 })} min={50} max={200} step={5} />
+                </div>
               </div>
 
               <div className="border-t" />
@@ -574,70 +616,101 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
                       Position Offset
                     </span>
                   </Label>
-                  {((localConfig.offsetX ?? 0) !== 0 || (localConfig.offsetY ?? 0) !== 0) && (
-                    <button
-                      onClick={() => updateConfig({ offsetX: 0, offsetY: 0 })}
-                      className="text-[10px] text-muted-foreground hover:text-foreground"
-                    >
-                      Reset
-                    </button>
-                  )}
+                  <button
+                    onClick={() => {
+                      if (offsetTarget === 'counter') {
+                        updateConfig({ offsetX: 0, offsetY: 0 });
+                      } else {
+                        const elOff = { ...(localConfig.elementOffsets || {}) };
+                        delete elOff[offsetTarget];
+                        updateConfig({ elementOffsets: elOff });
+                      }
+                    }}
+                    className="text-[10px] text-muted-foreground hover:text-foreground"
+                  >
+                    Reset
+                  </button>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  {/* Direction pad */}
-                  <div className="grid grid-cols-3 gap-0.5 w-fit">
-                    <div />
-                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetY: (localConfig.offsetY ?? 0) - 5 })}>
-                      <ArrowUp className="w-3 h-3" />
-                    </Button>
-                    <div />
-                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetX: (localConfig.offsetX ?? 0) - 5 })}>
-                      <ArrowLeft className="w-3 h-3" />
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-[9px] font-mono" onClick={() => updateConfig({ offsetX: 0, offsetY: 0 })}>
-                      ·
-                    </Button>
-                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetX: (localConfig.offsetX ?? 0) + 5 })}>
-                      <ArrowRight className="w-3 h-3" />
-                    </Button>
-                    <div />
-                    <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => updateConfig({ offsetY: (localConfig.offsetY ?? 0) + 5 })}>
-                      <ArrowDown className="w-3 h-3" />
-                    </Button>
-                    <div />
-                  </div>
+                <Select value={offsetTarget} onValueChange={setOffsetTarget}>
+                  <SelectTrigger className="h-8 text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="counter">Entire Counter</SelectItem>
+                    <SelectItem value="header">Header & Icon</SelectItem>
+                    <SelectItem value="title">Event Title</SelectItem>
+                    <SelectItem value="date">Event Date</SelectItem>
+                    <SelectItem value="digits">Countdown Digits</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                  {/* Numeric inputs */}
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Label className="text-[10px] w-4 text-muted-foreground">X</Label>
-                      <Slider value={[localConfig.offsetX ?? 0]} onValueChange={(v) => updateConfig({ offsetX: v[0] })} min={-200} max={200} step={1} className="flex-1" />
-                      <div className="flex items-center gap-0.5">
-                        <Input
-                          type="number"
-                          value={localConfig.offsetX ?? 0}
-                          onChange={(e) => updateConfig({ offsetX: Number(e.target.value) })}
-                          className="w-14 h-6 text-[11px] text-right px-1.5"
-                        />
-                        <span className="text-[9px] text-muted-foreground">px</span>
+                {(() => {
+                  const ox = offsetTarget === 'counter' ? (localConfig.offsetX ?? 0) : (localConfig.elementOffsets?.[offsetTarget]?.x ?? 0);
+                  const oy = offsetTarget === 'counter' ? (localConfig.offsetY ?? 0) : (localConfig.elementOffsets?.[offsetTarget]?.y ?? 0);
+                  const setOff = (axis: 'x' | 'y', val: number) => {
+                    if (offsetTarget === 'counter') {
+                      updateConfig(axis === 'x' ? { offsetX: val } : { offsetY: val });
+                    } else {
+                      const elOff = { ...(localConfig.elementOffsets || {}) };
+                      elOff[offsetTarget] = { ...(elOff[offsetTarget] || { x: 0, y: 0 }), [axis]: val };
+                      updateConfig({ elementOffsets: elOff });
+                    }
+                  };
+                  const resetOff = () => {
+                    if (offsetTarget === 'counter') {
+                      updateConfig({ offsetX: 0, offsetY: 0 });
+                    } else {
+                      const elOff = { ...(localConfig.elementOffsets || {}) };
+                      delete elOff[offsetTarget];
+                      updateConfig({ elementOffsets: elOff });
+                    }
+                  };
+                  return (
+                    <div className="flex items-center gap-4">
+                      <div className="grid grid-cols-3 gap-0.5 w-fit">
+                        <div />
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOff('y', oy - 5)}>
+                          <ArrowUp className="w-3 h-3" />
+                        </Button>
+                        <div />
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOff('x', ox - 5)}>
+                          <ArrowLeft className="w-3 h-3" />
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-[9px] font-mono" onClick={resetOff}>
+                          ·
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOff('x', ox + 5)}>
+                          <ArrowRight className="w-3 h-3" />
+                        </Button>
+                        <div />
+                        <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={() => setOff('y', oy + 5)}>
+                          <ArrowDown className="w-3 h-3" />
+                        </Button>
+                        <div />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Label className="text-[10px] w-4 text-muted-foreground">X</Label>
+                          <Slider value={[ox]} onValueChange={(v) => setOff('x', v[0])} min={-200} max={200} step={1} className="flex-1" />
+                          <div className="flex items-center gap-0.5">
+                            <Input type="number" value={ox} onChange={(e) => setOff('x', Number(e.target.value))} className="w-14 h-6 text-[11px] text-right px-1.5" />
+                            <span className="text-[9px] text-muted-foreground">px</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Label className="text-[10px] w-4 text-muted-foreground">Y</Label>
+                          <Slider value={[oy]} onValueChange={(v) => setOff('y', v[0])} min={-200} max={200} step={1} className="flex-1" />
+                          <div className="flex items-center gap-0.5">
+                            <Input type="number" value={oy} onChange={(e) => setOff('y', Number(e.target.value))} className="w-14 h-6 text-[11px] text-right px-1.5" />
+                            <span className="text-[9px] text-muted-foreground">px</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Label className="text-[10px] w-4 text-muted-foreground">Y</Label>
-                      <Slider value={[localConfig.offsetY ?? 0]} onValueChange={(v) => updateConfig({ offsetY: v[0] })} min={-200} max={200} step={1} className="flex-1" />
-                      <div className="flex items-center gap-0.5">
-                        <Input
-                          type="number"
-                          value={localConfig.offsetY ?? 0}
-                          onChange={(e) => updateConfig({ offsetY: Number(e.target.value) })}
-                          className="w-14 h-6 text-[11px] text-right px-1.5"
-                        />
-                        <span className="text-[9px] text-muted-foreground">px</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  );
+                })()}
+              </div>
               </div>
 
               <div className="border-t" />
@@ -907,6 +980,19 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Visibility</p>
                 <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <PanelTop className="w-4 h-4 text-muted-foreground" />
+                      <div className="space-y-0.5">
+                        <Label className="text-sm font-medium">Show Header & Icon</Label>
+                        <p className="text-xs text-muted-foreground">Display the "Next Event" label and icon</p>
+                      </div>
+                    </div>
+                    <Checkbox 
+                      checked={localConfig.showHeader !== false}
+                      onCheckedChange={(checked) => updateConfig({ showHeader: checked === true })}
+                    />
+                  </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <Type className="w-4 h-4 text-muted-foreground" />

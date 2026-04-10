@@ -4,7 +4,7 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -102,6 +102,11 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 * Renamed all internal "gallery" references to "counter" for consistency
 * Improved data sanitization: all nested counter data is now recursively sanitized before storage
 * Added automatic data migration from legacy "gallery" option keys to new "counter" keys
+* Added granular typography controls — independent sizes for Header, Digits, Labels, and Separators
+* Added per-element position offset — individually reposition header, title, date, and digits
+* Added overall scale slider for resizing the entire counter widget
+* Added "Show Header & Icon" visibility toggle — hide the header row to display only the countdown
+* Fixed counter height slider to properly stretch content vertically
 * Version bump and compliance fixes for WordPress.org guidelines
 
 = 1.1.6 =

@@ -112,11 +112,15 @@ export interface CountdownConfig {
   headerFontSize?: number;   // px
   digitFontSize?: number;    // px
   labelFontSize?: number;    // px
+  separatorFontSize?: number; // px
   counterWidth?: number;     // px
   counterHeight?: number;    // px
   lockAspectRatio?: boolean;
   offsetX?: number;          // px
   offsetY?: number;          // px
+  overallScale?: number;     // multiplier
+  showHeader?: boolean;
+  elementOffsets?: Record<string, { x: number; y: number }>;
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -484,12 +488,28 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   if (config.headerFontSize) sizingStyle['--header-font-size'] = `${config.headerFontSize}px`;
   if (config.digitFontSize) sizingStyle['--digit-font-size'] = `${config.digitFontSize}px`;
   if (config.labelFontSize) sizingStyle['--label-font-size'] = `${config.labelFontSize}px`;
+  if (config.separatorFontSize) sizingStyle['--separator-font-size'] = `${config.separatorFontSize}px`;
   if (config.counterWidth) sizingStyle.width = `${config.counterWidth}px`;
-  if (config.counterHeight) sizingStyle.minHeight = `${config.counterHeight}px`;
+  if (config.counterHeight) {
+    sizingStyle.height = `${config.counterHeight}px`;
+    sizingStyle.display = 'flex';
+    sizingStyle.alignItems = 'center';
+    sizingStyle.justifyContent = 'center';
+  }
   if (config.offsetX || config.offsetY) {
     sizingStyle.position = 'relative';
     sizingStyle.left = `${config.offsetX || 0}px`;
     sizingStyle.top = `${config.offsetY || 0}px`;
+  }
+  if (config.overallScale && config.overallScale !== 1) {
+    sizingStyle.transform = `scale(${config.overallScale})`;
+    sizingStyle.transformOrigin = 'center center';
+  }
+  // Element offsets as CSS variables
+  const eo = config.elementOffsets || {};
+  for (const [key, val] of Object.entries(eo)) {
+    if (val?.x) sizingStyle[`--el-${key}-x`] = `${val.x}px`;
+    if (val?.y) sizingStyle[`--el-${key}-y`] = `${val.y}px`;
   }
 
   if (StyledRenderer) {
@@ -509,6 +529,9 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
           labelHours={config.labelHours || "Hours"}
           labelMinutes={config.labelMinutes || "Minutes"}
           labelSeconds={config.labelSeconds || "Seconds"}
+          showHeader={config.showHeader !== false}
+          showTitle={config.showTitle !== false}
+          showDate={config.showDate !== false}
         />
       </div>
     );
@@ -534,31 +557,36 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
         {/* Header */}
         {(() => {
           const bal = config.headerDigitBalance ?? 50;
-          const headerFactor = 1 + (50 - bal) * 0.012; // <50 = bigger header
-          const digitFactor = 1 + (bal - 50) * 0.012;  // >50 = bigger digits
+          const headerFactor = 1 + (50 - bal) * 0.012;
+          const digitFactor = 1 + (bal - 50) * 0.012;
+          const elOffLocal = (el: string): React.CSSProperties => {
+            const e = config.elementOffsets?.[el];
+            return e ? { transform: `translate(${e.x}px, ${e.y}px)` } : {};
+          };
           return (
             <>
-              <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
-                <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-                <span className="font-semibold" style={{ color: config.textColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
-                  {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
-                </span>
-                {config.showDate !== false && (
-                  <span style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
-                    {t.fullDate}
+              {config.showHeader !== false && (
+                <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('header') }}>
+                  <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
+                  <span className="font-semibold" style={{ color: config.textColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
+                    {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
                   </span>
-                )}
-              </div>
+                  {config.showDate !== false && (
+                    <span style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
+                      {t.fullDate}
+                    </span>
+                  )}
+                </div>
+              )}
 
-              {/* Service title */}
               {config.showTitle !== false && t.title && (
-                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center' }}>
+                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('title') }}>
                   {t.title}
                 </p>
               )}
 
               {/* Countdown digits */}
-              <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%', transform: digitFactor !== 1 ? `scale(${digitFactor})` : undefined, transformOrigin: 'center center' }}>
+              <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%', transform: digitFactor !== 1 ? `scale(${digitFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('digits') }}>
                 {units.map((u, i) => (
                   <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
                     <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
@@ -578,7 +606,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
                     {i < units.length - 1 && (
                       <span
                         className="font-light flex-shrink-0"
-                        style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: 'clamp(1.5rem, 6vw, 3rem)' }}
+                        style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: config.separatorFontSize ? `${config.separatorFontSize}px` : 'clamp(1.5rem, 6vw, 3rem)' }}
                       >
                         :
                       </span>
