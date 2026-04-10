@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Gallery } from '@/types/gallery';
-// BUILD_FLAGS import removed - multi-counter is always available
+import { BUILD_FLAGS } from '@/config/buildFlags';
 import { AnalyticsModal } from '@/components/AnalyticsModal';
 
 interface GallerySelectorProps {
