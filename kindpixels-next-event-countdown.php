@@ -907,11 +907,12 @@ class NxEvtCd_Plugin {
             wp_die('Security check failed');
         }
 
-        $settings_json = isset($_POST['settings']) ? sanitize_text_field(wp_unslash($_POST['settings'])) : '';
+        $settings_json = isset($_POST['settings']) ? wp_unslash($_POST['settings']) : '';
         $settings = json_decode($settings_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($settings)) {
-            update_option('nxevtcd_settings', $settings);
+            $sanitized = $this->sanitize_countdown_config($settings);
+            update_option('nxevtcd_settings', $sanitized);
             wp_send_json_success('Settings saved');
         } else {
             wp_send_json_error('Invalid settings data');
