@@ -22,6 +22,7 @@ import UpcomingCalendarShowcase from '@/components/UpcomingCalendarShowcase';
 import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorShowcase';
 import LightboxShowcase from '@/components/LightboxShowcase';
 import CounterStylesShowcase from '@/components/CounterStylesShowcase';
+import CounterSizeShowcase from '@/components/CounterSizeShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
 import { useLicense } from '@/hooks/useLicense';
 import { PLUGIN_VERSION } from '@/config/pluginIdentity';
@@ -506,6 +507,11 @@ const Index = () => {
         <CounterStylesShowcase />
       </div>
     );
+  }
+
+  // DEV: Show showcase for counter size options
+  if (urlParams.get('showcase') === 'counter-size') {
+    return <CounterSizeShowcase />;
   }
 
   if (!showAdmin) {
