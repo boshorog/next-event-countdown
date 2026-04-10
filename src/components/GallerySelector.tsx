@@ -233,45 +233,47 @@ export const GallerySelector = ({
       </Button>
 
 
-      {/* Add Counter button - always available */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogTrigger asChild>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0"
-            aria-label="Add Countdown"
-            title="Add Countdown"
-          >
-            <Plus className="h-3 w-3" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Countdown</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <Label htmlFor="new-gallery">Countdown Name</Label>
-              <Input
-                id="new-gallery"
-                value={newGalleryName}
-                onChange={(e) => setNewGalleryName(e.target.value)}
-                placeholder="Enter countdown name"
-                onKeyDown={(e) => e.key === 'Enter' && handleCreateGallery()}
-              />
+      {/* Add Counter button - only in Pro builds (tree-shaken from free bundle) */}
+      {BUILD_FLAGS.MULTI_GALLERY_UI && (
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0"
+              aria-label="Add Countdown"
+              title="Add Countdown"
+            >
+              <Plus className="h-3 w-3" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Countdown</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label htmlFor="new-gallery">Countdown Name</Label>
+                <Input
+                  id="new-gallery"
+                  value={newGalleryName}
+                  onChange={(e) => setNewGalleryName(e.target.value)}
+                  placeholder="Enter countdown name"
+                  onKeyDown={(e) => e.key === 'Enter' && handleCreateGallery()}
+                />
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleCreateGallery}>
+                  Create Countdown
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-2 justify-end">
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleCreateGallery}>
-                Create Countdown
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 

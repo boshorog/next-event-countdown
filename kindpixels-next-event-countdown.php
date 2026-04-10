@@ -990,6 +990,14 @@ class NxEvtCd_Plugin {
      * Handle saving counters list.
      * No feature restrictions — unlimited counters for all users.
      */
+    /**
+     * Check if this is a Pro build by looking for the .pro-build marker file.
+     * This is a build-artifact check, not a license check.
+     */
+    private function is_pro_build() {
+        return file_exists(plugin_dir_path(__FILE__) . 'dist/.pro-build');
+    }
+
     private function handle_save_counters() {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
@@ -1000,6 +1008,11 @@ class NxEvtCd_Plugin {
 
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($counters)) {
             wp_send_json_error('Invalid counters data');
+        }
+
+        // Free build: enforce single counter (defense-in-depth; free JS bundle cannot create multiple)
+        if (!$this->is_pro_build() && count($counters) > 1) {
+            $counters = array(reset($counters));
         }
 
         // Recursively sanitize each counter entry including nested items
