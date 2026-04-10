@@ -728,14 +728,17 @@ class NxEvtCd_Plugin {
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
                 break;
-            case 'save_galleries':
-                $this->handle_save_galleries();
+            case 'save_counters':
+            case 'save_galleries': // legacy compat
+                $this->handle_save_counters();
                 break;
-            case 'get_galleries':
-                $this->handle_get_galleries();
+            case 'get_counters':
+            case 'get_galleries': // legacy compat
+                $this->handle_get_counters();
                 break;
-            case 'reset_galleries':
-                $this->handle_reset_galleries();
+            case 'reset_counters':
+            case 'reset_galleries': // legacy compat
+                $this->handle_reset_counters();
                 break;
             default:
                 wp_send_json_error('Invalid action');
