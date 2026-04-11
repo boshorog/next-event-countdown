@@ -74,7 +74,7 @@ The plugin compares all your events against the current date and time, and autom
 
 = Can I have multiple countdowns on different pages? =
 
-Yes, with the Pro version you get additional premium styles and multi-location support. Each counter gets its own shortcode, events, and style. The free version also supports multiple counters.
+Yes, with the Pro version. Each counter gets its own shortcode, events, and style — allowing you to show different countdowns for different pages or locations. The free version supports one counter.
 
 = Does it work with page builders? =
 
