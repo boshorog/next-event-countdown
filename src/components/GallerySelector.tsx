@@ -234,7 +234,7 @@ export const GallerySelector = ({
 
 
       {/* Add Counter button - only in Pro builds (tree-shaken from free bundle) */}
-      {BUILD_FLAGS.MULTI_GALLERY_UI && (
+      {BUILD_FLAGS.ADD_COUNTER_UI && (
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
             <Button
