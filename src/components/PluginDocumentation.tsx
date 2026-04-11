@@ -158,7 +158,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   </tr>
                 </thead>
                 <tbody>
-                  <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                  <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
                   <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
@@ -375,7 +375,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                       </tr>
                     </thead>
                     <tbody>
-                      <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                      <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
                       <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                       <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                       <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
