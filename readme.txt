@@ -56,7 +56,7 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * Multiple locations / venues within the same website
 * Priority support
 
-For a full comparison, visit [kindpixels.com/plugins/kindpixels-next-event-countdown](https://kindpixels.com/plugins/kindpixels-next-event-countdown).
+For a full comparison, visit [kindpixels.com/plugins/next-event-countdown](https://kindpixels.com/plugins/next-event-countdown).
 
 == Installation ==
 
