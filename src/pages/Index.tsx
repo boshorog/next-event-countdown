@@ -80,13 +80,7 @@ const Index = () => {
   });
   const [shortcodeCopied, setShortcodeCopied] = useState(false);
   const [galleryNotFound, setGalleryNotFound] = useState(false);
-  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(() => {
-    try {
-      const saved = localStorage.getItem('nxevtcd_countdown_config');
-      if (saved) return { ...defaultCountdownConfig, ...JSON.parse(saved) };
-    } catch {}
-    return defaultCountdownConfig;
-  });
+  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(defaultCountdownConfig);
   const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
