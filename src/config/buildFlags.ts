@@ -43,10 +43,17 @@ const isDevPro = getDevModePro();
 
 export const BUILD_FLAGS = {
   /**
-   * Multi-counter management (+ button in breadcrumb, counter selector)
+   * Multi-counter selector UI (dropdown, rename, delete)
    * Always enabled — free and pro both support multiple counters
    */
   MULTI_GALLERY_UI: true,
+
+  /**
+   * "Add Counter" button (+ icon)
+   * - Free: false → Cannot create new counters from UI
+   * - Pro: true → Can add counters
+   */
+  ADD_COUNTER_UI: BUILD_VARIANT === 'pro' || isDevPro,
 
   /**
    * Bulk upload UI (not used in countdown plugin)
