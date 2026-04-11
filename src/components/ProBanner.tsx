@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, ExternalLink, Zap, Unlock, Check, MapPin } from 'lucide-react';
+import { Crown, ExternalLink, Palette, Headset, Check, LayoutGrid } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 
 interface ProBannerProps {
@@ -91,7 +91,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-bold text-foreground">Upgrade to KindPixels Next Event Countdown Pro</h3>
+              <h3 className="text-lg font-bold text-foreground">Upgrade to Next Event Countdown</h3>
               <div className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full">
                 Pro
               </div>
@@ -103,15 +103,15 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <MapPin className="w-6 h-6 text-orange-500" />
+                <LayoutGrid className="w-6 h-6 text-orange-500" />
                 <span className="text-lg font-semibold">Multiple Counters</span>
               </div>
               <div className="flex items-center gap-3">
-                <Zap className="w-6 h-6 text-orange-500" />
+                <Palette className="w-6 h-6 text-orange-500" />
                 <span className="text-lg font-semibold">Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
-                <Unlock className="w-6 h-6 text-orange-500" />
+                <Headset className="w-6 h-6 text-orange-500" />
                 <span className="text-lg font-semibold">Priority Support</span>
               </div>
             </div>
@@ -154,7 +154,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   </tr>
                 </thead>
                 <tbody>
-                  <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                  <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
                   <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
