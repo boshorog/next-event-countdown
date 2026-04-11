@@ -524,9 +524,9 @@ const Index = () => {
             <span className="text-3xl font-bold text-gray-200">00</span>
           </div>
           <div className="flex gap-1.5 mt-2">
-            <div className="w-2 h-2 rounded-full bg-gray-300 animate-[blink_1.4s_infinite_both]" />
-            <div className="w-2 h-2 rounded-full bg-gray-300 animate-[blink_1.4s_infinite_both_0.2s]" />
-            <div className="w-2 h-2 rounded-full bg-gray-300 animate-[blink_1.4s_infinite_both_0.4s]" />
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" />
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" style={{ animationDelay: '0.2s' }} />
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" style={{ animationDelay: '0.4s' }} />
           </div>
         </div>
       );
