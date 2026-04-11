@@ -44,14 +44,13 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 = Free vs Pro =
 
 **Free version includes:**
-* 1 counter with unlimited events
+* Multiple counters with unlimited events
 * 1 countdown style
 * Full color and label customization
 * Recurring and one-time events
 * Multiple date formats and timezone support
 
 **Pro version adds:**
-* Unlimited counters on your website
 * 5+ premium countdown styles
 * Multiple locations / venues within the same website
 * Priority support
@@ -74,7 +73,7 @@ The plugin compares all your events against the current date and time, and autom
 
 = Can I have multiple countdowns on different pages? =
 
-Yes, with the Pro version. Each counter gets its own shortcode, events, and style — allowing you to show different countdowns for different locations within the same website. The free version supports one counter.
+Yes, with the Pro version you get additional premium styles and multi-location support. Each counter gets its own shortcode, events, and style. The free version also supports multiple counters.
 
 = Does it work with page builders? =
 
