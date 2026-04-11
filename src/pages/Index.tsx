@@ -512,7 +512,24 @@ const Index = () => {
     // Frontend shortcode view: render countdown widget only
     // Don't render until config is loaded from WP to avoid flash of default style/events
     if (!countdownConfigLoaded) {
-      return <div className="w-full" />;
+      return (
+        <div className="w-full flex flex-col items-center justify-center py-10 px-4">
+          <div className="flex items-center gap-1 mb-2">
+            <span className="text-3xl font-bold text-gray-200" style={{ fontVariantNumeric: 'tabular-nums' }}>00</span>
+            <span className="text-gray-200 text-xl">:</span>
+            <span className="text-3xl font-bold text-gray-200">00</span>
+            <span className="text-gray-200 text-xl">:</span>
+            <span className="text-3xl font-bold text-gray-200">00</span>
+            <span className="text-gray-200 text-xl">:</span>
+            <span className="text-3xl font-bold text-gray-200">00</span>
+          </div>
+          <div className="flex gap-1.5 mt-2">
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" />
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" style={{ animationDelay: '0.2s' }} />
+            <div className="w-2 h-2 rounded-full bg-gray-300 animate-blink" style={{ animationDelay: '0.4s' }} />
+          </div>
+        </div>
+      );
     }
     return (
       <div className="w-full">
