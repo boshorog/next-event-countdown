@@ -123,7 +123,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   className="w-full h-10 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium"
                   onClick={() => window.open('https://checkout.freemius.com/plugin/25492/plan/42185/', '_blank')}
                 >
-                  Get KindPixels Next Event Countdown Pro
+                  Get Next Event Countdown Pro
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </div>

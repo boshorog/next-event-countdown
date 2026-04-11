@@ -80,13 +80,7 @@ const Index = () => {
   });
   const [shortcodeCopied, setShortcodeCopied] = useState(false);
   const [galleryNotFound, setGalleryNotFound] = useState(false);
-  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(() => {
-    try {
-      const saved = localStorage.getItem('nxevtcd_countdown_config');
-      if (saved) return { ...defaultCountdownConfig, ...JSON.parse(saved) };
-    } catch {}
-    return defaultCountdownConfig;
-  });
+  const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(defaultCountdownConfig);
   const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
@@ -516,6 +510,10 @@ const Index = () => {
 
   if (!showAdmin) {
     // Frontend shortcode view: render countdown widget only
+    // Don't render until config is loaded from WP to avoid flash of default style/events
+    if (!countdownConfigLoaded) {
+      return <div className="w-full" />;
+    }
     return (
       <div className="w-full">
         <ServiceCountdownWidget config={countdownConfig} />
