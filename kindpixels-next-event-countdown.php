@@ -3,7 +3,7 @@
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.1.7
+ * Version: 1.1.8
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.1.7' );
+define( 'NXEVTCD_VERSION', '1.1.8' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -1010,10 +1010,6 @@ class NxEvtCd_Plugin {
             wp_send_json_error('Invalid counters data');
         }
 
-        // Free build: enforce single counter (defense-in-depth; free JS bundle cannot create multiple)
-        if (!$this->is_pro_build() && count($counters) > 1) {
-            $counters = array(reset($counters));
-        }
 
         // Recursively sanitize each counter entry including nested items
         $sanitized = array();
