@@ -4,7 +4,7 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.1.7
+Stable tag: 1.1.8
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -95,6 +95,11 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 3. Live countdown widget on the front end.
 
 == Changelog ==
+
+= 1.1.8 =
+* Removed server-side counter truncation — free version no longer restricts saving multiple counters
+* Added external services disclosure (Freemius, WordPress.org API) per WordPress.org guidelines
+* Bug fixes
 
 = 1.1.7 =
 * Compliance fixes for WordPress.org guidelines
@@ -193,3 +198,23 @@ For questions or issues, visit [kindpixels.com/support](https://kindpixels.com/s
 = Privacy =
 
 This plugin does not collect personal data. All event data is stored locally in your WordPress database.
+
+== External services ==
+
+This plugin relies on the following third-party services:
+
+= Freemius =
+
+Freemius is used for software licensing, checkout, and optional Pro upgrades. When a user initiates a Pro upgrade, the plugin redirects to the Freemius checkout page. The Freemius SDK (bundled with the plugin) may transmit site URL, plugin version, and license status to Freemius servers for license validation and update checks.
+
+* Service provider: Freemius, Inc.
+* [Terms of Service](https://freemius.com/terms/)
+* [Privacy Policy](https://freemius.com/privacy/)
+
+= WordPress.org Plugins API =
+
+The plugin queries the WordPress.org Plugins API to check whether a newer version of the plugin is available. This request is made from the admin dashboard and sends only the plugin slug. No personal or site-specific data is transmitted.
+
+* Service provider: WordPress.org
+* API endpoint: `https://api.wordpress.org/plugins/info/1.0/`
+* [Privacy Policy](https://wordpress.org/about/privacy/)
