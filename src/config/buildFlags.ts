@@ -10,7 +10,7 @@
  * - npm run build:pro   → For paying customers (all features)
  * 
  * FREE VERSION:
- * - Multiple counters (unrestricted)
+ * - 1 counter with unlimited events
  * - Unlimited recurring & special events
  * - 1 countdown style
  * 
