@@ -44,8 +44,7 @@ const isDevPro = getDevModePro();
 export const BUILD_FLAGS = {
   /**
    * Multi-counter management (+ button in breadcrumb, counter selector)
-   * - Free: false → Single counter only (code tree-shaken from free bundle)
-   * - Pro: true → Unlimited counters
+   * Always enabled — free and pro both support multiple counters
    */
   MULTI_GALLERY_UI: true,
 
