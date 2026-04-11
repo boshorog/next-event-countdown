@@ -516,6 +516,10 @@ const Index = () => {
 
   if (!showAdmin) {
     // Frontend shortcode view: render countdown widget only
+    // Don't render until config is loaded from WP to avoid flash of default style/events
+    if (!countdownConfigLoaded) {
+      return <div className="w-full" />;
+    }
     return (
       <div className="w-full">
         <ServiceCountdownWidget config={countdownConfig} />
