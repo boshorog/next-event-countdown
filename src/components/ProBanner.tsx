@@ -98,7 +98,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
             </div>
             
             <p className="text-sm text-muted-foreground mb-4">
-              Manage countdowns for multiple locations with unique styles — perfect for churches, venues, and organizations with several campuses.
+              Set it once and it runs forever — add multiple counters with premium styles for different pages, locations, or schedules across your site.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -108,7 +108,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
               </div>
               <div className="flex items-center gap-3">
                 <Palette className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">Counter Styles</span>
+                <span className="text-lg font-semibold">More Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
                 <Headset className="w-6 h-6 text-orange-500" />
