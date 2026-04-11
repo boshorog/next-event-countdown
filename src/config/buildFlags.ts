@@ -47,7 +47,7 @@ export const BUILD_FLAGS = {
    * - Free: false → Single counter only (code tree-shaken from free bundle)
    * - Pro: true → Unlimited counters
    */
-  MULTI_GALLERY_UI: BUILD_VARIANT === 'pro' || isDevPro,
+  MULTI_GALLERY_UI: true,
 
   /**
    * Bulk upload UI (not used in countdown plugin)

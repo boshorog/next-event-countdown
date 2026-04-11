@@ -44,14 +44,13 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 = Free vs Pro =
 
 **Free version includes:**
-* 1 counter with unlimited events
+* Multiple counters with unlimited events
 * 1 countdown style
 * Full color and label customization
 * Recurring and one-time events
 * Multiple date formats and timezone support
 
 **Pro version adds:**
-* Unlimited counters on your website
 * 5+ premium countdown styles
 * Multiple locations / venues within the same website
 * Priority support
