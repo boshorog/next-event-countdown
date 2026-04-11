@@ -496,13 +496,16 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
     sizingStyle.alignItems = 'center';
     sizingStyle.justifyContent = 'center';
   }
+  // Build combined transform from offset and scale
+  const transforms: string[] = [];
   if (config.offsetX || config.offsetY) {
-    sizingStyle.position = 'relative';
-    sizingStyle.left = `${config.offsetX || 0}px`;
-    sizingStyle.top = `${config.offsetY || 0}px`;
+    transforms.push(`translate(${config.offsetX || 0}px, ${config.offsetY || 0}px)`);
   }
   if (config.overallScale && config.overallScale !== 1) {
-    sizingStyle.transform = `scale(${config.overallScale})`;
+    transforms.push(`scale(${config.overallScale})`);
+  }
+  if (transforms.length > 0) {
+    sizingStyle.transform = transforms.join(' ');
     sizingStyle.transformOrigin = 'center center';
   }
   // Element offsets as CSS variables
