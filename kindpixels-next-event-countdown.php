@@ -1010,6 +1010,10 @@ class NxEvtCd_Plugin {
             wp_send_json_error('Invalid counters data');
         }
 
+        // Free build: enforce single counter (defense-in-depth; free JS bundle cannot create multiple)
+        if (!$this->is_pro_build() && count($counters) > 1) {
+            $counters = array(reset($counters));
+        }
 
         // Recursively sanitize each counter entry including nested items
         $sanitized = array();
