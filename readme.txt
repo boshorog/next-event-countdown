@@ -198,3 +198,23 @@ For questions or issues, visit [kindpixels.com/support](https://kindpixels.com/s
 = Privacy =
 
 This plugin does not collect personal data. All event data is stored locally in your WordPress database.
+
+== External services ==
+
+This plugin relies on the following third-party services:
+
+= Freemius =
+
+Freemius is used for software licensing, checkout, and optional Pro upgrades. When a user initiates a Pro upgrade, the plugin redirects to the Freemius checkout page. The Freemius SDK (bundled with the plugin) may transmit site URL, plugin version, and license status to Freemius servers for license validation and update checks.
+
+* Service provider: Freemius, Inc.
+* [Terms of Service](https://freemius.com/terms/)
+* [Privacy Policy](https://freemius.com/privacy/)
+
+= WordPress.org Plugins API =
+
+The plugin queries the WordPress.org Plugins API to check whether a newer version of the plugin is available. This request is made from the admin dashboard and sends only the plugin slug. No personal or site-specific data is transmitted.
+
+* Service provider: WordPress.org
+* API endpoint: `https://api.wordpress.org/plugins/info/1.0/`
+* [Privacy Policy](https://wordpress.org/about/privacy/)
