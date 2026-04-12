@@ -110,18 +110,26 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       {p.showTitle !== false && (
         <p className="text-muted-foreground italic mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('title') }}>{p.eventTitle}</p>
       )}
-      <div className="flex items-center justify-center gap-5 mb-4" style={elOff('digits')}>
+      <div className="flex items-center justify-center gap-5 mb-4" style={{ ...elOff('digits'), ['--radial-size' as any]: '80px' }}>
+        <style>{`
+          @media (max-width: 480px) {
+            .radial-grid { gap: 8px !important; }
+            .radial-grid .radial-item { width: 68px !important; height: 68px !important; }
+            .radial-grid .radial-item svg { width: 68px !important; height: 68px !important; }
+            .radial-grid .radial-label { font-size: 6px !important; }
+          }
+        `}</style>
         {items.map(({ v, l, max }) => {
           const pct = (v / max) * 100;
           return (
-            <div key={l} className="relative w-[80px] h-[80px] flex items-center justify-center">
-              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 80 80">
+            <div key={l} className="radial-item relative flex items-center justify-center" style={{ width: 80, height: 80 }}>
+              <svg className="absolute inset-0 -rotate-90" viewBox="0 0 80 80" style={{ width: '100%', height: '100%' }}>
                 <circle cx="40" cy="40" r={r} fill="none" stroke="currentColor" strokeWidth="3" className="text-muted/30" />
                 <circle cx="40" cy="40" r={r} fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray={`${c}`} strokeDashoffset={`${c - (c * pct) / 100}`} strokeLinecap="round" className="text-primary" />
               </svg>
               <div className="text-center z-10">
                 <div className="font-bold font-mono leading-none text-foreground" style={{ fontSize: 'var(--digit-font-size, 20px)' }}>{v}</div>
-                <div className="uppercase tracking-wider text-muted-foreground mt-1" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{l}</div>
+                <div className="radial-label uppercase tracking-wider text-muted-foreground mt-1" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{l}</div>
               </div>
             </div>
           );
@@ -139,7 +147,7 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-border">
+    <div className="w-full rounded-2xl overflow-hidden border border-border max-w-sm mx-auto">
       {p.showHeader !== false && (
         <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)`, ...elOff('header') }}>
           <Icon className="w-4 h-4 text-white/90" />
@@ -177,13 +185,13 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           <Icon className="w-6 h-6 mx-auto mb-2" style={{ color: p.iconColor }} />
         </div>
       )}
-      {p.showTitle !== false && (
-        <h3 className="font-black text-foreground tracking-tight" style={{ fontSize: 'var(--header-font-size, 18px)', ...elOff('title') }}>{p.eventTitle}</h3>
-      )}
       {(p.showHeader !== false || p.showDate !== false) && (
-        <p className="text-muted-foreground mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('date') }}>
+        <p className="text-muted-foreground mb-1" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('date') }}>
           {p.showHeader !== false && p.headerLabel}{p.showHeader !== false && p.showDate !== false && ' · '}{p.showDate !== false && p.eventDate}
         </p>
+      )}
+      {p.showTitle !== false && (
+        <h3 className="font-black text-foreground tracking-tight mb-5" style={{ fontSize: 'var(--header-font-size, 18px)', ...elOff('title') }}>{p.eventTitle}</h3>
       )}
       <div className="flex items-center justify-center gap-5" style={elOff('digits')}>
         {units.map((u) => (
@@ -201,7 +209,7 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
 export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden" style={{ backgroundColor: '#0a0a0a' }}>
+    <div className="w-full rounded-2xl overflow-hidden max-w-sm mx-auto" style={{ backgroundColor: '#0a0a0a' }}>
       {p.showHeader !== false && (
         <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(34,197,94,0.2)', ...elOff('header') }}>
           <div className="flex items-center gap-2">
@@ -246,10 +254,19 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const showLeftPanel = p.showHeader !== false || p.showTitle !== false || p.showDate !== false;
   return (
     <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center">
-      <div className="flex items-center gap-8">
+      <style>{`
+        @media (max-width: 480px) {
+          .elegant-layout { flex-direction: column !important; gap: 16px !important; }
+          .elegant-layout .elegant-left { text-align: center !important; align-items: center !important; }
+          .elegant-layout .elegant-divider { width: 60% !important; height: 1px !important; }
+          .elegant-layout .elegant-digits { gap: 12px !important; flex-wrap: wrap; justify-content: center !important; }
+          .elegant-layout .elegant-digits .elegant-sep { height: 24px !important; }
+        }
+      `}</style>
+      <div className="elegant-layout flex items-center gap-8">
         {showLeftPanel && (
           <>
-            <div className="flex flex-col items-end text-right flex-shrink-0">
+            <div className="elegant-left flex flex-col items-end text-right flex-shrink-0">
               {p.showHeader !== false && (
                 <div className="flex items-center gap-2 mb-1" style={elOff('header')}>
                   <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
@@ -266,17 +283,17 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
                 </div>
               )}
             </div>
-            <div className="w-px h-16 bg-border/50 flex-shrink-0" />
+            <div className="elegant-divider w-px h-16 bg-border/50 flex-shrink-0" />
           </>
         )}
-        <div className="flex items-center gap-5 flex-1" style={elOff('digits')}>
+        <div className="elegant-digits flex items-center gap-5 flex-1" style={elOff('digits')}>
           {units.map((u, i) => (
             <div key={u.l} className="flex items-center gap-5">
               <div className="text-center">
                 <div className="font-light text-foreground" style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontSize: 'var(--digit-font-size, 30px)' }}>{pad(u.v)}</div>
                 <div className="tracking-[0.15em] text-muted-foreground italic mt-1" style={{ fontSize: 'var(--label-font-size, 8px)' }}>{u.l}</div>
               </div>
-              {i < 3 && <div className="w-px h-10 bg-border/50" />}
+              {i < 3 && <div className="elegant-sep w-px h-10 bg-border/50" />}
             </div>
           ))}
         </div>
