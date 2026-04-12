@@ -299,6 +299,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   const [urlFileType, setUrlFileType] = useState('pdf');
   const [isAddingUrl, setIsAddingUrl] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const calendarResetRef = useRef<(() => void) | null>(null);
   const [dividerFormData, setDividerFormData] = useState({
     text: ''
   });
