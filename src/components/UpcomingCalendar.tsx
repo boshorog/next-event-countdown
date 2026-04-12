@@ -51,11 +51,23 @@ function getEventsForRange(config: CountdownConfig, startDate: Date, days: numbe
   return events;
 }
 
-const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
+const UpcomingCalendar = ({ countdownConfig, registerReset }: UpcomingCalendarProps) => {
   const isMobile = useIsMobile();
   const [offset, setOffset] = useState(0);
   const [sliding, setSliding] = useState<'left' | 'right' | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Register reset-to-today function for parent to call
+  const resetToToday = useCallback(() => {
+    setOffset(0);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    }
+  }, []);
+
+  useState(() => {
+    registerReset?.(resetToToday);
+  });
   const VISIBLE_DAYS = isMobile ? 6 : 11;
   const TOTAL_MOBILE_DAYS = 21; // preload for swipe
   const startDate = addDays(new Date(), isMobile ? 0 : offset);
