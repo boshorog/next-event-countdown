@@ -1466,11 +1466,17 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             <div className="calendar-tab-card">
               <div className="calendar-tab">
                 <CalendarDays className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
+                <button
+                  onClick={() => calendarResetRef.current?.()}
+                  className="text-sm font-semibold tracking-tight hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
+                  title="Return to today"
+                >
+                  Upcoming Schedule
+                </button>
               </div>
               <div className="calendar-tab-body overflow-visible">
                 <div className="pb-4 px-3 pt-5 overflow-visible">
-                  <UpcomingCalendar countdownConfig={countdownConfig} />
+                  <UpcomingCalendar countdownConfig={countdownConfig} registerReset={(fn) => { calendarResetRef.current = fn; }} />
                 </div>
               </div>
             </div>
