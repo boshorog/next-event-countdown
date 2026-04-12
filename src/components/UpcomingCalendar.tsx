@@ -13,6 +13,8 @@ interface CalendarEvent {
 
 interface UpcomingCalendarProps {
   countdownConfig: CountdownConfig;
+  onResetToToday?: () => void;
+  registerReset?: (fn: () => void) => void;
 }
 
 function getEventsForRange(config: CountdownConfig, startDate: Date, days: number): CalendarEvent[] {
