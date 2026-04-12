@@ -65,9 +65,9 @@ const UpcomingCalendar = ({ countdownConfig, registerReset }: UpcomingCalendarPr
     }
   }, []);
 
-  useState(() => {
+  useEffect(() => {
     registerReset?.(resetToToday);
-  });
+  }, [registerReset, resetToToday]);
   const VISIBLE_DAYS = isMobile ? 6 : 11;
   const TOTAL_MOBILE_DAYS = 21; // preload for swipe
   const startDate = addDays(new Date(), isMobile ? 0 : offset);
