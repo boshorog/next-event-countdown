@@ -23,6 +23,7 @@ import SettingsScopeSelectorShowcase from '@/components/SettingsScopeSelectorSho
 import LightboxShowcase from '@/components/LightboxShowcase';
 import CounterStylesShowcase from '@/components/CounterStylesShowcase';
 import CounterSizeShowcase from '@/components/CounterSizeShowcase';
+import LoadingBarStyleShowcase from '@/components/LoadingBarStyleShowcase';
 import { UpdateNotice } from '@/components/UpdateNotice';
 import { useLicense } from '@/hooks/useLicense';
 import { PLUGIN_VERSION } from '@/config/pluginIdentity';
@@ -506,6 +507,11 @@ const Index = () => {
   // DEV: Show showcase for counter size options
   if (urlParams.get('showcase') === 'counter-size') {
     return <CounterSizeShowcase />;
+  }
+
+  // DEV: Show showcase for loading bar counter style
+  if (urlParams.get('showcase') === 'loading-bar') {
+    return <LoadingBarStyleShowcase />;
   }
 
   if (!showAdmin) {
