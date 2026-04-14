@@ -198,6 +198,28 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     setOpenSpecial(idx + 1);
   };
 
+  const makeRecurring = (idx: number) => {
+    const ev = config.specialEvents[idx];
+    // Convert to a weekly recurring event on the same day of week
+    const [y, m, d] = ev.date.split("-").map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const newSchedule: ServiceSchedule = {
+      recurrenceType: "weekly",
+      day: dayOfWeek,
+      hour: ev.hour,
+      minute: ev.minute,
+      title: ev.title,
+      timezone: ev.timezone || defaultTz,
+      duration: ev.duration || 60,
+    };
+    // Add to recurring and remove from special
+    update("schedules", [...config.schedules, newSchedule]);
+    const updatedSpecials = config.specialEvents.filter((_, i) => i !== idx);
+    update("specialEvents", updatedSpecials);
+    setOpenSpecial(null);
+    setOpenRecurring(config.schedules.length);
+  };
+
   const addSpecial = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
