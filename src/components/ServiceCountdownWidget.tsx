@@ -548,6 +548,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
           showHeader={config.showHeader !== false}
           showTitle={config.showTitle !== false}
           showDate={config.showDate !== false}
+          progressPercent={t.progressPercent}
         />
       </div>
     );
