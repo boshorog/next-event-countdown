@@ -1,4 +1,4 @@
-export type CounterStyleId = 'default' | 'cards' | 'circles' | 'gradient' | 'bold' | 'dots' | 'elegant';
+export type CounterStyleId = 'default' | 'cards' | 'circles' | 'gradient' | 'bold' | 'dots' | 'elegant' | 'loadingbar';
 
 export interface CounterStyleOption {
   id: CounterStyleId;
