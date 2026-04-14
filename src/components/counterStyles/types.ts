@@ -34,4 +34,5 @@ export const COUNTER_STYLE_OPTIONS: CounterStyleOption[] = [
   { id: 'bold', name: 'Bold Stack', description: 'Oversized stacked digits with prominent event title', pro: true },
   { id: 'dots', name: 'LED Dots', description: 'Green dot-matrix display with digital clock aesthetic', pro: true },
   { id: 'elegant', name: 'Elegant Serif', description: 'Refined serif typography with date above the counter', pro: true },
+  { id: 'loadingbar', name: 'Loading Bar', description: 'Animated striped progress bar with bold countdown digits', pro: true },
 ];

@@ -302,6 +302,71 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   );
 };
 
+// ─── Loading Bar (Rounded Pill) ───
+export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
+  const Icon = p.icon;
+  const units = getUnits(p);
+
+  // Estimate progress: assume 30-day max
+  const totalSec = p.days * 86400 + p.hours * 3600 + p.minutes * 60 + p.seconds;
+  const maxSec = 30 * 86400;
+  const pct = Math.min(100, Math.max(1, (totalSec / maxSec) * 100));
+
+  return (
+    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-4">
+      <style>{`
+        @keyframes stripe-reverse { 0% { background-position: 40px 0; } 100% { background-position: 0 0; } }
+        .stripe-bar-rev {
+          animation: stripe-reverse 1s linear infinite;
+          background-size: 40px 40px;
+          background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
+        }
+      `}</style>
+      {p.showHeader !== false && (
+        <div className="flex items-center justify-center gap-2" style={elOff('header')}>
+          <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
+          <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
+        </div>
+      )}
+      {p.showTitle !== false && (
+        <p className="text-muted-foreground" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('title') }}>{p.eventTitle}</p>
+      )}
+      <div className="flex items-center justify-center gap-3" style={elOff('digits')}>
+        {units.map((u, i) => (
+          <div key={u.l} className="flex items-center gap-3">
+            <div className="flex flex-col items-center" style={{ minWidth: 52 }}>
+              <span className="tabular-nums leading-none text-foreground" style={{ fontWeight: 700, fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace', fontSize: 'var(--digit-font-size, 36px)' }}>{pad(u.v)}</span>
+              <span className="uppercase tracking-wider text-muted-foreground" style={{ marginTop: '6px', fontSize: 'var(--label-font-size, 8px)' }}>{u.l}</span>
+            </div>
+            {i < 3 && (
+              <span
+                className="text-muted-foreground/50"
+                style={{
+                  fontWeight: 600,
+                  fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace',
+                  fontSize: 'var(--separator-font-size, calc(var(--digit-font-size, 36px) * 0.75))',
+                  lineHeight: 1,
+                  marginTop: '-14px',
+                }}
+              >:</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="relative h-6 bg-muted rounded-full overflow-hidden" style={elOff('digits')}>
+        <div
+          className="stripe-bar-rev absolute inset-y-0 left-0 rounded-full transition-all duration-1000"
+          style={{ width: `${pct}%`, backgroundColor: p.iconColor }}
+        />
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 10px)', fontWeight: 700, fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>{Math.round(pct)}%</div>
+      </div>
+      {p.showDate !== false && (
+        <p className="text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 10px)', ...elOff('date') }}>{p.eventDate}</p>
+      )}
+    </div>
+  );
+};
+
 // ─── Renderer Map ───
 export const STYLE_RENDERERS: Record<string, React.FC<CounterStyleRenderProps>> = {
   default: ClassicRenderer,
@@ -311,4 +376,5 @@ export const STYLE_RENDERERS: Record<string, React.FC<CounterStyleRenderProps>> 
   bold: BoldStackRenderer,
   dots: LEDDotsRenderer,
   elegant: ElegantSerifRenderer,
+  loadingbar: LoadingBarRenderer,
 };
