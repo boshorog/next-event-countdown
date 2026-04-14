@@ -212,10 +212,9 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
       timezone: ev.timezone || defaultTz,
       duration: ev.duration || 60,
     };
-    // Add to recurring and remove from special
-    update("schedules", [...config.schedules, newSchedule]);
+    // Update both at once to avoid stale state
     const updatedSpecials = config.specialEvents.filter((_, i) => i !== idx);
-    update("specialEvents", updatedSpecials);
+    onChange({ ...config, schedules: [...config.schedules, newSchedule], specialEvents: updatedSpecials });
     setOpenSpecial(null);
     setOpenRecurring(config.schedules.length);
   };
