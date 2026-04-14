@@ -174,6 +174,7 @@ interface NextServiceInfo {
   fullDate: string;
   title: string;
   isLive: boolean;
+  totalSpanMs?: number; // total ms from previous event end to next event start
 }
 
 const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1 hour fallback

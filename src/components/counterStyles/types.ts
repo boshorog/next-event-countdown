@@ -24,6 +24,7 @@ export interface CounterStyleRenderProps {
   showHeader?: boolean;
   showTitle?: boolean;
   showDate?: boolean;
+  progressPercent?: number; // 0-100, elapsed percentage for loading bar
 }
 
 export const COUNTER_STYLE_OPTIONS: CounterStyleOption[] = [
