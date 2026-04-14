@@ -460,13 +460,15 @@ export function useCountdown(config: CountdownConfig) {
   const [state, setState] = useState(() => {
     const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
     const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
+    const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
+    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent };
   });
   useEffect(() => {
     const tick = () => {
       const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
       const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
+      const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
+      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent });
     };
     tick();
     const id = setInterval(tick, 1000);
