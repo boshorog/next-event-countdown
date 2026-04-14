@@ -309,10 +309,13 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
 
-  // Estimate progress: assume 30-day max
-  const totalSec = p.days * 86400 + p.hours * 3600 + p.minutes * 60 + p.seconds;
-  const maxSec = 30 * 86400;
-  const pct = Math.min(100, Math.max(1, (totalSec / maxSec) * 100));
+  // Use dynamic progress from previous event to next event
+  const pct = p.progressPercent != null ? p.progressPercent : (() => {
+    // Fallback: estimate based on 30-day max
+    const totalSec = p.days * 86400 + p.hours * 3600 + p.minutes * 60 + p.seconds;
+    const maxSec = 30 * 86400;
+    return Math.min(100, Math.max(1, (totalSec / maxSec) * 100));
+  })();
 
   return (
     <div className="w-full rounded-2xl p-6 bg-background text-center space-y-3 max-w-sm mx-auto">

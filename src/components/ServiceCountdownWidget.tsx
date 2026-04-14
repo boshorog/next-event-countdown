@@ -174,6 +174,7 @@ interface NextServiceInfo {
   fullDate: string;
   title: string;
   isLive: boolean;
+  totalSpanMs?: number; // total ms from previous event end to next event start
 }
 
 const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1 hour fallback
@@ -372,36 +373,34 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     }
   }
 
-  // Find next upcoming — special events take priority over recurring at same time
-  let nearest = Infinity;
-  let nearestDate = "";
-  let nearestTitle = "";
-  let nearestIsSpecial = false;
+  // Collect all past event end times and future event start times
+  const allPastEnds: number[] = [];
+  const allFutureStarts: { ms: number; date: string; title: string }[] = [];
 
   for (const ev of specialEvents) {
     const tz = ev.timezone || DEFAULT_TIMEZONE;
     const [y, m, d] = ev.date.split("-").map(Number);
     const base = new Date(y, m - 1, d);
     const target = dateInTz(base, ev.hour, ev.minute, tz);
-    const ms = target.getTime() - nowMs;
-    if (ms > 0 && ms < nearest) {
-      nearest = ms;
-      nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts);
-      nearestTitle = ev.title;
-      nearestIsSpecial = true;
+    const startMs = target.getTime();
+    const durationMs = (ev.duration || 60) * 60 * 1000;
+    const endMs = startMs + durationMs;
+    if (startMs > nowMs) {
+      allFutureStarts.push({ ms: startMs - nowMs, date: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title });
+    }
+    if (endMs <= nowMs) {
+      allPastEnds.push(endMs);
     }
   }
 
   for (const s of schedules) {
     const candidates = getScheduleCandidates(s, now, 4);
+    const durationMs = (s.duration || 60) * 60 * 1000;
     for (const target of candidates) {
-      const ms = target.getTime() - nowMs;
-      // Only use recurring if it's strictly sooner (special wins ties)
-      if (ms > 0 && ms < nearest) {
-        // Check if a special event overlaps this time slot — if so, skip
-        const sStart = target.getTime();
-        const sDurationMs = (s.duration || 60) * 60 * 1000;
-        const sEnd = sStart + sDurationMs;
+      const startMs = target.getTime();
+      const endMs = startMs + durationMs;
+      if (startMs > nowMs) {
+        // Check overlap with special events
         let overlapsSpecial = false;
         for (const ev of specialEvents) {
           const tz = ev.timezone || DEFAULT_TIMEZONE;
@@ -411,22 +410,34 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
           const eDurationMs = (ev.duration || 60) * 60 * 1000;
           const eStart = eTarget.getTime();
           const eEnd = eStart + eDurationMs;
-          if (eStart < sEnd && eEnd > sStart) {
+          if (eStart < endMs && eEnd > startMs) {
             overlapsSpecial = true;
             break;
           }
         }
         if (!overlapsSpecial) {
-          nearest = ms;
-          nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts);
-          nearestTitle = s.title;
-          nearestIsSpecial = false;
+          allFutureStarts.push({ ms: startMs - nowMs, date: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title });
         }
+      }
+      if (endMs <= nowMs) {
+        allPastEnds.push(endMs);
       }
     }
   }
 
-  return { ms: nearest, fullDate: nearestDate, title: nearestTitle, isLive: false };
+  // Find nearest future event
+  allFutureStarts.sort((a, b) => a.ms - b.ms);
+  const next = allFutureStarts[0];
+  if (!next) {
+    return { ms: Infinity, fullDate: "", title: "", isLive: false };
+  }
+
+  // Find most recent past event end
+  const prevEndMs = allPastEnds.length > 0 ? Math.max(...allPastEnds) : undefined;
+  const nextStartMs = nowMs + next.ms;
+  const totalSpanMs = prevEndMs !== undefined ? nextStartMs - prevEndMs : undefined;
+
+  return { ms: next.ms, fullDate: next.date, title: next.title, isLive: false, totalSpanMs };
 }
 
 function msToTime(ms: number) {
@@ -449,13 +460,15 @@ export function useCountdown(config: CountdownConfig) {
   const [state, setState] = useState(() => {
     const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
     const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
+    const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
+    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent };
   });
   useEffect(() => {
     const tick = () => {
       const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
       const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
+      const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
+      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent });
     };
     tick();
     const id = setInterval(tick, 1000);
@@ -535,6 +548,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
           showHeader={config.showHeader !== false}
           showTitle={config.showTitle !== false}
           showDate={config.showDate !== false}
+          progressPercent={t.progressPercent}
         />
       </div>
     );

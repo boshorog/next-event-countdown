@@ -166,7 +166,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   // not here, so events aren't removed before the user saves.
 
   const addSchedule = () => {
-    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
+    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Event", timezone: defaultTz, duration: 60 }]);
     setOpenRecurring(config.schedules.length);
     setTimeout(() => {
       recurringListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -198,11 +198,33 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     setOpenSpecial(idx + 1);
   };
 
+  const makeRecurring = (idx: number) => {
+    const ev = config.specialEvents[idx];
+    // Convert to a weekly recurring event on the same day of week
+    const [y, m, d] = ev.date.split("-").map(Number);
+    const dayOfWeek = new Date(y, m - 1, d).getDay();
+    const newSchedule: ServiceSchedule = {
+      recurrenceType: "weekly",
+      day: dayOfWeek,
+      hour: ev.hour,
+      minute: ev.minute,
+      title: ev.title,
+      timezone: ev.timezone || defaultTz,
+      duration: ev.duration || 60,
+    };
+    // Add to recurring and remove from special
+    update("schedules", [...config.schedules, newSchedule]);
+    const updatedSpecials = config.specialEvents.filter((_, i) => i !== idx);
+    update("specialEvents", updatedSpecials);
+    setOpenSpecial(null);
+    setOpenRecurring(config.schedules.length);
+  };
+
   const addSpecial = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
-    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: defaultTz, duration: 60 }]);
+    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "New Event", timezone: defaultTz, duration: 60 }]);
     setOpenSpecial(config.specialEvents.length);
     setTimeout(() => {
       specialListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -491,6 +513,14 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                         </div>
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                          title="Make recurring event"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                        </Button>
                         <Button
                           variant="ghost" size="sm"
                           onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
