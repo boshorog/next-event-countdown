@@ -31,7 +31,7 @@ const CounterStylesShowcase = () => {
           <Crown className="w-5 h-5 text-amber-500" />
         </h2>
         <p className="text-muted-foreground text-sm max-w-lg mx-auto">
-          Choose from 8 unique countdown display styles. Each style includes the full widget layout — header, event info, countdown digits, and date.
+          Choose from 9 unique countdown display styles. Each style includes the full widget layout — header, event info, countdown digits, and date.
         </p>
       </div>
 
