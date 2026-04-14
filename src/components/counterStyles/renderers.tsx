@@ -324,14 +324,16 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent);
         }
       `}</style>
-      {p.showHeader !== false && (
-        <div className="flex items-center justify-center gap-2" style={elOff('header')}>
+      {(p.showHeader !== false || p.showTitle !== false) && (
+        <div className="flex items-center justify-center gap-2 mb-0" style={elOff('header')}>
           <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
-          <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 16px)' }}>{p.headerLabel}</span>
+          {p.showHeader !== false && (
+            <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 16px)' }}>{p.headerLabel}{p.showTitle !== false ? ':' : ''}</span>
+          )}
+          {p.showTitle !== false && (
+            <span className="text-muted-foreground" style={{ fontSize: 'var(--header-font-size, 15px)' }}>{p.eventTitle}</span>
+          )}
         </div>
-      )}
-      {p.showTitle !== false && (
-        <p className="text-muted-foreground" style={{ fontSize: 'var(--header-font-size, 15px)', ...elOff('title') }}>{p.eventTitle}</p>
       )}
       <div className="flex items-center justify-center gap-3" style={elOff('digits')}>
         {units.map((u, i) => (
