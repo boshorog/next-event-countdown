@@ -110,12 +110,12 @@ export const RadialRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       {p.showTitle !== false && (
         <p className="text-muted-foreground italic mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('title') }}>{p.eventTitle}</p>
       )}
-      <div className="flex items-center justify-center gap-5 mb-4" style={{ ...elOff('digits'), ['--radial-size' as any]: '80px' }}>
+      <div className="radial-grid flex items-center justify-center gap-3 mb-4 px-1" style={elOff('digits')}>
         <style>{`
           @media (max-width: 480px) {
-            .radial-grid { gap: 8px !important; }
-            .radial-grid .radial-item { width: 68px !important; height: 68px !important; }
-            .radial-grid .radial-item svg { width: 68px !important; height: 68px !important; }
+            .radial-grid { gap: 6px !important; padding-left: 4px !important; padding-right: 4px !important; }
+            .radial-grid .radial-item { width: calc((100vw - 56px) / 4) !important; height: calc((100vw - 56px) / 4) !important; max-width: 80px !important; max-height: 80px !important; }
+            .radial-grid .radial-item svg { width: 100% !important; height: 100% !important; }
             .radial-grid .radial-label { font-size: 6px !important; }
           }
         `}</style>
@@ -185,13 +185,13 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           <Icon className="w-6 h-6 mx-auto mb-2" style={{ color: p.iconColor }} />
         </div>
       )}
+      {p.showTitle !== false && (
+        <h3 className="font-black text-foreground tracking-tight mb-1" style={{ fontSize: 'var(--header-font-size, 18px)', ...elOff('title') }}>{p.eventTitle}</h3>
+      )}
       {(p.showHeader !== false || p.showDate !== false) && (
-        <p className="text-muted-foreground mb-1" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('date') }}>
+        <p className="text-muted-foreground mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('date') }}>
           {p.showHeader !== false && p.headerLabel}{p.showHeader !== false && p.showDate !== false && ' · '}{p.showDate !== false && p.eventDate}
         </p>
-      )}
-      {p.showTitle !== false && (
-        <h3 className="font-black text-foreground tracking-tight mb-5" style={{ fontSize: 'var(--header-font-size, 18px)', ...elOff('title') }}>{p.eventTitle}</h3>
       )}
       <div className="flex items-center justify-center gap-5" style={elOff('digits')}>
         {units.map((u) => (
@@ -253,14 +253,16 @@ export const ElegantSerifRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const units = getUnits(p);
   const showLeftPanel = p.showHeader !== false || p.showTitle !== false || p.showDate !== false;
   return (
-    <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center">
+    <div className="w-full rounded-2xl p-6 bg-background flex items-center justify-center overflow-hidden">
       <style>{`
         @media (max-width: 480px) {
-          .elegant-layout { flex-direction: column !important; gap: 16px !important; }
-          .elegant-layout .elegant-left { text-align: center !important; align-items: center !important; }
+          .elegant-layout { flex-direction: column !important; gap: 12px !important; width: 100% !important; }
+          .elegant-layout .elegant-left { text-align: center !important; align-items: center !important; width: 100% !important; }
           .elegant-layout .elegant-divider { width: 60% !important; height: 1px !important; }
-          .elegant-layout .elegant-digits { gap: 12px !important; flex-wrap: wrap; justify-content: center !important; }
+          .elegant-layout .elegant-digits { gap: 4px !important; flex-wrap: nowrap !important; justify-content: center !important; width: 100% !important; }
           .elegant-layout .elegant-digits .elegant-sep { height: 24px !important; }
+          .elegant-layout .elegant-digits > div { gap: 4px !important; }
+          .elegant-layout .elegant-digits .text-center { min-width: 0 !important; }
         }
       `}</style>
       <div className="elegant-layout flex items-center gap-8">
@@ -313,7 +315,7 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const pct = Math.min(100, Math.max(1, (totalSec / maxSec) * 100));
 
   return (
-    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-4">
+    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-4 max-w-sm mx-auto">
       <style>{`
         @keyframes stripe-reverse { 0% { background-position: 40px 0; } 100% { background-position: 0 0; } }
         .stripe-bar-rev {
@@ -324,12 +326,12 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       `}</style>
       {p.showHeader !== false && (
         <div className="flex items-center justify-center gap-2" style={elOff('header')}>
-          <Icon className="w-4 h-4" style={{ color: p.iconColor }} />
-          <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 14px)' }}>{p.headerLabel}</span>
+          <Icon className="w-5 h-5" style={{ color: p.iconColor }} />
+          <span className="font-semibold text-foreground" style={{ fontSize: 'var(--header-font-size, 16px)' }}>{p.headerLabel}</span>
         </div>
       )}
       {p.showTitle !== false && (
-        <p className="text-muted-foreground" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('title') }}>{p.eventTitle}</p>
+        <p className="text-muted-foreground" style={{ fontSize: 'var(--header-font-size, 15px)', ...elOff('title') }}>{p.eventTitle}</p>
       )}
       <div className="flex items-center justify-center gap-3" style={elOff('digits')}>
         {units.map((u, i) => (
@@ -358,10 +360,10 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
           className="stripe-bar-rev absolute inset-y-0 left-0 rounded-full transition-all duration-1000"
           style={{ width: `${pct}%`, backgroundColor: p.iconColor }}
         />
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 10px)', fontWeight: 700, fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>{Math.round(pct)}%</div>
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 12px)', fontWeight: 700, fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>{Math.round(pct)}%</div>
       </div>
       {p.showDate !== false && (
-        <p className="text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 10px)', ...elOff('date') }}>{p.eventDate}</p>
+        <p className="text-muted-foreground" style={{ fontSize: 'var(--label-font-size, 13px)', ...elOff('date') }}>{p.eventDate}</p>
       )}
     </div>
   );
