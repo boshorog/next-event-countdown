@@ -315,7 +315,7 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const pct = Math.min(100, Math.max(1, (totalSec / maxSec) * 100));
 
   return (
-    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-4 max-w-sm mx-auto">
+    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-3 max-w-sm mx-auto">
       <style>{`
         @keyframes stripe-reverse { 0% { background-position: 40px 0; } 100% { background-position: 0 0; } }
         .stripe-bar-rev {
