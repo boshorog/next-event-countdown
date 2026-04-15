@@ -902,6 +902,60 @@ class NxEvtCd_Plugin {
         wp_send_json_success( array( 'message' => 'License deactivated successfully' ) );
     }
     
+    /**
+     * Handle ICS feed fetch (Pro feature).
+     * Fetches raw ICS content from an external URL server-side to avoid CORS.
+     */
+    private function handle_fetch_ics_feed() {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Insufficient permissions');
+        }
+
+        $ics_url = isset($_POST['ics_url']) ? esc_url_raw(wp_unslash($_POST['ics_url'])) : '';
+
+        if (empty($ics_url)) {
+            wp_send_json_error(array('message' => 'ICS feed URL is required'));
+            return;
+        }
+
+        // Normalize webcal:// to https://
+        $ics_url = preg_replace('/^webcal:\/\//', 'https://', $ics_url);
+
+        // Validate URL
+        if (!filter_var($ics_url, FILTER_VALIDATE_URL)) {
+            wp_send_json_error(array('message' => 'Invalid URL format'));
+            return;
+        }
+
+        $response = wp_remote_get($ics_url, array(
+            'timeout' => 30,
+            'sslverify' => true,
+            'headers' => array(
+                'Accept' => 'text/calendar, application/calendar+json, text/plain',
+            ),
+        ));
+
+        if (is_wp_error($response)) {
+            wp_send_json_error(array('message' => 'Failed to fetch feed: ' . $response->get_error_message()));
+            return;
+        }
+
+        $code = wp_remote_retrieve_response_code($response);
+        if ($code !== 200) {
+            wp_send_json_error(array('message' => 'Feed returned HTTP ' . intval($code)));
+            return;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+
+        if (empty($body) || strpos($body, 'BEGIN:VCALENDAR') === false) {
+            wp_send_json_error(array('message' => 'Response does not appear to be a valid ICS/iCalendar feed'));
+            return;
+        }
+
+        wp_send_json_success(array('ics_content' => $body));
+    }
+
     private function handle_save_settings() {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
