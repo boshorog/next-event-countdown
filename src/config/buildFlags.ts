@@ -68,6 +68,13 @@ export const BUILD_FLAGS = {
    * - Pro: true → Full analytics dashboard
    */
   ANALYTICS: BUILD_VARIANT === 'pro' || isDevPro,
+
+  /**
+   * ICS Calendar Feed import/sync
+   * - Free: false → No ICS feed support
+   * - Pro: true → Import events from Google Calendar, Outlook, etc.
+   */
+  ICS_FEED: BUILD_VARIANT === 'pro' || isDevPro,
 } as const;
 
 export const isProBuild = () => BUILD_VARIANT === 'pro' || isDevPro;
