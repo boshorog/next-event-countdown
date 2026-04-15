@@ -30,6 +30,7 @@ export interface SpecialEvent {
   title: string;
   timezone?: string;
   duration?: number; // duration in minutes
+  imported?: boolean; // true = from ICS feed
 }
 
 export const TIMEZONE_OPTIONS = [
@@ -121,6 +122,11 @@ export interface CountdownConfig {
   overallScale?: number;     // multiplier
   showHeader?: boolean;
   elementOffsets?: Record<string, { x: number; y: number }>;
+  // ICS Calendar Feed (Pro)
+  icsFeedUrl?: string;
+  icsRefreshMinutes?: number;  // auto-refresh interval
+  icsLastSync?: string;        // ISO timestamp
+  icsImportedEvents?: SpecialEvent[]; // cached imported events
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
