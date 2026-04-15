@@ -212,7 +212,7 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
 
         {/* Success message */}
         {lastSyncResult && (
-          <div className="flex items-center gap-2 text-xs text-green-700 bg-green-50 rounded-md px-3 py-2">
+          <div className="flex items-center gap-2 text-xs text-primary bg-primary/10 rounded-md px-3 py-2">
             <CheckCircle2 className="w-3.5 h-3.5 flex-shrink-0" />
             Imported {lastSyncResult.count} upcoming event{lastSyncResult.count !== 1 ? 's' : ''}
           </div>
@@ -247,7 +247,7 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
                 <CalendarSync className="w-3 h-3" /> Status
               </Label>
               <div className="flex items-center gap-2 h-8 px-3 rounded-md border border-border bg-muted/30 text-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                <div className="w-1.5 h-1.5 rounded-full bg-primary flex-shrink-0" />
                 <span className="text-xs truncate">
                   {importedCount} event{importedCount !== 1 ? 's' : ''} · Synced {formatLastSync(config.icsLastSync)}
                 </span>
