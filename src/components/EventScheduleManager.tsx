@@ -148,6 +148,12 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const specialListRef = useRef<HTMLDivElement>(null);
   const use12h = config.use24h !== true;
 
+  // Merge local + imported events for display (local first, then imported)
+  const allSpecialEvents = [
+    ...config.specialEvents,
+    ...(config.icsImportedEvents || []),
+  ];
+
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
 
