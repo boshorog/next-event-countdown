@@ -56,7 +56,7 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
   const [error, setError] = useState<string | null>(null);
   const [lastSyncResult, setLastSyncResult] = useState<{ count: number } | null>(null);
 
-  const importedCount = (config.icsImportedEvents || []).length;
+  const importedCount = config.specialEvents.filter(e => e.imported).length;
 
   const isValidUrl = (url: string): boolean => {
     if (!url.trim()) return false;
@@ -94,10 +94,15 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
       const icsContent = await fetchIcsContent(normalizeUrl(feedUrl), wpContext);
       const importedEvents = parseIcsToEvents(icsContent);
 
+      // Remove previously imported events from specialEvents, then merge new ones
+      const localOnly = config.specialEvents.filter(e => !e.imported);
+      const merged = [...localOnly, ...importedEvents];
+
       onChange({
         ...config,
+        specialEvents: merged,
         icsFeedUrl: feedUrl,
-        icsImportedEvents: importedEvents,
+        icsImportedEvents: undefined, // no longer using separate array
         icsLastSync: new Date().toISOString(),
         icsRefreshMinutes: config.icsRefreshMinutes || 60,
       });
@@ -114,8 +119,11 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
     setUrlInput("");
     setError(null);
     setLastSyncResult(null);
+    // Remove imported events from specialEvents
+    const localOnly = config.specialEvents.filter(e => !e.imported);
     onChange({
       ...config,
+      specialEvents: localOnly,
       icsFeedUrl: undefined,
       icsImportedEvents: undefined,
       icsLastSync: undefined,

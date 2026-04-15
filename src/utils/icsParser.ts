@@ -205,24 +205,20 @@ export async function fetchIcsContent(
     throw new Error(json?.data?.message || json?.data || 'Failed to fetch ICS feed');
   }
 
-  // Dev preview: use a CORS proxy to fetch the real feed
-  const corsProxies = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  ];
-
-  for (const proxyUrl of corsProxies) {
-    try {
-      const res = await fetch(proxyUrl);
-      if (!res.ok) continue;
-      const text = await res.text();
-      if (text.includes('BEGIN:VCALENDAR')) return text;
-    } catch {
-      continue;
+  // Dev preview: use allorigins JSON endpoint (more reliable than raw)
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxyUrl);
+    if (res.ok) {
+      const json = await res.json();
+      const text = json?.contents;
+      if (text && text.includes('BEGIN:VCALENDAR')) return text;
     }
+  } catch {
+    // continue to next attempt
   }
 
-  // Last resort: try direct fetch (may work for some public feeds)
+  // Try direct fetch (may work for some public feeds)
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -232,6 +228,6 @@ export async function fetchIcsContent(
     // ignore
   }
 
-  throw new Error('Could not fetch ICS feed. In production (WordPress), the server proxies the request to avoid CORS issues.');
+  throw new Error('Could not fetch ICS feed. Make sure the URL is a valid public ICS/iCal feed.');
 }
 
