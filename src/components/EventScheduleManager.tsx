@@ -524,11 +524,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                         </div>
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
-                        {!ev.imported && (
+                        {isLocalEvent && (
                           <>
                             <Button
                               variant="ghost" size="sm"
-                              onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
+                              onClick={(e) => { e.stopPropagation(); makeRecurring(localIdx); }}
                               className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
                               title="Make recurring event"
                             >
@@ -536,21 +536,21 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                             </Button>
                             <Button
                               variant="ghost" size="sm"
-                              onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
+                              onClick={(e) => { e.stopPropagation(); duplicateSpecial(localIdx); }}
                               className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
                               title="Duplicate event"
                             >
                               <Copy className="w-3 h-3" />
                             </Button>
+                            <Button
+                              variant="ghost" size="sm"
+                              onClick={(e) => { e.stopPropagation(); removeSpecial(localIdx); }}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
                           </>
                         )}
-                        <Button
-                          variant="ghost" size="sm"
-                          onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
-                          className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive flex-shrink-0"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
                       </div>
                     </button>
                   </CollapsibleTrigger>
