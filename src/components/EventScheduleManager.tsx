@@ -554,86 +554,112 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       </div>
                     </button>
                   </CollapsibleTrigger>
-                  {isLocalEvent && (
                   <CollapsibleContent>
                     <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
-                        <Input value={ev.title} onChange={(v) => updateSpecial(localIdx, { title: v.target.value })} className="h-8 text-sm" />
-                      </div>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Date</Label>
-                          <DatePickerField value={ev.date} onChange={(date) => updateSpecial(localIdx, { date })} />
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
-                          <Select value={ev.timezone || "America/New_York"} onValueChange={(v) => updateSpecial(localIdx, { timezone: v })}>
-                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div className={`grid gap-3 ${use12h ? 'grid-cols-4' : 'grid-cols-3'}`}>
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
-                          {use12h ? (
-                            <Input
-                              type="number"
-                              min={1}
-                              max={12}
-                              value={to12h(ev.hour).h12}
-                              onChange={(e) => {
-                                const val = parseInt(e.target.value) || 0;
-                                const ampm = to12h(ev.hour).ampm;
-                                if (val >= 1 && val <= 12) updateSpecial(localIdx, { hour: to24h(val, ampm) });
-                              }}
-                              className={`h-8 text-sm ${(() => { const v = to12h(ev.hour).h12; return v < 1 || v > 12 ? 'border-red-500 focus-visible:ring-red-500' : ''; })()}`}
-                            />
-                          ) : (
-                            <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => {
-                              const val = parseInt(e.target.value) || 0;
-                              if (val >= 0 && val <= 23) updateSpecial(localIdx, { hour: val });
-                            }} className={`h-8 text-sm ${ev.hour < 0 || ev.hour > 23 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
-                          )}
-                        </div>
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
-                          <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => {
-                            const val = parseInt(e.target.value) || 0;
-                            if (val >= 0 && val <= 59) updateSpecial(localIdx, { minute: val });
-                          }} className={`h-8 text-sm ${ev.minute < 0 || ev.minute > 59 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
-                        </div>
-                        {use12h && (
+                      {isLocalEvent ? (
+                        <>
                           <div className="space-y-1.5">
-                            <Label className="text-xs font-medium text-muted-foreground">AM/PM</Label>
-                            <Select value={to12h(ev.hour).ampm} onValueChange={(v) => {
-                              const h12 = to12h(ev.hour).h12;
-                              updateSpecial(localIdx, { hour: to24h(h12, v as 'AM' | 'PM') });
-                            }}>
-                              <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="AM">AM</SelectItem>
-                                <SelectItem value="PM">PM</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            <Label className="text-xs font-medium text-muted-foreground">Event Title</Label>
+                            <Input value={ev.title} onChange={(v) => updateSpecial(localIdx, { title: v.target.value })} className="h-8 text-sm" />
                           </div>
-                        )}
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
-                          <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(localIdx, { duration: parseInt(v) })}>
-                            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                              {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
-                            </SelectContent>
-                          </Select>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-medium text-muted-foreground">Date</Label>
+                              <DatePickerField value={ev.date} onChange={(date) => updateSpecial(localIdx, { date })} />
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-medium text-muted-foreground">Timezone</Label>
+                              <Select value={ev.timezone || "America/New_York"} onValueChange={(v) => updateSpecial(localIdx, { timezone: v })}>
+                                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {TIMEZONE_OPTIONS.map((tz) => <SelectItem key={tz.value} value={tz.value}>{tz.label}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                          <div className={`grid gap-3 ${use12h ? 'grid-cols-4' : 'grid-cols-3'}`}>
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-medium text-muted-foreground">Hour</Label>
+                              {use12h ? (
+                                <Input
+                                  type="number"
+                                  min={1}
+                                  max={12}
+                                  value={to12h(ev.hour).h12}
+                                  onChange={(e) => {
+                                    const val = parseInt(e.target.value) || 0;
+                                    const ampm = to12h(ev.hour).ampm;
+                                    if (val >= 1 && val <= 12) updateSpecial(localIdx, { hour: to24h(val, ampm) });
+                                  }}
+                                  className={`h-8 text-sm ${(() => { const v = to12h(ev.hour).h12; return v < 1 || v > 12 ? 'border-red-500 focus-visible:ring-red-500' : ''; })()}`}
+                                />
+                              ) : (
+                                <Input type="number" min={0} max={23} value={ev.hour} onChange={(e) => {
+                                  const val = parseInt(e.target.value) || 0;
+                                  if (val >= 0 && val <= 23) updateSpecial(localIdx, { hour: val });
+                                }} className={`h-8 text-sm ${ev.hour < 0 || ev.hour > 23 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
+                              )}
+                            </div>
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-medium text-muted-foreground">Minute</Label>
+                              <Input type="number" min={0} max={59} value={ev.minute} onChange={(e) => {
+                                const val = parseInt(e.target.value) || 0;
+                                if (val >= 0 && val <= 59) updateSpecial(localIdx, { minute: val });
+                              }} className={`h-8 text-sm ${ev.minute < 0 || ev.minute > 59 ? 'border-red-500 focus-visible:ring-red-500' : ''}`} />
+                            </div>
+                            {use12h && (
+                              <div className="space-y-1.5">
+                                <Label className="text-xs font-medium text-muted-foreground">AM/PM</Label>
+                                <Select value={to12h(ev.hour).ampm} onValueChange={(v) => {
+                                  const h12 = to12h(ev.hour).h12;
+                                  updateSpecial(localIdx, { hour: to24h(h12, v as 'AM' | 'PM') });
+                                }}>
+                                  <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="AM">AM</SelectItem>
+                                    <SelectItem value="PM">PM</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                            <div className="space-y-1.5">
+                              <Label className="text-xs font-medium text-muted-foreground">Duration</Label>
+                              <Select value={String(ev.duration || 60)} onValueChange={(v) => updateSpecial(localIdx, { duration: parseInt(v) })}>
+                                <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+                                <SelectContent>
+                                  {DURATION_OPTIONS.map((d) => <SelectItem key={d.value} value={d.value}>{d.label}</SelectItem>)}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        /* Read-only details for imported events */
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Date</p>
+                              <p className="text-sm">{ev.date}</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Time</p>
+                              <p className="text-sm">{String(ev.hour).padStart(2, '0')}:{String(ev.minute).padStart(2, '0')}</p>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Duration</p>
+                              <p className="text-sm">{ev.duration || 60} min</p>
+                            </div>
+                            <div>
+                              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-0.5">Source</p>
+                              <p className="text-sm text-muted-foreground">Calendar Feed</p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </CollapsibleContent>
-                  )}
                 </div>
               </Collapsible>
             );

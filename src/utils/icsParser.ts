@@ -205,15 +205,34 @@ export async function fetchIcsContent(
     throw new Error(json?.data?.message || json?.data || 'Failed to fetch ICS feed');
   }
 
-  // Dev preview: try direct fetch (may fail due to CORS)
+  // Dev preview: use a CORS proxy to fetch the real feed
+  const corsProxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  ];
+
+  for (const proxyUrl of corsProxies) {
+    try {
+      const res = await fetch(proxyUrl);
+      if (!res.ok) continue;
+      const text = await res.text();
+      if (text.includes('BEGIN:VCALENDAR')) return text;
+    } catch {
+      continue;
+    }
+  }
+
+  // Last resort: try direct fetch (may work for some public feeds)
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.text();
+    const text = await res.text();
+    if (text.includes('BEGIN:VCALENDAR')) return text;
   } catch {
-    // Return mock ICS data for dev preview
-    return generateMockIcs();
+    // ignore
   }
+
+  throw new Error('Could not fetch ICS feed. In production (WordPress), the server proxies the request to avoid CORS issues.');
 }
 
 function generateMockIcs(): string {
