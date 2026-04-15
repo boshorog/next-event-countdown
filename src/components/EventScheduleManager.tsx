@@ -494,11 +494,13 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Button>
           </div>
         </CardHeader>
-        <CardContent className={cn("space-y-1.5", config.specialEvents.length === 0 && "flex items-center justify-center min-h-[180px]")} ref={specialListRef}>
-          {config.specialEvents.length === 0 && (
+        <CardContent className={cn("space-y-1.5", allSpecialEvents.length === 0 && "flex items-center justify-center min-h-[180px]")} ref={specialListRef}>
+          {allSpecialEvents.length === 0 && (
             <p className="text-xs text-muted-foreground italic text-center">No special events added.</p>
           )}
-          {config.specialEvents.map((ev, i) => {
+          {allSpecialEvents.map((ev, i) => {
+            const isLocalEvent = i < config.specialEvents.length;
+            const localIdx = isLocalEvent ? i : -1;
             const isOpen = openSpecial === i;
             return (
               <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenSpecial(open ? i : null)}>
