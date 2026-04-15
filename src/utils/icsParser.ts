@@ -11,6 +11,7 @@
  */
 
 import type { SpecialEvent } from '@/components/ServiceCountdownWidget';
+import { supabase } from '@/integrations/supabase/client';
 
 /** Unfold continuation lines per RFC 5545 §3.1 */
 function unfold(raw: string): string {
@@ -183,14 +184,13 @@ export function parseIcsToEvents(icsContent: string, horizonDays = 90): (Special
 
 /**
  * Fetch ICS content. In WordPress, goes through PHP AJAX proxy.
- * In dev preview, attempts direct fetch (may fail due to CORS) or uses mock data.
+ * In preview/dev, goes through our server-side proxy to avoid browser CORS issues.
  */
 export async function fetchIcsContent(
   url: string,
   wpContext?: { ajaxUrl: string; nonce: string }
 ): Promise<string> {
   if (wpContext?.ajaxUrl && wpContext?.nonce) {
-    // WordPress: proxy through PHP
     const form = new FormData();
     form.append('action', 'nxevtcd_action');
     form.append('action_type', 'fetch_ics_feed');
@@ -205,29 +205,18 @@ export async function fetchIcsContent(
     throw new Error(json?.data?.message || json?.data || 'Failed to fetch ICS feed');
   }
 
-  // Dev preview: use allorigins JSON endpoint (more reliable than raw)
-  try {
-    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxyUrl);
-    if (res.ok) {
-      const json = await res.json();
-      const text = json?.contents;
-      if (text && text.includes('BEGIN:VCALENDAR')) return text;
-    }
-  } catch {
-    // continue to next attempt
+  const { data, error } = await supabase.functions.invoke('fetch-ics-feed', {
+    body: { url },
+  });
+
+  if (error) {
+    throw new Error(error.message || 'Failed to fetch ICS feed');
   }
 
-  // Try direct fetch (may work for some public feeds)
-  try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    if (text.includes('BEGIN:VCALENDAR')) return text;
-  } catch {
-    // ignore
+  if (!data?.icsContent) {
+    throw new Error(data?.error || 'Could not fetch ICS feed. Make sure the URL is a valid public ICS/iCal feed.');
   }
 
-  throw new Error('Could not fetch ICS feed. Make sure the URL is a valid public ICS/iCal feed.');
+  return data.icsContent;
 }
 
