@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.document-rating]
 verify_jwt = false
+
+[functions.fetch-ics-feed]
+verify_jwt = false
