@@ -623,6 +623,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           })}
         </CardContent>
       </Card>
+
+      {/* ICS Calendar Feed (Pro only) */}
+      {BUILD_FLAGS.ICS_FEED && (
+        <IcsCalendarFeedSettings config={config} onChange={onChange} />
+      )}
     </div>
   );
 };
