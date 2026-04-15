@@ -30,6 +30,7 @@ export interface SpecialEvent {
   title: string;
   timezone?: string;
   duration?: number; // duration in minutes
+  imported?: boolean; // true = from ICS feed
 }
 
 export const TIMEZONE_OPTIONS = [
@@ -121,6 +122,11 @@ export interface CountdownConfig {
   overallScale?: number;     // multiplier
   showHeader?: boolean;
   elementOffsets?: Record<string, { x: number; y: number }>;
+  // ICS Calendar Feed (Pro)
+  icsFeedUrl?: string;
+  icsRefreshMinutes?: number;  // auto-refresh interval
+  icsLastSync?: string;        // ISO timestamp
+  icsImportedEvents?: SpecialEvent[]; // cached imported events
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -457,15 +463,22 @@ export function useCountdown(config: CountdownConfig) {
     atWordStr: config.atWord,
   };
   const showLiveDuration = config.showLiveDuration ?? false;
+
+  // Merge local special events with ICS imported events
+  const mergedSpecialEvents = [
+    ...config.specialEvents,
+    ...(config.icsImportedEvents || []),
+  ];
+
   const [state, setState] = useState(() => {
-    const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
+    const n = getNextService(config.schedules, mergedSpecialEvents, config.dateFormat, config.use24h, fmtOpts);
     const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
     const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
     return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent };
   });
   useEffect(() => {
     const tick = () => {
-      const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
+      const n = getNextService(config.schedules, mergedSpecialEvents, config.dateFormat, config.use24h, fmtOpts);
       const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
       const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
       setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent });
@@ -473,7 +486,7 @@ export function useCountdown(config: CountdownConfig) {
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
+  }, [config.schedules, config.specialEvents, config.icsImportedEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
   return state;
 }
 

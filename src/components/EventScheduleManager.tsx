@@ -2,6 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { BUILD_FLAGS } from "@/config/buildFlags";
+import IcsCalendarFeedSettings from "@/components/IcsCalendarFeedSettings";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -507,27 +510,34 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       <div className="flex items-center gap-2.5 min-w-0">
                         {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                         <div className="min-w-0">
-                          <p className="text-sm font-medium truncate">{ev.title}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-sm font-medium truncate">{ev.title}</p>
+                            {ev.imported && <Badge variant="secondary" className="text-[9px] px-1 py-0 flex-shrink-0">Imported</Badge>}
+                          </div>
                           <p className="text-xs text-muted-foreground truncate">{specialSummary(ev)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
-                        <Button
-                          variant="ghost" size="sm"
-                          onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
-                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                          title="Make recurring event"
-                        >
-                          <RefreshCw className="w-3 h-3" />
-                        </Button>
-                        <Button
-                          variant="ghost" size="sm"
-                          onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
-                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                          title="Duplicate event"
-                        >
-                          <Copy className="w-3 h-3" />
-                        </Button>
+                        {!ev.imported && (
+                          <>
+                            <Button
+                              variant="ghost" size="sm"
+                              onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                              title="Make recurring event"
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                            </Button>
+                            <Button
+                              variant="ghost" size="sm"
+                              onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
+                              className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                              title="Duplicate event"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="ghost" size="sm"
                           onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}
@@ -538,6 +548,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       </div>
                     </button>
                   </CollapsibleTrigger>
+                  {!ev.imported && (
                   <CollapsibleContent>
                     <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border">
                       <div className="space-y-1.5">
@@ -616,12 +627,18 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       </div>
                     </div>
                   </CollapsibleContent>
+                  )}
                 </div>
               </Collapsible>
             );
           })}
         </CardContent>
       </Card>
+
+      {/* ICS Calendar Feed (Pro only) */}
+      {BUILD_FLAGS.ICS_FEED && (
+        <IcsCalendarFeedSettings config={config} onChange={onChange} />
+      )}
     </div>
   );
 };
