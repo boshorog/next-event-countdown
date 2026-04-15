@@ -211,6 +211,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
     { id: 'colors', label: 'Colors & Icon', icon: Palette },
     { id: 'labels', label: 'Labels', icon: Type },
     { id: 'size', label: 'Counter Size', icon: Maximize2 },
+    ...(BUILD_FLAGS.ICS_FEED ? [{ id: 'calendar-feed', label: 'Calendar Feed', icon: Globe, pro: true }] : []),
     { id: 'other', label: 'Other Settings', icon: Settings },
   ];
 
@@ -1123,6 +1124,14 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
           </div>
         );
       }
+
+      case 'calendar-feed':
+        return (
+          <IcsCalendarFeedSettings config={localConfig} onChange={(newConfig) => {
+            setLocalConfig(newConfig);
+            onCountdownConfigChange?.(newConfig);
+          }} />
+        );
 
       default:
         return null;

@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { BUILD_FLAGS } from "@/config/buildFlags";
-import IcsCalendarFeedSettings from "@/components/IcsCalendarFeedSettings";
+import { Badge } from "@/components/ui/badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -634,11 +633,6 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
           })}
         </CardContent>
       </Card>
-
-      {/* ICS Calendar Feed (Pro only) */}
-      {BUILD_FLAGS.ICS_FEED && (
-        <IcsCalendarFeedSettings config={config} onChange={onChange} />
-      )}
     </div>
   );
 };
