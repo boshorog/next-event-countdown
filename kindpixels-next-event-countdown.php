@@ -740,6 +740,9 @@ class NxEvtCd_Plugin {
             case 'reset_galleries': // legacy compat
                 $this->handle_reset_counters();
                 break;
+            case 'fetch_ics_feed':
+                $this->handle_fetch_ics_feed();
+                break;
             default:
                 wp_send_json_error('Invalid action');
         }
