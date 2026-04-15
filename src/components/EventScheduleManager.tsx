@@ -548,6 +548,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       </div>
                     </button>
                   </CollapsibleTrigger>
+                  {!ev.imported && (
                   <CollapsibleContent>
                     <div className="px-3 pb-3 pt-1 space-y-3 border-t border-border">
                       <div className="space-y-1.5">
