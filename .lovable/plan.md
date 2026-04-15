@@ -1,39 +1,85 @@
 
 
-## Plan: Gate multi-counter via build-time code elimination
+## ICS Calendar Feed Import (Pro Feature)
 
-### The WordPress.org dilemma
+This feature lets users paste an ICS/iCal URL from Google Calendar, Outlook, Apple Calendar, or any system that exposes `.ics` feeds. The plugin fetches and parses events, merges them with local events, and auto-refreshes on a configurable interval.
 
-WP.org policy forbids **shipping code that implements a feature and then artificially restricts it**. The current approach ships the "+" button and multi-counter logic in both builds and hides it with a runtime flag -- that is exactly what they reject.
+### Architecture
 
-### Solution: Build-time elimination
+Since this is a WordPress plugin (client-side React app with a PHP backend), ICS fetching must happen server-side (PHP) to avoid CORS issues. The React frontend manages configuration and triggers syncs via AJAX.
 
-The free build (`npm run build:free`) should **literally not contain** the multi-counter UI code. Vite already replaces `import.meta.env.VITE_BUILD_VARIANT` at build time, so if we gate the "+" button and counter selector behind `BUILD_VARIANT === 'pro'`, the minifier will tree-shake it out of the free bundle entirely. WP.org cannot complain about code that does not exist in the ZIP.
+```text
+┌─────────────────────────────────────────────────┐
+│  React UI (Pro only)                            │
+│  - ICS Feed URL input + Add button              │
+│  - Feed list with status/last sync time         │
+│  - "Sync Now" button per feed                   │
+│  - Auto-refresh interval selector               │
+│  - Imported events shown with "Imported" badge   │
+└──────────────────┬──────────────────────────────┘
+                   │ AJAX
+┌──────────────────▼──────────────────────────────┐
+│  PHP Backend                                     │
+│  - fetch_ics_feed: fetches URL, parses VEVENT    │
+│  - Stores imported events in wp_options          │
+│  - WP-Cron for auto-refresh                      │
+│  - Returns parsed events to React                │
+└─────────────────────────────────────────────────┘
+```
 
-The `.pro-build` marker file (already created by the build script) lets PHP detect the variant at runtime and enforce the same limit server-side.
+### Changes
 
-### What changes
+**1. Extend CountdownConfig type** (`ServiceCountdownWidget.tsx`)
+- Add `icsFeedUrl?: string` — the ICS feed URL
+- Add `icsRefreshMinutes?: number` — auto-refresh interval (default 60)
+- Add `icsLastSync?: string` — ISO timestamp of last sync
+- Add `icsImportedEvents?: SpecialEvent[]` — cached imported events (each with an `imported: true` flag)
+- Add `imported?: boolean` to `SpecialEvent` interface — labels events as imported vs local
 
-**1. `src/config/buildFlags.ts`**
-- Change `MULTI_GALLERY_UI` back to `BUILD_VARIANT === 'pro' || isDevPro` (was incorrectly set to `true` for all builds)
-- Update comments: free = 1 counter, pro = unlimited
+**2. Create ICS Feed Settings UI** (`src/components/IcsCalendarFeedSettings.tsx`)
+- New Pro-gated component with:
+  - URL input field with validation (must end in `.ics` or contain `webcal://`)
+  - Auto-refresh interval selector (15min, 30min, 1h, 3h, 6h, 12h, 24h)
+  - Last synced timestamp display
+  - "Sync Now" button with loading state
+  - List of imported events count
+- Placed inside the EventScheduleManager as a new collapsible section
 
-**2. `src/components/GallerySelector.tsx`**
-- Wrap the "+" (Add Counter) button in `{BUILD_FLAGS.MULTI_GALLERY_UI && ...}` so it is excluded from the free bundle
-- The delete button already only shows for multiple galleries, which is fine
+**3. ICS Parsing utility** (`src/utils/icsParser.ts`)
+- Client-side parser for `.ics` content (VCALENDAR/VEVENT format)
+- Extracts: DTSTART, DTEND (for duration), SUMMARY (title), RRULE (for recurring)
+- Converts VEVENT entries to `SpecialEvent[]` with `imported: true`
+- Handles timezone conversion (TZID parameter)
+- Filters to only future events (next 90 days)
 
-**3. `kindpixels-next-event-countdown.php`**
-- Add a helper `is_pro_build()` that checks for the `.pro-build` marker file (not a Freemius license check -- just a build artifact check)
-- In `handle_save_counters()`: if `!$this->is_pro_build()` and count > 1, keep only the first counter
-- This is not "gating existing functionality" because the free JS bundle literally cannot create multiple counters; the PHP check is a defense-in-depth safeguard
+**4. PHP backend handler** (in `kindpixels-next-event-countdown.php`)
+- New AJAX action `nxevtcd_fetch_ics` that:
+  - Accepts the ICS URL
+  - Fetches via `wp_remote_get()` (handles CORS server-side)
+  - Returns raw ICS content to the React app for parsing
+  - Alternatively: parses server-side and returns JSON events
+- WP-Cron hook for periodic background refresh
 
-**4. No other files need changes** -- the gallery-to-counter rename and sanitization work from the previous plan are already done.
+**5. Merge logic in countdown calculation** (`ServiceCountdownWidget.tsx`)
+- `getNextService()` already processes both `schedules` and `specialEvents`
+- Imported events (with `imported: true`) get merged into `specialEvents` array
+- No change needed to countdown logic — imported events are treated identically
 
-### Why this satisfies WP.org
+**6. UI labels in EventScheduleManager**
+- Special events list shows a small badge: "Imported" (blue) or "Local" (default)
+- Imported events are read-only (no edit, only delete to stop importing that specific one)
+- "Sync Now" triggers an immediate AJAX fetch + re-parse
 
-The free ZIP does not contain any multi-counter UI code (tree-shaken out by Vite). There is no locked feature visible to the user. The PHP limit is purely server-side validation that matches the client capability -- the same pattern WordPress itself uses (e.g., multisite features absent from single-site builds).
+**7. Build flags gating** (`buildFlags.ts`)
+- Add `ICS_FEED: BUILD_VARIANT === 'pro' || isDevPro` flag
+- UI components conditionally rendered based on this flag
 
-### Technical detail
+### Dev preview behavior
+In dev preview mode (Lovable/localhost), the ICS fetch will use a CORS proxy or mock data since there's no PHP backend. A simulated fetch with sample ICS data will demonstrate the feature.
 
-Vite replaces `import.meta.env.VITE_BUILD_VARIANT` with the literal string `"free"` at build time. So `BUILD_VARIANT === 'pro'` becomes `"free" === "pro"` which is `false`, and the minifier strips the dead branch. The "+" button JSX never appears in the output bundle.
+### What you might be missing
+- **Multiple feeds**: Support for more than one ICS URL per counter (e.g., one from Google Calendar + one from Outlook)
+- **Event deduplication**: If the same event exists locally and in the feed, detect duplicates by matching title + date
+- **Feed validation**: Show a preview of imported events before committing
+- **Error handling**: Clear error messages for invalid URLs, unreachable feeds, or malformed ICS data
 
