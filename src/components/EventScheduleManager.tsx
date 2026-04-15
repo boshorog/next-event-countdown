@@ -627,6 +627,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       </div>
                     </div>
                   </CollapsibleContent>
+                  )}
                 </div>
               </Collapsible>
             );
