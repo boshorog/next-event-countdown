@@ -235,17 +235,3 @@ export async function fetchIcsContent(
   throw new Error('Could not fetch ICS feed. In production (WordPress), the server proxies the request to avoid CORS issues.');
 }
 
-function generateMockIcs(): string {
-  const now = new Date();
-  const events: string[] = [];
-
-  for (let i = 1; i <= 5; i++) {
-    const d = new Date(now.getTime() + i * 3 * 24 * 60 * 60 * 1000);
-    const ds = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
-    events.push(
-      `BEGIN:VEVENT\nDTSTART:${ds}T${String(10 + (i % 3)).padStart(2, '0')}0000\nDTEND:${ds}T${String(11 + (i % 3)).padStart(2, '0')}0000\nSUMMARY:Imported Event ${i}\nEND:VEVENT`
-    );
-  }
-
-  return `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Mock//EN\n${events.join('\n')}\nEND:VCALENDAR`;
-}
