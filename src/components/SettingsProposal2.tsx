@@ -14,6 +14,7 @@ import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
 import ServiceCountdownWidget from '@/components/ServiceCountdownWidget';
 import SaturationCanvasPicker from '@/components/SaturationCanvasPicker';
+import IcsCalendarFeedSettings from '@/components/IcsCalendarFeedSettings';
 import {
   DropdownMenu,
   DropdownMenuContent,
