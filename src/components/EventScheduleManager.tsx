@@ -3,6 +3,7 @@ import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star,
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { BUILD_FLAGS } from "@/config/buildFlags";
+import IcsCalendarFeedSettings from "@/components/IcsCalendarFeedSettings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
