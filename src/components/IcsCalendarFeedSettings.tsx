@@ -18,7 +18,7 @@
  */
 
 import { useState } from "react";
-import { CalendarSync, RefreshCw, Trash2, Globe, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CalendarSync, RefreshCw, Trash2, CalendarDays, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
