@@ -518,25 +518,23 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                         </div>
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
+                        <Button
+                          variant="ghost" size="sm"
+                          onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
+                          className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                          title="Make recurring event"
+                        >
+                          <RefreshCw className="w-3 h-3" />
+                        </Button>
                         {!ev.imported && (
-                          <>
-                            <Button
-                              variant="ghost" size="sm"
-                              onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
-                              className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                              title="Make recurring event"
-                            >
-                              <RefreshCw className="w-3 h-3" />
-                            </Button>
-                            <Button
-                              variant="ghost" size="sm"
-                              onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
-                              className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                              title="Duplicate event"
-                            >
-                              <Copy className="w-3 h-3" />
-                            </Button>
-                          </>
+                          <Button
+                            variant="ghost" size="sm"
+                            onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
+                            className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
+                            title="Duplicate event"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </Button>
                         )}
                         <Button
                           variant="ghost" size="sm"

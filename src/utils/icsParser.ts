@@ -43,6 +43,7 @@ interface ParsedVEvent {
   dtStart: Date;
   dtEnd?: Date;
   rrule?: string;
+  allDay?: boolean;
 }
 
 function extractVEvents(icsContent: string): ParsedVEvent[] {
@@ -73,6 +74,10 @@ function extractVEvents(icsContent: string): ParsedVEvent[] {
       const val = propValue(line);
       const d = parseIcsDate(val);
       if (d) current.dtStart = d;
+      // All-day events use DATE (no time component): DTSTART;VALUE=DATE:20260101
+      if (line.includes('VALUE=DATE') || val.length === 8) {
+        (current as any).allDay = true;
+      }
     } else if (line.startsWith('DTEND')) {
       const val = propValue(line);
       const d = parseIcsDate(val);
@@ -145,9 +150,12 @@ export function parseIcsToEvents(icsContent: string, horizonDays = 90): (Special
   const results: (SpecialEvent & { imported: true })[] = [];
 
   for (const ev of vEvents) {
-    const durationMin = ev.dtEnd
-      ? Math.max(15, Math.round((ev.dtEnd.getTime() - ev.dtStart.getTime()) / 60000))
-      : 60;
+    // All-day events or events without end time get 60-minute default
+    const durationMin = ev.allDay
+      ? 60
+      : ev.dtEnd
+        ? Math.max(15, Math.round((ev.dtEnd.getTime() - ev.dtStart.getTime()) / 60000))
+        : 60;
 
     const datesToAdd: Date[] = [];
 
