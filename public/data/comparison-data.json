@@ -29,7 +29,7 @@
     },
     {
       "id": "calendar-import",
-      "feature": "Import from Google Calendar & Outlook",
+      "feature": "Import events from Google Calendar, Outlook, Apple Calendar, etc.",
       "free": false,
       "pro": true
     },
