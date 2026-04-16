@@ -70,7 +70,7 @@ export const CardBlocksRenderer: React.FC<CounterStyleRenderProps> = (p) => {
       {p.showTitle !== false && (
         <p className="text-muted-foreground mb-5" style={{ fontSize: 'calc(var(--header-font-size, 14px) * 0.85)', ...elOff('title') }}>{p.eventTitle}</p>
       )}
-      <div className="grid grid-cols-4 gap-2 mb-4 max-w-[280px] mx-auto" style={elOff('digits')}>
+      <div className="grid grid-cols-4 gap-2 mb-4 mx-auto" style={elOff('digits')}>
         {units.map((u) => (
           <div key={u.l} className="bg-muted/60 rounded-xl py-3 flex flex-col items-center justify-center shadow-sm">
             <div className="font-bold font-mono text-foreground tabular-nums" style={{ fontSize: 'var(--digit-font-size, 24px)' }}>{pad(u.v)}</div>
@@ -147,7 +147,7 @@ export const GradientGlassRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const Icon = p.icon;
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-border max-w-sm mx-auto">
+    <div className="w-full rounded-2xl overflow-hidden border border-border">
       {p.showHeader !== false && (
         <div className="px-5 py-3 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${p.iconColor}, ${p.iconColor}cc)`, ...elOff('header') }}>
           <Icon className="w-4 h-4 text-white/90" />
@@ -209,7 +209,7 @@ export const BoldStackRenderer: React.FC<CounterStyleRenderProps> = (p) => {
 export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   const units = getUnits(p);
   return (
-    <div className="w-full rounded-2xl overflow-hidden max-w-sm mx-auto" style={{ backgroundColor: '#0a0a0a' }}>
+    <div className="w-full rounded-2xl overflow-hidden" style={{ backgroundColor: '#0a0a0a' }}>
       {p.showHeader !== false && (
         <div className="px-5 py-3 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(34,197,94,0.2)', ...elOff('header') }}>
           <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export const LEDDotsRenderer: React.FC<CounterStyleRenderProps> = (p) => {
         </div>
       )}
       <div className="px-5 py-5 text-center">
-        <div className="flex items-center justify-center max-w-[360px] mx-auto" style={elOff('digits')}>
+        <div className="flex items-center justify-center" style={elOff('digits')}>
           {units.map((u, i) => (
             <React.Fragment key={u.l}>
               <div className="flex flex-col items-center" style={{ minWidth: 56 }}>
@@ -318,7 +318,7 @@ export const LoadingBarRenderer: React.FC<CounterStyleRenderProps> = (p) => {
   })();
 
   return (
-    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-3 max-w-sm mx-auto">
+    <div className="w-full rounded-2xl p-6 bg-background text-center space-y-3">
       <style>{`
         @keyframes stripe-reverse { 0% { background-position: 40px 0; } 100% { background-position: 0 0; } }
         .stripe-bar-rev {
