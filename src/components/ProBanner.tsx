@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, ExternalLink, Palette, Headset, Check, LayoutGrid } from 'lucide-react';
+import { Crown, ExternalLink, Palette, Globe, Check, LayoutGrid } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 
 interface ProBannerProps {
@@ -98,7 +98,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
             </div>
             
             <p className="text-sm text-muted-foreground mb-4">
-              Set it once and it runs forever — add multiple counters with premium styles for different pages, locations, or schedules across your site.
+              Set it once and it runs forever — add multiple counters with premium styles, import events from Google Calendar or Outlook, and manage different schedules across your site.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -111,8 +111,8 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                 <span className="text-lg font-semibold">More Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
-                <Headset className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">Priority Support</span>
+                <Globe className="w-6 h-6 text-orange-500" />
+                <span className="text-lg font-semibold">Import Calendars</span>
               </div>
             </div>
 
@@ -158,6 +158,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
+                  <FeatureRow feature="Import from Google Calendar & Outlook" free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                   <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />

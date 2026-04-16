@@ -4,7 +4,7 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -54,6 +54,7 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 * Additional counters for different pages or locations
 * 5+ premium countdown styles
 * Multiple locations / venues within the same website
+* Import events from Google Calendar and Outlook
 * Priority support
 
 For a full comparison, visit [kindpixels.com/plugins/next-event-countdown](https://kindpixels.com/plugins/next-event-countdown).
