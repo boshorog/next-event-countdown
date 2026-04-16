@@ -59,11 +59,24 @@ const UpcomingCalendar = ({ countdownConfig, registerReset }: UpcomingCalendarPr
 
   // Register reset-to-today function for parent to call
   const resetToToday = useCallback(() => {
-    setOffset(0);
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+    if (offset === 0) {
+      // Already at today, just scroll mobile view
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+      return;
     }
-  }, []);
+    // Use the same slide animation as nav arrows
+    const direction = offset > 0 ? 'left' : 'right';
+    setSliding(direction);
+    setTimeout(() => {
+      setOffset(0);
+      setSliding(null);
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    }, 280);
+  }, [offset]);
 
   useEffect(() => {
     registerReset?.(resetToToday);
