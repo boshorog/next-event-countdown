@@ -97,6 +97,21 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.2.1 =
+* Renamed "Calendar Feed" to "Calendar Import" across settings and UI
+* Added Calendar Import to Pro feature comparison tables
+* Fixed counter styles (Card Blocks, Gradient Glass, LED Dots, Loading Bar) rendering tighter than the settings preview
+* Updated Pro banner to highlight calendar import feature
+
+= 1.2.0 =
+* Added ICS Calendar Feed import (Pro) — sync events from Google Calendar, Outlook, Apple Calendar, etc.
+* Added "Return to Today" animation in Upcoming Schedule calendar navigation
+* Imported events without duration default to 60 minutes
+* Added "Make Recurring" action for imported events
+* Added biweekly, monthly, and daily recurrence types
+* Multiple counter styles and sizing improvements
+* Bug fixes and performance improvements
+
 = 1.1.9 =
 * Fixed position offset not applying when counter is embedded via shortcode
 * Fixed flash of default counter style/events on frontend load — now shows a loading placeholder until saved config is ready
