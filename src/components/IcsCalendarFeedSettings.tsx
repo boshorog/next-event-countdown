@@ -18,7 +18,7 @@
  */
 
 import { useState } from "react";
-import { CalendarSync, RefreshCw, Trash2, Globe, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { CalendarSync, RefreshCw, Trash2, CalendarDays, Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -159,8 +159,8 @@ const IcsCalendarFeedSettings = ({ config, onChange }: IcsCalendarFeedSettingsPr
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-sm flex items-center gap-2">
-              <Globe className="w-4 h-4 text-primary" />
-              Calendar Feed Import
+              <CalendarDays className="w-4 h-4 text-primary" />
+              Calendar Import
               <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Pro</Badge>
             </CardTitle>
             <p className="text-xs text-muted-foreground mt-1">

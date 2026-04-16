@@ -162,6 +162,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                   <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
+                  <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                   <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />
@@ -379,6 +380,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                       <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                       <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                       <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
+                      <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                       <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                       <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
                       <FeatureRow feature="Priority Support" free={false} pro={true} />

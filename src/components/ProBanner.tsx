@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, ExternalLink, Palette, Globe, Check, LayoutGrid } from 'lucide-react';
+import { Crown, ExternalLink, Palette, CalendarDays, Check, LayoutGrid } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 
 interface ProBannerProps {
@@ -111,7 +111,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                 <span className="text-lg font-semibold">More Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
-                <Globe className="w-6 h-6 text-orange-500" />
+                <CalendarDays className="w-6 h-6 text-orange-500" />
                 <span className="text-lg font-semibold">Import Calendars</span>
               </div>
             </div>
