@@ -28,6 +28,12 @@
       "pro": true
     },
     {
+      "id": "calendar-import",
+      "feature": "Import from Google Calendar & Outlook",
+      "free": false,
+      "pro": true
+    },
+    {
       "id": "customization",
       "feature": "Colors, Labels & Icon Customization",
       "free": true,
