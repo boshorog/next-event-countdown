@@ -4,7 +4,7 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -96,6 +96,11 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 3. Live countdown widget on the front end.
 
 == Changelog ==
+
+= 1.2.2 =
+* Updated support and feature request links to the WordPress.org plugin support forum
+* Comparison table polish and consistency across all views
+* Minor copy improvements
 
 = 1.2.1 =
 * Counter styles polishes
