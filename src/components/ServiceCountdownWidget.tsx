@@ -500,6 +500,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const Icon = getIconComponent(config.icon);
   const hs = config.headerScale ?? 1;
   const styleId = config.counterStyle || 'default';
+  const isMobile = useIsMobile();
 
   const units = [
     { v: t.days, l: config.labelDays || "Days" },
@@ -517,16 +518,18 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   if (config.digitFontSize) sizingStyle['--digit-font-size'] = `${config.digitFontSize}px`;
   if (config.labelFontSize) sizingStyle['--label-font-size'] = `${config.labelFontSize}px`;
   if (config.separatorFontSize) sizingStyle['--separator-font-size'] = `${config.separatorFontSize}px`;
-  if (config.counterWidth) sizingStyle.width = `${config.counterWidth}px`;
-  if (config.counterHeight) {
+  // On mobile: cap width to viewport (no fixed width). On desktop: respect counterWidth.
+  if (config.counterWidth && !isMobile) sizingStyle.width = `${config.counterWidth}px`;
+  if (config.counterHeight && !isMobile) {
     sizingStyle.height = `${config.counterHeight}px`;
     sizingStyle.display = 'flex';
     sizingStyle.alignItems = 'center';
     sizingStyle.justifyContent = 'center';
   }
-  // Build combined transform from offset and scale
+  // Build combined transform from offset and scale.
+  // Position offsets (offsetX/offsetY and per-element offsets) only apply on desktop.
   const transforms: string[] = [];
-  if (config.offsetX || config.offsetY) {
+  if (!isMobile && (config.offsetX || config.offsetY)) {
     transforms.push(`translate(${config.offsetX || 0}px, ${config.offsetY || 0}px)`);
   }
   if (config.overallScale && config.overallScale !== 1) {
@@ -536,43 +539,48 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
     sizingStyle.transform = transforms.join(' ');
     sizingStyle.transformOrigin = 'center center';
   }
-  // Element offsets as CSS variables
-  const eo = config.elementOffsets || {};
-  for (const [key, val] of Object.entries(eo)) {
-    if (val?.x) sizingStyle[`--el-${key}-x`] = `${val.x}px`;
-    if (val?.y) sizingStyle[`--el-${key}-y`] = `${val.y}px`;
+  // Element offsets as CSS variables (desktop only)
+  if (!isMobile) {
+    const eo = config.elementOffsets || {};
+    for (const [key, val] of Object.entries(eo)) {
+      if (val?.x) sizingStyle[`--el-${key}-x`] = `${val.x}px`;
+      if (val?.y) sizingStyle[`--el-${key}-y`] = `${val.y}px`;
+    }
   }
 
   if (StyledRenderer) {
     return (
-      <div style={sizingStyle}>
-        <StyledRenderer
-          days={t.days}
-          hours={t.hours}
-          minutes={t.minutes}
-          seconds={t.seconds}
-          headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
-          eventTitle={t.title}
-          eventDate={t.fullDate}
-          iconColor={config.iconColor}
-          icon={Icon}
-          labelDays={config.labelDays || "Days"}
-          labelHours={config.labelHours || "Hours"}
-          labelMinutes={config.labelMinutes || "Minutes"}
-          labelSeconds={config.labelSeconds || "Seconds"}
-          showHeader={config.showHeader !== false}
-          showTitle={config.showTitle !== false}
-          showDate={config.showDate !== false}
-          progressPercent={t.progressPercent}
-        />
-      </div>
+      <MobileFitWrapper>
+        <div style={sizingStyle}>
+          <StyledRenderer
+            days={t.days}
+            hours={t.hours}
+            minutes={t.minutes}
+            seconds={t.seconds}
+            headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+            eventTitle={t.title}
+            eventDate={t.fullDate}
+            iconColor={config.iconColor}
+            icon={Icon}
+            labelDays={config.labelDays || "Days"}
+            labelHours={config.labelHours || "Hours"}
+            labelMinutes={config.labelMinutes || "Minutes"}
+            labelSeconds={config.labelSeconds || "Seconds"}
+            showHeader={config.showHeader !== false}
+            showTitle={config.showTitle !== false}
+            showDate={config.showDate !== false}
+            progressPercent={t.progressPercent}
+          />
+        </div>
+      </MobileFitWrapper>
     );
   }
 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <div style={{ overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' as const, ...sizingStyle, width: sizingStyle.width || '100%' }}>
+    <MobileFitWrapper>
+      <div style={{ overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' as const, ...sizingStyle, width: sizingStyle.width || '100%' }}>
       <div
         className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} text-center`}
         style={{
