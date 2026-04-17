@@ -450,17 +450,23 @@ const Index = () => {
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
   // Persist countdownConfig to localStorage and WP database whenever it changes
   useEffect(() => {
+    // DEMO MODE: persist only to sessionStorage; never touch localStorage or WP
+    if (isDemo) {
+      if (countdownConfigLoaded) saveDemoConfig(countdownConfig);
+      return;
+    }
+
     try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
-    
+
     // Only save to WP after initial load from server is complete
     if (!countdownConfigLoaded) return;
-    
+
     const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const uParams = new URLSearchParams(window.location.search);
     const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
     const nc = wpData?.nonce || uParams.get('nonce') || '';
     const isAdm = !!wpData?.isAdmin || uParams.get('admin') === 'true';
-    
+
     if (ajUrl && nc && isAdm) {
       const form = new FormData();
       form.append('action', 'nxevtcd_action');
@@ -470,18 +476,18 @@ const Index = () => {
       form.append('countdown_config', JSON.stringify(countdownConfig));
       fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form }).catch(() => {});
     }
-  }, [countdownConfig, countdownConfigLoaded]);
+  }, [countdownConfig, countdownConfigLoaded, isDemo]);
 
 
-  // Check if we should show admin interface (dev preview or WordPress admin)
+  // Check if we should show admin interface (dev preview, WordPress admin, or demo mode)
   const urlParams = new URLSearchParams(window.location.search);
   const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
   const isWordPressAdmin = !!wp?.isAdmin || urlParams.get('admin') === 'true';
   const hostname = window.location.hostname;
   const isDevPreview = hostname.includes('lovable.app') || hostname.includes('lovableproject.com') || hostname === 'localhost';
 
-  // Show admin interface only in WordPress admin area or dev preview
-  const showAdmin = isDevPreview || isWordPressAdmin;
+  // Show admin interface in WordPress admin area, dev preview, or demo mode
+  const showAdmin = isDevPreview || isWordPressAdmin || isDemo;
 
   // DEV: Show showcase for gallery not found designs
   const showGalleryNotFoundShowcase = urlParams.get('showcase') === 'gallery-not-found';
