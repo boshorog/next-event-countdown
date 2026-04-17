@@ -372,18 +372,38 @@ const Index = () => {
   }, [galleryState.currentGalleryId]);
 
   // Load countdown config from WP database (works for both admin and frontend shortcode)
+  // IMPORTANT: To avoid a "flash of default style" on the frontend shortcode, we MUST wait
+  // until galleries have actually loaded (currentGalleryId is set) before considering the
+  // config load complete. Otherwise the first fetch can run with a placeholder gallery_id
+  // (e.g. URL slug or 'default') that doesn't match any saved option, returns null, and we
+  // render the widget with defaultCountdownConfig (counterStyle: 'default') for a moment
+  // until the second fetch with the real gallery_id arrives. That flash sometimes "sticks"
+  // visually until the user refreshes, especially with cached/slow responses.
   useEffect(() => {
     const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const uParams = new URLSearchParams(window.location.search);
     const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
     const nc = wpData?.nonce || uParams.get('nonce') || '';
     const reqName = uParams.get('name') || '';
-    const configGalleryId = galleryState.currentGalleryId || reqName || 'default';
 
     if (!ajUrl || !nc) {
       setCountdownConfigLoaded(true);
       return;
     }
+
+    // Wait for galleries to load before fetching config. This guarantees we use the real
+    // gallery_id (matching the saved nxevtcd_countdown_config_<id> option) instead of a
+    // best-guess placeholder. Keep countdownConfigLoaded=false in the meantime so the
+    // skeleton stays visible and we never render the default-style fallback widget.
+    if (!galleryState.currentGalleryId) {
+      // Edge case: no gallery name in URL AND no galleries fetched yet — keep waiting.
+      // The galleries fetch effect will eventually set currentGalleryId (or an empty
+      // state), and this effect will re-run.
+      return;
+    }
+
+    const configGalleryId = galleryState.currentGalleryId;
+    let cancelled = false;
 
     const form = new FormData();
     form.append('action', 'nxevtcd_action');
@@ -394,6 +414,7 @@ const Index = () => {
     fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form })
       .then((res) => res.json())
       .then((data) => {
+        if (cancelled) return;
         if (data?.success && data?.data?.countdown_config) {
           const loaded = { ...defaultCountdownConfig, ...data.data.countdown_config };
           // Clean up past special events and expired recurring schedules on load
@@ -420,8 +441,11 @@ const Index = () => {
         setCountdownConfigLoaded(true);
       })
       .catch(() => {
+        if (cancelled) return;
         setCountdownConfigLoaded(true);
       });
+
+    return () => { cancelled = true; };
   }, [galleryState.currentGalleryId]);
 
   const copyShortcode = async () => {
