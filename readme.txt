@@ -4,7 +4,7 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 6.9
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -96,6 +96,13 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 3. Live countdown widget on the front end.
 
 == Changelog ==
+
+= 1.2.3 =
+* New: Live Demo shortcode `[nxevtcd_demo]` – embed an interactive sandbox of the plugin admin on marketing pages (changes are session-only and reset on tab close)
+* Improved: Mobile auto-fit – counter now scales down to fit any phone screen regardless of size settings; position offsets and fixed width now apply on desktop only
+* Improved: Update notice – iframe-aware AJAX update with 12s safety timeout, falls back to the WordPress Updates page if anything stalls
+* Fixed: Frontend race condition that occasionally rendered the default Classic style on first load before the saved Pro style was applied
+* Fixed: Pro users now land on the dedicated WP Updates page (update-core.php) instead of the plugins list when clicking Update
 
 = 1.2.2 =
 * Updated support and feature request links to the WordPress.org plugin support forum
