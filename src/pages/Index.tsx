@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { isDevPreview } from '@/config/pluginIdentity';
 import { isProBuild } from '@/config/buildFlags';
+import { isDemoMode, saveDemoConfig, loadDemoConfig } from '@/config/demoMode';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -65,8 +66,14 @@ const initialPDFs: GalleryItem[] = [];
 
 const Index = () => {
   // IMPORTANT: useLicense must be called unconditionally at the top
-  const license = useLicense();
-  
+  const rawLicense = useLicense();
+  const isDemo = isDemoMode();
+
+  // In demo mode, force Free version (no Pro features)
+  const license = isDemo
+    ? { ...rawLicense, isPro: false, status: 'free' as const, checked: true, isDevMode: false }
+    : rawLicense;
+
   const [galleryState, setGalleryState] = useState<GalleryState>({
     galleries: [],
     currentGalleryId: ''
