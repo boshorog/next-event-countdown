@@ -159,9 +159,9 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                 </thead>
                 <tbody>
                   <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
-                  <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
-                  <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
+                  <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
                   <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                   <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
@@ -377,9 +377,9 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                     </thead>
                     <tbody>
                       <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
-                      <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
+                      <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
                       <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
-                      <FeatureRow feature="Multiple Locations / Venues within the same website" free={false} pro={true} />
+                      <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
                       <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                       <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
                       <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
@@ -464,7 +464,7 @@ const PluginDocumentation: React.FC<PluginDocumentationProps> = ({ className, sh
                     <h4 className="font-medium mb-2">Useful Links</h4>
                     <ul className="space-y-2">
                       <li>
-                        <a href="https://kindpixels.com/plugins/kindpixels-next-event-countdown/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a href="https://kindpixels.com/plugins/next-event-countdown/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                           Plugin Website →
                         </a>
                       </li>

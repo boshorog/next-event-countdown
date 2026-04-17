@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "lastUpdated": "2026-03-05",
+  "version": "1.0.1",
+  "lastUpdated": "2026-04-17",
   "title": "Free vs Pro Comparison",
   "features": [
     {
@@ -13,7 +13,7 @@
       "id": "countdown-styles",
       "feature": "Countdown Styles",
       "free": "1",
-      "pro": "5+"
+      "pro": "Multiple"
     },
     {
       "id": "events",
@@ -41,7 +41,7 @@
     },
     {
       "id": "date-formats",
-      "feature": "Multiple Date Formats",
+      "feature": "Multiple Date Formats & Timezone Support",
       "free": true,
       "pro": true
     },
