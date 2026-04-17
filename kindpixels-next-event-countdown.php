@@ -123,6 +123,7 @@ class NxEvtCd_Plugin {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_shortcode('nxevtcd_countdown', array($this, 'display_countdown_shortcode'));
+        add_shortcode('nxevtcd_demo', array($this, 'display_demo_shortcode'));
         
         // AJAX handlers
         add_action('wp_ajax_nxevtcd_action', array($this, 'handle_nxevtcd_ajax'));
