@@ -142,7 +142,8 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     }
   };
 
-  // Don't show if loading, dismissed, no latest version, or current is up-to-date
+  // Don't show in demo mode, while loading, dismissed, no latest version, or up-to-date
+  if (isDemoMode()) return null;
   if (loading || dismissed || !latestVersion) return null;
   if (compareVersions(currentVersion, latestVersion) >= 0) return null;
 
