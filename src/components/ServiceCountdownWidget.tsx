@@ -660,6 +660,7 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
 
       </div>
     </div>
+    </MobileFitWrapper>
   );
 };
 
