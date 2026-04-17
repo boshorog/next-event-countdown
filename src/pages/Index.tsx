@@ -92,9 +92,26 @@ const Index = () => {
   const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
+    // DEMO MODE: skip all WP/localStorage. Load from sessionStorage or use defaults.
+    if (isDemo) {
+      const demoGallery: Gallery = {
+        id: 'demo',
+        name: 'Demo Counter',
+        items: [] as GalleryItem[],
+        createdAt: new Date().toISOString(),
+      };
+      setGalleryState({ galleries: [demoGallery], currentGalleryId: 'demo' });
+
+      const savedConfig = loadDemoConfig();
+      if (savedConfig) {
+        setCountdownConfig({ ...defaultCountdownConfig, ...savedConfig });
+      }
+      setCountdownConfigLoaded(true);
+      return;
+    }
+
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
-    
     // Debug: Reset galleries if ?reset_galleries=1 is present
     if (urlParams.get('reset_galleries') === '1') {
       console.log('[Next Event Countdown] Resetting galleries...');
