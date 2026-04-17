@@ -9,7 +9,7 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A beautiful countdown widget that automatically shows the next upcoming event, including recurring and one-time events.
+A practical countdown widget that automatically shows the next upcoming event, including recurring and one-time events.
 
 == Description ==
 
