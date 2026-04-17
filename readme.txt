@@ -15,20 +15,20 @@ A beautiful countdown widget that automatically shows the next upcoming event, i
 
 **Stop manually updating countdown timers!** Next Event Countdown automatically cycles through your events and always displays the one coming up next. Set it once, and it runs forever.
 
-Whether you run a gym, a church, a school, a co-working space, a community center, or a weekly meetup — if you have events that repeat, this plugin keeps your visitors informed without any manual work.
+Whether you run a gym, a church, a school, a co-working space, a community center, or a weekly meetup – if you have events that repeat, this plugin keeps your visitors informed without any manual work.
 
 = Real-World Examples =
 
-* **Fitness studios** — show the next class: yoga at 6 AM → spinning at noon → HIIT at 5 PM.
-* **Churches** — Sunday service ends → midweek Bible study → Friday youth group → back to Sunday.
-* **Schools & universities** — next open day, parent-teacher conference, or semester start.
-* **Restaurants & bars** — happy hour countdown, trivia night, live music events.
-* **Co-working spaces** — networking events, workshops, community lunches.
-* **Online communities** — weekly webinars, AMAs, or live streams.
+* **Fitness studios** – show the next class: yoga at 6 AM → spinning at noon → HIIT at 5 PM.
+* **Churches** – Sunday service ends → midweek Bible study → Friday youth group → back to Sunday.
+* **Schools & universities** – next open day, parent-teacher conference, or semester start.
+* **Restaurants & bars** – happy hour countdown, trivia night, live music events.
+* **Co-working spaces** – networking events, workshops, community lunches.
+* **Online communities** – weekly webinars, AMAs, or live streams.
 
 = Why Next Event Countdown? =
 
-Most countdown plugins make you pick a single date. When the event passes, the timer hits zero and stays there. Next Event Countdown is different — it knows your full schedule and always counts down to whatever's next.
+Most countdown plugins make you pick a single date. When the event passes, the timer hits zero and stays there. Next Event Countdown is different – it knows your full schedule and always counts down to whatever's next.
 
 No manual updates. No expired timers. Just a clean, live countdown that's always right.
 
@@ -36,7 +36,7 @@ No manual updates. No expired timers. Just a clean, live countdown that's always
 
 * **Recurring Events** – Define one-time or weekly recurring events. The widget always shows the nearest one.
 * **Live Ticking** – Real-time countdown updates every second.
-* **Fully Customizable** – Colors, labels, fonts, and icons — all configurable from the admin panel.
+* **Fully Customizable** – Colors, labels, fonts, and icons – all configurable from the admin panel.
 * **Responsive** – Looks great on desktop, tablet, and mobile.
 * **Lightweight** – No bloat, no external dependencies. A single optimized bundle that won't slow your site down.
 * **Shortcode Embed** – Drop `[nxevtcd_countdown name="my-counter"]` anywhere.
@@ -71,11 +71,11 @@ For a full comparison, visit [kindpixels.com/plugins/next-event-countdown](https
 
 = How does it know which event to show? =
 
-The plugin compares all your events against the current date and time, and automatically displays the one happening soonest. When that event passes, it moves to the next one — no action required.
+The plugin compares all your events against the current date and time, and automatically displays the one happening soonest. When that event passes, it moves to the next one – no action required.
 
 = Can I have multiple countdowns on different pages? =
 
-Yes, with the Pro version. Each counter gets its own shortcode, events, and style — allowing you to show different countdowns for different pages or locations. The free version supports one counter.
+Yes, with the Pro version. Each counter gets its own shortcode, events, and style – allowing you to show different countdowns for different pages or locations. The free version supports one counter.
 
 = Does it work with page builders? =
 
@@ -91,7 +91,7 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Screenshots ==
 
-1. Admin dashboard — manage events and customize your counter.
+1. Admin dashboard – manage events and customize your counter.
 2. Multiple countdown styles available in Pro.
 3. Live countdown widget on the front end.
 
@@ -102,18 +102,18 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 * Bug fixes and performance improvements
 
 = 1.2.0 =
-* New feature: ICS Calendar Feed import (Pro) — sync events from Google Calendar, Outlook, Apple Calendar, etc.
+* New feature: ICS Calendar Feed import (Pro) – sync events from Google Calendar, Outlook, Apple Calendar, etc.
 * Added "Make Recurring" action for imported events
 * Multiple counter styles and sizing improvements
 * Bug fixes
 
 = 1.1.9 =
 * Fixed position offset not applying when counter is embedded via shortcode
-* Fixed flash of default counter style/events on frontend load — now shows a loading placeholder until saved config is ready
+* Fixed flash of default counter style/events on frontend load – now shows a loading placeholder until saved config is ready
 * Bug fixes
 
 = 1.1.8 =
-* Removed server-side counter truncation — free version no longer restricts saving multiple counters
+* Removed server-side counter truncation – free version no longer restricts saving multiple counters
 * Added external services disclosure (Freemius, WordPress.org API) per WordPress.org guidelines
 * Bug fixes
 
@@ -124,29 +124,29 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 = 1.1.6 =
 * Fixed several WordPress Directory compliance issues
-* Added Header / Digits Balance slider — shift visual emphasis between the header area and countdown digits
+* Added Header / Digits Balance slider – shift visual emphasis between the header area and countdown digits
 
 = 1.1.5 =
 * Fixed Freemius wp.org compliance (is_premium set to false for free version)
 * Replaced all inline script/style tags with proper wp_enqueue and wp_add_inline_script/style
-* Improved mobile responsiveness — countdown digits now scale fluidly and no longer clip on small screens
+* Improved mobile responsiveness – countdown digits now scale fluidly and no longer clip on small screens
 * Bug fixes
 
 = 1.1.3 =
-* Improved mobile responsiveness — countdown no longer clips on small screens
+* Improved mobile responsiveness – countdown no longer clips on small screens
 * Fixed counter size setting persistence in frontend
 * Removed extra blank space below the countdown widget
 * Improved time input fields with validation highlighting
 * Bug fixes
 
 = 1.1.2 =
-* Improved update resilience — events and settings are fully preserved during plugin updates
+* Improved update resilience – events and settings are fully preserved during plugin updates
 * Bug fixes
 
 = 1.1.1 =
-* Fixed shortcode frontend rendering — countdown widget now displays correctly on pages and posts
+* Fixed shortcode frontend rendering – countdown widget now displays correctly on pages and posts
 * Improved default style alignment consistency between admin preview and frontend
-* Added "Live Event Countdown" toggle — show remaining event duration instead of 00:00:00
+* Added "Live Event Countdown" toggle – show remaining event duration instead of 00:00:00
 * Bug fixes and visual refinements
 
 = 1.1.0 =
@@ -200,7 +200,7 @@ Each counter has a unique shortcode. Copy it from the admin panel and paste it i
 
 `[nxevtcd_countdown name="my-counter"]`
 
-All display settings are configured in the plugin dashboard — no shortcode parameters needed beyond the name.
+All display settings are configured in the plugin dashboard – no shortcode parameters needed beyond the name.
 
 = Source Code =
 

@@ -2,8 +2,8 @@
 /**
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
- * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.2.1
+ * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event – perfect for any organization with a recurring schedule.
+ * Version: 1.2.2
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.2.1' );
+define( 'NXEVTCD_VERSION', '1.2.2' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -146,7 +146,7 @@ class NxEvtCd_Plugin {
      * Add admin menu page
      */
     public function add_admin_menu() {
-        // Custom SVG icon — countdown colon logo
+        // Custom SVG icon – countdown colon logo
         $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2731.33 2040.46"><path fill="black" d="M870.34 1020.23c0,-647.46 -364.37,-1020.23 -863.27,-1020.23 -2.37,0 -4.71,0.07 -7.07,0.08l0 454.07c2.35,-0.06 4.7,-0.1 7.07,-0.1 176.58,0 305.51,154.16 305.51,566.17 0,412.02 -128.93,566.17 -305.51,566.17 -2.37,0 -4.72,-0.04 -7.07,-0.1l0 454.07c2.36,0.02 4.7,0.08 7.07,0.08 498.9,0 863.27,-372.78 863.27,-1020.23zm990.65 0c0,647.46 364.37,1020.23 866.08,1020.23 1.43,0 2.84,-0.05 4.26,-0.05l0 -454.07c-1.42,0.02 -2.83,0.06 -4.26,0.06 -179.38,0 -308.31,-154.16 -308.31,-566.17 0,-412.02 128.93,-566.17 308.31,-566.17 1.43,0 2.84,0.04 4.26,0.06l0 -454.07c-1.43,-0 -2.83,-0.05 -4.26,-0.05 -501.71,0 -866.08,372.78 -866.08,1020.23zm-495.32 231.24c-76.61,0 -141.08,24.76 -193.4,74.28 -52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.28 -193.39,-74.28zm-193.4 -931.94c-52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.27 -193.39,-74.27 -76.61,0 -141.08,24.76 -193.4,74.27z"/></svg>';
         $icon_base64 = 'data:image/svg+xml;base64,' . base64_encode($icon_svg);
         
@@ -597,7 +597,7 @@ class NxEvtCd_Plugin {
         
         // IMPORTANT: Only store the version number. Do NOT delete or reset
         // nxevtcd_countdown_config_*, nxevtcd_settings, or nxevtcd_galleries
-        // options here — they must survive plugin updates.
+        // options here – they must survive plugin updates.
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
         // Set activation redirect (only on fresh install, not on update)
@@ -611,7 +611,7 @@ class NxEvtCd_Plugin {
      */
     public static function deactivate() {
         // Only remove transient metadata. Do NOT delete saved events,
-        // settings, or countdown configs — user may reactivate the plugin.
+        // settings, or countdown configs – user may reactivate the plugin.
         delete_option('nxevtcd_version');
     }
     
@@ -1045,7 +1045,7 @@ class NxEvtCd_Plugin {
 
     /**
      * Handle saving counters list.
-     * No feature restrictions — unlimited counters for all users.
+     * No feature restrictions – unlimited counters for all users.
      */
     /**
      * Check if this is a Pro build by looking for the .pro-build marker file.
