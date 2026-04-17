@@ -568,8 +568,44 @@ class NxEvtCd_Plugin {
     }
 
     /**
-     * Run upgrade routines on plugin updates.
+     * Demo shortcode – renders the admin UI in demo mode for potential customers.
+     * All changes are temporary (session-scoped), no data is sent to the server.
+     * Usage: [nxevtcd_demo]
      */
+    public function display_demo_shortcode($atts) {
+        $index_url = plugins_url('dist/index.html', __FILE__);
+        $frame_token = function_exists('wp_generate_uuid4') ? wp_generate_uuid4() : uniqid('nxevtcd_', true);
+
+        $src = add_query_arg(array(
+            'demo'       => 'true',
+            'admin'      => 'true',
+            'frameToken' => $frame_token,
+        ), $index_url);
+
+        $iframe_id = 'nxevtcd-demo-' . uniqid();
+        $html  = '<div class="nxevtcd-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
+        $html .= '<iframe id="' . esc_attr($iframe_id) . '" src="' . esc_url($src) . '" scrolling="no" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-downloads" style="height:1200px;min-height:800px;overflow:hidden;width:100%;border:0;display:block;"></iframe>';
+        $html .= '</div>';
+
+        // Auto-resize listener (token-scoped to this iframe instance)
+        wp_enqueue_script('nxevtcd-frontend');
+        $resize_js = '(function(){
+          var iframe = document.getElementById("' . esc_js($iframe_id) . '");
+          if(!iframe) return;
+          var token = "' . esc_js($frame_token) . '";
+          window.addEventListener("message", function(e){
+            if(!e.data || typeof e.data !== "object") return;
+            if(e.data.token && e.data.token !== token) return;
+            if(e.data.type === "nxevtcd:height" && typeof e.data.height === "number"){
+              var h = parseInt(e.data.height, 10);
+              if(h > 100) iframe.style.height = h + "px";
+            }
+          }, false);
+        })();';
+        wp_add_inline_script('nxevtcd-frontend', $resize_js);
+
+        return $html;
+    }
     private function maybe_upgrade() {
         $stored_version = get_option('nxevtcd_version', '');
         if (!empty($stored_version) && $stored_version === NXEVTCD_VERSION) {
