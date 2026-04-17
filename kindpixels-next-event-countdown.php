@@ -606,6 +606,10 @@ class NxEvtCd_Plugin {
 
         return $html;
     }
+
+    /**
+     * Run upgrade routines on plugin updates.
+     */
     private function maybe_upgrade() {
         $stored_version = get_option('nxevtcd_version', '');
         if (!empty($stored_version) && $stored_version === NXEVTCD_VERSION) {
