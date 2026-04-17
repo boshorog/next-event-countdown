@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { X, Loader2 } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 import { STORAGE_KEYS, PLUGIN_SLUG } from '@/config/pluginIdentity';
+import { isDemoMode } from '@/config/demoMode';
 
 interface UpdateNoticeProps {
   currentVersion: string;
