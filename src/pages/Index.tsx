@@ -575,7 +575,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`${isDemo ? '' : 'min-h-screen'} bg-background`}>
       <div className="max-w-6xl mx-auto">
         {/* Logo Header */}
         <div className="px-6 pt-6 pb-6">
@@ -584,14 +584,21 @@ const Index = () => {
             <div className="flex items-baseline gap-2">
               <h1 className="text-2xl text-slate-800"><span className="font-bold">{(license.isPro || isProBuild()) ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
               <span className="text-xs text-slate-400">v{PLUGIN_VERSION}</span>
+              {isDemo && (
+                <span className="ml-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 rounded-full">
+                  Demo
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Update Notice - shows when new version available */}
-        <div className="px-6">
-          <UpdateNotice currentVersion={PLUGIN_VERSION} />
-        </div>
+        {/* Update Notice - hidden in demo mode */}
+        {!isDemo && (
+          <div className="px-6">
+            <UpdateNotice currentVersion={PLUGIN_VERSION} />
+          </div>
+        )}
 
         {/* Pro Welcome Message - shows after license activation */}
         {license.isPro && <ProWelcome className="mx-6 mb-6" />}
