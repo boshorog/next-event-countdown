@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Star, Music, Trophy } from "lucide-react";
 import { STYLE_RENDERERS } from "./counterStyles/renderers";
+import MobileFitWrapper from "./MobileFitWrapper";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // ─── Recurrence Types ───
 export type RecurrenceType = "weekly" | "biweekly" | "monthly-dow" | "monthly-date" | "daily";
