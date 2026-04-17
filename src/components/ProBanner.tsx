@@ -13,14 +13,14 @@ const FeatureRow = ({ feature, free, pro }: { feature: string; free: boolean | s
     <td className="py-3 px-4 text-sm">{feature}</td>
     <td className="py-3 px-4 text-center">
       {typeof free === 'boolean' ? (
-        free ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">—</span>
+        free ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">–</span>
       ) : (
         <span className="text-sm text-muted-foreground">{free}</span>
       )}
     </td>
     <td className="py-3 px-4 text-center">
       {typeof pro === 'boolean' ? (
-        pro ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">—</span>
+        pro ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">–</span>
       ) : (
         <span className="text-sm font-medium text-primary">{pro}</span>
       )}
@@ -98,7 +98,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
             </div>
             
             <p className="text-sm text-muted-foreground mb-4">
-              Set it once and it runs forever — add multiple counters with premium styles, import events from Google Calendar or Outlook, and manage different schedules across your site.
+              Set it once and it runs forever – add multiple counters with premium styles, import events from Google Calendar or Outlook, and manage different schedules across your site.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -155,12 +155,12 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                 </thead>
                 <tbody>
                   <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
-                  <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
                   <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
-                  <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
+                  <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />
                 </tbody>
               </table>
