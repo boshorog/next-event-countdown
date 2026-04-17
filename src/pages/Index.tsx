@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { isDevPreview } from '@/config/pluginIdentity';
 import { isProBuild } from '@/config/buildFlags';
+import { isDemoMode, saveDemoConfig, loadDemoConfig } from '@/config/demoMode';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -65,8 +66,14 @@ const initialPDFs: GalleryItem[] = [];
 
 const Index = () => {
   // IMPORTANT: useLicense must be called unconditionally at the top
-  const license = useLicense();
-  
+  const rawLicense = useLicense();
+  const isDemo = isDemoMode();
+
+  // In demo mode, force Free version (no Pro features)
+  const license = isDemo
+    ? { ...rawLicense, isPro: false, status: 'free' as const, checked: true, isDevMode: false }
+    : rawLicense;
+
   const [galleryState, setGalleryState] = useState<GalleryState>({
     galleries: [],
     currentGalleryId: ''
@@ -85,9 +92,26 @@ const Index = () => {
   const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
+    // DEMO MODE: skip all WP/localStorage. Load from sessionStorage or use defaults.
+    if (isDemo) {
+      const demoGallery: Gallery = {
+        id: 'demo',
+        name: 'Demo Counter',
+        items: [] as GalleryItem[],
+        createdAt: new Date().toISOString(),
+      };
+      setGalleryState({ galleries: [demoGallery], currentGalleryId: 'demo' });
+
+      const savedConfig = loadDemoConfig();
+      if (savedConfig) {
+        setCountdownConfig({ ...defaultCountdownConfig, ...savedConfig });
+      }
+      setCountdownConfigLoaded(true);
+      return;
+    }
+
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
-    
     // Debug: Reset galleries if ?reset_galleries=1 is present
     if (urlParams.get('reset_galleries') === '1') {
       console.log('[Next Event Countdown] Resetting galleries...');
@@ -426,17 +450,23 @@ const Index = () => {
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
   // Persist countdownConfig to localStorage and WP database whenever it changes
   useEffect(() => {
+    // DEMO MODE: persist only to sessionStorage; never touch localStorage or WP
+    if (isDemo) {
+      if (countdownConfigLoaded) saveDemoConfig(countdownConfig);
+      return;
+    }
+
     try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
-    
+
     // Only save to WP after initial load from server is complete
     if (!countdownConfigLoaded) return;
-    
+
     const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const uParams = new URLSearchParams(window.location.search);
     const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
     const nc = wpData?.nonce || uParams.get('nonce') || '';
     const isAdm = !!wpData?.isAdmin || uParams.get('admin') === 'true';
-    
+
     if (ajUrl && nc && isAdm) {
       const form = new FormData();
       form.append('action', 'nxevtcd_action');
@@ -446,18 +476,18 @@ const Index = () => {
       form.append('countdown_config', JSON.stringify(countdownConfig));
       fetch(ajUrl, { method: 'POST', credentials: 'same-origin', body: form }).catch(() => {});
     }
-  }, [countdownConfig, countdownConfigLoaded]);
+  }, [countdownConfig, countdownConfigLoaded, isDemo]);
 
 
-  // Check if we should show admin interface (dev preview or WordPress admin)
+  // Check if we should show admin interface (dev preview, WordPress admin, or demo mode)
   const urlParams = new URLSearchParams(window.location.search);
   const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
   const isWordPressAdmin = !!wp?.isAdmin || urlParams.get('admin') === 'true';
   const hostname = window.location.hostname;
   const isDevPreview = hostname.includes('lovable.app') || hostname.includes('lovableproject.com') || hostname === 'localhost';
 
-  // Show admin interface only in WordPress admin area or dev preview
-  const showAdmin = isDevPreview || isWordPressAdmin;
+  // Show admin interface in WordPress admin area, dev preview, or demo mode
+  const showAdmin = isDevPreview || isWordPressAdmin || isDemo;
 
   // DEV: Show showcase for gallery not found designs
   const showGalleryNotFoundShowcase = urlParams.get('showcase') === 'gallery-not-found';
@@ -545,7 +575,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`${isDemo ? '' : 'min-h-screen'} bg-background`}>
       <div className="max-w-6xl mx-auto">
         {/* Logo Header */}
         <div className="px-6 pt-6 pb-6">
@@ -554,14 +584,21 @@ const Index = () => {
             <div className="flex items-baseline gap-2">
               <h1 className="text-2xl text-slate-800"><span className="font-bold">{(license.isPro || isProBuild()) ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
               <span className="text-xs text-slate-400">v{PLUGIN_VERSION}</span>
+              {isDemo && (
+                <span className="ml-1 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide bg-amber-100 text-amber-700 rounded-full">
+                  Demo
+                </span>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Update Notice - shows when new version available */}
-        <div className="px-6">
-          <UpdateNotice currentVersion={PLUGIN_VERSION} />
-        </div>
+        {/* Update Notice - hidden in demo mode */}
+        {!isDemo && (
+          <div className="px-6">
+            <UpdateNotice currentVersion={PLUGIN_VERSION} />
+          </div>
+        )}
 
         {/* Pro Welcome Message - shows after license activation */}
         {license.isPro && <ProWelcome className="mx-6 mb-6" />}
@@ -699,57 +736,59 @@ const Index = () => {
           </div>
         </Tabs>
 
-        {/* Footer */}
-        <div className="px-6 mt-8">
-          <div className="border-t border-slate-200 pt-4 pb-6">
-            <div className="flex items-center justify-between">
-              {/* Left: Support Links */}
-              <div className="flex items-center gap-6">
+        {/* Footer - hidden in demo mode */}
+        {!isDemo && (
+          <div className="px-6 mt-8">
+            <div className="border-t border-slate-200 pt-4 pb-6">
+              <div className="flex items-center justify-between">
+                {/* Left: Support Links */}
+                <div className="flex items-center gap-6">
+                  <a 
+                    href="https://wordpress.org/support/plugin/kindpixels-next-event-countdown/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    Support
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <a 
+                    href="https://wordpress.org/support/plugin/kindpixels-next-event-countdown/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    Request a Feature
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <a 
+                    href="https://wordpress.org/plugins/kindpixels-next-event-countdown/#reviews" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
+                  >
+                    Rate Us ★★★★★
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                </div>
+                
+                {/* Right: Kind Pixels Logo */}
                 <a 
-                  href="https://wordpress.org/support/plugin/kindpixels-next-event-countdown/" 
+                  href="https://kindpixels.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
+                  className="kp-footer-logo text-slate-600"
                 >
-                  Support
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-                <a 
-                  href="https://wordpress.org/support/plugin/kindpixels-next-event-countdown/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
-                >
-                  Request a Feature
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-                <a 
-                  href="https://wordpress.org/plugins/kindpixels-next-event-countdown/#reviews" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-slate-500 hover:text-primary transition-colors flex items-center gap-1"
-                >
-                  Rate Us ★★★★★
-                  <ExternalLink className="w-3 h-3" />
+                  <KindPixelsLogo className="h-5 w-auto" />
                 </a>
               </div>
-              
-              {/* Right: Kind Pixels Logo */}
-              <a 
-                href="https://kindpixels.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="kp-footer-logo text-slate-600"
-              >
-                <KindPixelsLogo className="h-5 w-auto" />
-              </a>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Dev Mode Selector - only in dev preview, excluded from production builds */}
-      {IS_DEV_PREVIEW && DevLicenseSelector && (
+      {/* Dev Mode Selector - only in dev preview, excluded from production builds, hidden in demo */}
+      {IS_DEV_PREVIEW && !isDemo && DevLicenseSelector && (
         <Suspense fallback={null}>
           <DevLicenseSelector />
         </Suspense>
