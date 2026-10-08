@@ -174,6 +174,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Upgrade Notice ==
 
+= 1.2.4 =
+WordPress 7.0 compatibility and reliable Pro updates from the Plugins screen.
+
 = 1.1.0 =
 Multi-language support and improved settings organization.
 
