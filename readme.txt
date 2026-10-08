@@ -4,8 +4,8 @@ Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
 Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
-Tested up to: 6.9
-Stable tag: 1.1.5
+Tested up to: 7.0
+Stable tag: 1.2.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +98,28 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.2.4 =
+* Compatibility: Tested with WordPress 7.0
+* Fixed: Pro updates now appear on the Plugins screen
+* Improved: One-click update from inside the plugin forces a fresh update check and runs the upgrade directly
+
+= 1.2.3 =
+* New: Demo mode with a dedicated demo shortcode
+* Improved: Outside admin notices are hidden on the plugin screen
+* Improved: Counters automatically shrink to fit on mobile
+* Fixed: Pro counter styles occasionally loading as the default style
+
+= 1.2.2 =
+* Improved: Comparison tables, support links and typography
+
+= 1.2.1 =
+* New: Calendar Import (Pro) – import and sync events from ICS feeds (Google Calendar, Outlook, Apple Calendar, Microsoft 365)
+
+= 1.2.0 =
+* New: Loading Bar counter style (Pro)
+* New: "Make recurring" action for special events
+* Improved: Style refinements for Elegant Serif, Radial Progress and Bold Stack
+
 = 1.1.5 =
 * Fixed Freemius wp.org compliance (is_premium set to false for free version)
 * Replaced all inline script/style tags with proper wp_enqueue and wp_add_inline_script/style
@@ -151,6 +173,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.2.4 =
+WordPress 7.0 compatibility and reliable Pro updates from the Plugins screen.
 
 = 1.1.0 =
 Multi-language support and improved settings organization.

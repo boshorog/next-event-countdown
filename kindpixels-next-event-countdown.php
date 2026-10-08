@@ -3,14 +3,15 @@
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
  * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
- * Version: 1.1.5
+ * Version: 1.2.4
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: kindpixels-next-event-countdown
  * Requires at least: 5.8
- * Tested up to: 6.9
+ * Tested up to: 7.0
+ * Requires PHP: 7.4
  */
 // Prevent direct access
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,72 +24,96 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.1.5' );
+define( 'NXEVTCD_VERSION', '1.2.4' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
-
-    // Create a helper function for easy SDK access.
-
+    /**
+     * Get Freemius SDK instance.
+     *
+     * @return object Freemius SDK instance or stdClass if not available.
+     */
     function nxevtcd_fs() {
-
         global $nxevtcd_fs;
 
         if ( ! isset( $nxevtcd_fs ) ) {
+            $paths = array(
+                dirname( __FILE__ ) . '/freemius/start.php',
+                dirname( __FILE__ ) . '/vendor/freemius/start.php',
+            );
 
-            // Include Freemius SDK.
+            $sdk_loaded = false;
+            foreach ( $paths as $sdk_path ) {
+                if ( file_exists( $sdk_path ) ) {
+                    require_once $sdk_path;
+                    $sdk_loaded = true;
+                    break;
+                }
+            }
 
-            require_once dirname( __FILE__ ) . '/vendor/freemius/start.php';
+            if ( $sdk_loaded && function_exists( 'fs_dynamic_init' ) ) {
+                // Pro builds ship a dist/.pro-build marker AND a plugin header name containing "Pro".
+                // Both are required so a leaked marker can never unlock Pro in a WP.org package.
+                // Marking the build as premium lets Freemius deliver Pro updates on the Plugins screen.
+                $is_premium_build = file_exists( dirname( __FILE__ ) . '/dist/.pro-build' );
+                if ( $is_premium_build ) {
+                    try {
+                        if ( ! function_exists( 'get_file_data' ) ) {
+                            $plugin_php = ABSPATH . 'wp-admin/includes/plugin.php';
+                            if ( file_exists( $plugin_php ) ) {
+                                require_once $plugin_php;
+                            }
+                        }
+                        if ( function_exists( 'get_file_data' ) ) {
+                            $header      = get_file_data( __FILE__, array( 'Name' => 'Plugin Name' ), 'plugin' );
+                            $plugin_name = isset( $header['Name'] ) ? (string) $header['Name'] : '';
+                            if ( stripos( $plugin_name, 'pro' ) === false ) {
+                                $is_premium_build = false;
+                            }
+                        }
+                    } catch ( Throwable $e ) {
+                        $is_premium_build = false;
+                    }
+                }
 
-            $nxevtcd_fs = fs_dynamic_init( array(
+                $nxevtcd_fs = fs_dynamic_init( array(
+                    'id'                  => '25492',
+                    'slug'                => 'kindpixels-next-event-countdown',
+                    'premium_slug'        => 'kindpixels-next-event-countdown-pro',
+                    'premium_suffix'      => 'Pro',
+                    'type'                => 'plugin',
+                    'public_key'          => 'pk_4f0cdea63e183645cd7daa2d59bd9',
+                    'is_premium'          => $is_premium_build,
+                    'is_premium_only'     => false,
+                    'has_premium_version' => true,
+                    'is_org_compliant'    => ! $is_premium_build,
+                    'has_addons'          => false,
+                    'has_paid_plans'      => true,
+                    'menu'                => array(
+                        'slug'    => 'kindpixels-next-event-countdown-manager',
+                        'account' => $is_premium_build,
+                        'support' => false,
+                    ),
+                ) );
 
-                'id'                  => '25492',
-
-                'slug'                => 'kindpixels-next-event-countdown',
-
-                'type'                => 'plugin',
-
-                'public_key'          => 'pk_4f0cdea63e183645cd7daa2d59bd9',
-
-                'is_premium'          => false,
-
-                'premium_suffix'      => 'PRO',
-
-                'has_premium_version' => true,
-
-                'has_addons'          => false,
-
-                'has_paid_plans'      => true,
-
-                'is_org_compliant'    => true,
-
-                'menu'                => array(
-
-                    'slug'           => 'kindpixels-next-event-countdown-manager',
-
-                    'support'        => false,
-
-                ),
-
-            ) );
-
+                if ( is_object( $nxevtcd_fs ) && method_exists( $nxevtcd_fs, 'set_basename' ) ) {
+                    $nxevtcd_fs->set_basename( $is_premium_build, __FILE__ );
+                }
+            } else {
+                $nxevtcd_fs = new stdClass();
+            }
         }
 
         return $nxevtcd_fs;
-
     }
-
-    // Init Freemius.
 
     nxevtcd_fs();
 
-    // Signal that SDK was initiated.
+    if ( method_exists( nxevtcd_fs(), 'add_action' ) ) {
+        nxevtcd_fs()->add_action( 'after_license_change', 'nxevtcd_after_license_change' );
+    }
 
     do_action( 'nxevtcd_fs_loaded' );
-
-    // Hook license change redirect
-    nxevtcd_fs()->add_action( 'after_license_change', 'nxevtcd_after_license_change' );
-
 }
 
 /**
@@ -299,7 +324,7 @@ class NxEvtCd_Plugin {
             $update_plugins = get_site_transient( 'update_plugins' );
             if ( isset( $update_plugins->response[ $plugin_file ] ) ) {
                 $update_url = wp_nonce_url(
-                    self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . urlencode( $plugin_file ) ),
+                    self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $plugin_file ) ),
                     'upgrade-plugin_' . $plugin_file
                 );
             }
@@ -719,11 +744,59 @@ class NxEvtCd_Plugin {
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
                 break;
+            case 'prepare_update':
+                $this->handle_prepare_update();
+                break;
             default:
                 wp_send_json_error('Invalid action');
         }
     }
     
+    /**
+     * Force WordPress (and Freemius for Pro) to re-check for plugin updates and,
+     * if our update is now known, return a nonce-protected direct upgrade URL.
+     */
+    private function handle_prepare_update() {
+        if ( ! current_user_can( 'update_plugins' ) ) {
+            wp_send_json_error( array( 'message' => 'insufficient_permissions' ) );
+        }
+
+        $plugin_file = plugin_basename( __FILE__ );
+
+        if ( ! function_exists( 'wp_update_plugins' ) ) {
+            require_once ABSPATH . WPINC . '/update.php';
+        }
+        if ( ! function_exists( 'get_plugins' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
+        delete_site_transient( 'update_plugins' );
+        wp_clean_plugins_cache( false );
+        wp_update_plugins();
+
+        $update_plugins = get_site_transient( 'update_plugins' );
+        $known_version  = '';
+        $update_url     = '';
+
+        if ( isset( $update_plugins->response[ $plugin_file ] ) ) {
+            $entry         = $update_plugins->response[ $plugin_file ];
+            $known_version = isset( $entry->new_version ) ? (string) $entry->new_version : '';
+            $update_url    = wp_nonce_url(
+                self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $plugin_file ) ),
+                'upgrade-plugin_' . $plugin_file
+            );
+        } elseif ( isset( $update_plugins->no_update[ $plugin_file ] ) ) {
+            $entry         = $update_plugins->no_update[ $plugin_file ];
+            $known_version = isset( $entry->new_version ) ? (string) $entry->new_version : '';
+        }
+
+        wp_send_json_success( array(
+            'updateUrl'    => esc_url_raw( $update_url ),
+            'knownVersion' => $known_version,
+            'updatesPage'  => esc_url_raw( self_admin_url( 'update-core.php' ) ),
+        ) );
+    }
+
     /**
      * Handle Freemius license check
      */
