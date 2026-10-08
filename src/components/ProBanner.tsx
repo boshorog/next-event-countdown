@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Crown, ExternalLink, Palette, CalendarDays, Check, LayoutGrid } from 'lucide-react';
+import { Crown, ExternalLink, Zap, Unlock, Check, MapPin } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
 
 interface ProBannerProps {
@@ -13,14 +13,14 @@ const FeatureRow = ({ feature, free, pro }: { feature: string; free: boolean | s
     <td className="py-3 px-4 text-sm">{feature}</td>
     <td className="py-3 px-4 text-center">
       {typeof free === 'boolean' ? (
-        free ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">–</span>
+        free ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">—</span>
       ) : (
         <span className="text-sm text-muted-foreground">{free}</span>
       )}
     </td>
     <td className="py-3 px-4 text-center">
       {typeof pro === 'boolean' ? (
-        pro ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">–</span>
+        pro ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <span className="w-5 h-5 text-muted-foreground/50 mx-auto">—</span>
       ) : (
         <span className="text-sm font-medium text-primary">{pro}</span>
       )}
@@ -91,28 +91,28 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-bold text-foreground">Upgrade to Next Event Countdown</h3>
+              <h3 className="text-lg font-bold text-foreground">Upgrade to KindPixels Next Event Countdown Pro</h3>
               <div className="px-2 py-1 text-xs font-medium bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full">
                 Pro
               </div>
             </div>
             
             <p className="text-sm text-muted-foreground mb-4">
-              Set it once and it runs forever – add multiple counters with premium styles, import events from Google Calendar or Outlook, and manage different schedules across your site.
+              Manage countdowns for multiple locations with unique styles — perfect for churches, venues, and organizations with several campuses.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <LayoutGrid className="w-6 h-6 text-orange-500" />
+                <MapPin className="w-6 h-6 text-orange-500" />
                 <span className="text-lg font-semibold">Multiple Counters</span>
               </div>
               <div className="flex items-center gap-3">
-                <Palette className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">More Counter Styles</span>
+                <Zap className="w-6 h-6 text-orange-500" />
+                <span className="text-lg font-semibold">Counter Styles</span>
               </div>
               <div className="flex items-center gap-3">
-                <CalendarDays className="w-6 h-6 text-orange-500" />
-                <span className="text-lg font-semibold">Import Calendars</span>
+                <Unlock className="w-6 h-6 text-orange-500" />
+                <span className="text-lg font-semibold">Priority Support</span>
               </div>
             </div>
 
@@ -123,7 +123,7 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   className="w-full h-10 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium"
                   onClick={() => window.open('https://checkout.freemius.com/plugin/25492/plan/42185/', '_blank')}
                 >
-                  Get Next Event Countdown Pro
+                  Get KindPixels Next Event Countdown Pro
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -154,13 +154,12 @@ const ProBanner = ({ className = '', showComparison = false }: ProBannerProps) =
                   </tr>
                 </thead>
                 <tbody>
-                  <FeatureRow feature="Number of Counters" free="1" pro="Multiple" />
-                  <FeatureRow feature="Countdown Styles" free="1" pro="Multiple" />
+                  <FeatureRow feature="Number of Counters" free="1" pro="Unlimited" />
+                  <FeatureRow feature="Countdown Styles" free="1" pro="5+" />
                   <FeatureRow feature="Unlimited one-time and recurring events" free={true} pro={true} />
                   <FeatureRow feature="Multiple Locations / Venues" free={false} pro={true} />
-                  <FeatureRow feature="Import events from Google Calendar, Outlook, Apple Calendar, etc." free={false} pro={true} />
                   <FeatureRow feature="Colors, Labels & Icon Customization" free={true} pro={true} />
-                  <FeatureRow feature="Multiple Date Formats & Timezone Support" free={true} pro={true} />
+                  <FeatureRow feature="Multiple Date Formats" free={true} pro={true} />
                   <FeatureRow feature="Priority Support" free={false} pro={true} />
                 </tbody>
               </table>

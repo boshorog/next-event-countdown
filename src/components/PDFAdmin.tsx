@@ -16,6 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useLicense } from '@/hooks/useLicense';
 import { BUILD_FLAGS } from '@/config/buildFlags';
+import { isDemoMode } from '@/config/demoMode';
 import {
   DndContext,
   closestCenter,
@@ -299,7 +300,6 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   const [urlFileType, setUrlFileType] = useState('pdf');
   const [isAddingUrl, setIsAddingUrl] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const calendarResetRef = useRef<(() => void) | null>(null);
   const [dividerFormData, setDividerFormData] = useState({
     text: ''
   });
@@ -726,6 +726,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   );
 
   const saveGalleriesToWP = async (updatedGalleries: Gallery[]) => {
+    if (isDemoMode()) return true;
     // Safety guard: never persist an empty galleries array
     if (!Array.isArray(updatedGalleries) || updatedGalleries.length === 0) {
       console.warn('Aborting save: empty galleries payload');
@@ -1467,17 +1468,11 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
             <div className="calendar-tab-card">
               <div className="calendar-tab">
                 <CalendarDays className="w-4 h-4 text-primary" />
-                <button
-                  onClick={() => calendarResetRef.current?.()}
-                  className="text-sm font-semibold tracking-tight hover:text-primary transition-colors cursor-pointer bg-transparent border-none p-0"
-                  title="Return to today"
-                >
-                  Upcoming Schedule
-                </button>
+                <span className="text-sm font-semibold tracking-tight">Upcoming Schedule</span>
               </div>
               <div className="calendar-tab-body overflow-visible">
                 <div className="pb-4 px-3 pt-5 overflow-visible">
-                  <UpcomingCalendar countdownConfig={countdownConfig} registerReset={(fn) => { calendarResetRef.current = fn; }} />
+                  <UpcomingCalendar countdownConfig={countdownConfig} />
                 </div>
               </div>
             </div>

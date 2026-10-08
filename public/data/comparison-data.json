@@ -1,19 +1,19 @@
 {
-  "version": "1.0.1",
-  "lastUpdated": "2026-04-17",
+  "version": "1.0.0",
+  "lastUpdated": "2026-03-05",
   "title": "Free vs Pro Comparison",
   "features": [
     {
       "id": "counters",
       "feature": "Number of Counters",
       "free": "1",
-      "pro": "Multiple"
+      "pro": "Unlimited"
     },
     {
       "id": "countdown-styles",
       "feature": "Countdown Styles",
       "free": "1",
-      "pro": "Multiple"
+      "pro": "5+"
     },
     {
       "id": "events",
@@ -28,12 +28,6 @@
       "pro": true
     },
     {
-      "id": "calendar-import",
-      "feature": "Import events from Google Calendar, Outlook, Apple Calendar, etc.",
-      "free": false,
-      "pro": true
-    },
-    {
       "id": "customization",
       "feature": "Colors, Labels & Icon Customization",
       "free": true,
@@ -41,7 +35,7 @@
     },
     {
       "id": "date-formats",
-      "feature": "Multiple Date Formats & Timezone Support",
+      "feature": "Multiple Date Formats",
       "free": true,
       "pro": true
     },

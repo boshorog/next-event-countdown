@@ -2,8 +2,8 @@
 /**
  * Plugin Name: KindPixels Next Event Countdown
  * Plugin URI: https://kindpixels.com/plugins/next-event-countdown/
- * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event – perfect for any organization with a recurring schedule.
- * Version: 1.2.3
+ * Description: A beautiful, always-accurate countdown widget that automatically shows the next upcoming event — perfect for any organization with a recurring schedule.
+ * Version: 1.1.5
  * Author: KIND PIXELS
  * Author URI: https://kindpixels.com
  * License: GPL v2 or later
@@ -23,7 +23,7 @@ if ( defined( 'NXEVTCD_PLUGIN_LOADED' ) ) {
 }
 define( 'NXEVTCD_PLUGIN_LOADED', true );
 
-define( 'NXEVTCD_VERSION', '1.2.3' );
+define( 'NXEVTCD_VERSION', '1.1.5' );
 
 // Freemius SDK Initialization
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
@@ -147,11 +147,11 @@ class NxEvtCd_Plugin {
      * Add admin menu page
      */
     public function add_admin_menu() {
-        // Custom SVG icon – countdown colon logo
+        // Custom SVG icon — countdown colon logo
         $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2731.33 2040.46"><path fill="black" d="M870.34 1020.23c0,-647.46 -364.37,-1020.23 -863.27,-1020.23 -2.37,0 -4.71,0.07 -7.07,0.08l0 454.07c2.35,-0.06 4.7,-0.1 7.07,-0.1 176.58,0 305.51,154.16 305.51,566.17 0,412.02 -128.93,566.17 -305.51,566.17 -2.37,0 -4.72,-0.04 -7.07,-0.1l0 454.07c2.36,0.02 4.7,0.08 7.07,0.08 498.9,0 863.27,-372.78 863.27,-1020.23zm990.65 0c0,647.46 364.37,1020.23 866.08,1020.23 1.43,0 2.84,-0.05 4.26,-0.05l0 -454.07c-1.42,0.02 -2.83,0.06 -4.26,0.06 -179.38,0 -308.31,-154.16 -308.31,-566.17 0,-412.02 128.93,-566.17 308.31,-566.17 1.43,0 2.84,0.04 4.26,0.06l0 -454.07c-1.43,-0 -2.83,-0.05 -4.26,-0.05 -501.71,0 -866.08,372.78 -866.08,1020.23zm-495.32 231.24c-76.61,0 -141.08,24.76 -193.4,74.28 -52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.28 -193.39,-74.28zm-193.4 -931.94c-52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.27 -193.39,-74.27 -76.61,0 -141.08,24.76 -193.4,74.27z"/></svg>';
         $icon_base64 = 'data:image/svg+xml;base64,' . base64_encode($icon_svg);
         
-        add_menu_page(
+        $page_hook = add_menu_page(
             '',
             'Countdown',
             'manage_options',
@@ -160,7 +160,17 @@ class NxEvtCd_Plugin {
             $icon_base64,
             100
         );
+        add_action('load-' . $page_hook, array($this, 'prepare_clean_admin_page'));
+    }
 
+    public function prepare_clean_admin_page() {
+        remove_all_actions('admin_notices');
+        remove_all_actions('all_admin_notices');
+        add_filter('admin_body_class', array($this, 'admin_body_class'));
+    }
+
+    public function admin_body_class($classes) {
+        return $classes . ' nxevtcd-admin-page';
     }
     
     /**
@@ -206,6 +216,7 @@ class NxEvtCd_Plugin {
         if ($hook_suffix !== 'toplevel_page_kindpixels-next-event-countdown') {
             return;
         }
+        wp_enqueue_style('nxevtcd-admin-page', plugins_url('dist/admin-page.css', __FILE__), array(), NXEVTCD_VERSION);
         
         $js_file = $this->get_asset_url('js');
         $css_file = $this->get_asset_url('css');
@@ -309,31 +320,6 @@ class NxEvtCd_Plugin {
             'pluginBasename' => plugin_basename( __FILE__ ),
         ));
 
-        // Admin page inline styles (notice hiding + page chrome)
-        $admin_inline_css = '
-            body.nxevtcd-admin-page #wpbody-content > .notice,
-            body.nxevtcd-admin-page #wpbody-content > .updated,
-            body.nxevtcd-admin-page #wpbody-content > div.notice,
-            body.nxevtcd-admin-page #wpbody-content > div.updated,
-            body.nxevtcd-admin-page .wrap > .notice,
-            body.nxevtcd-admin-page .wrap > .updated,
-            body.nxevtcd-admin-page .notice,
-            body.nxevtcd-admin-page .updated,
-            body.nxevtcd-admin-page div[class*="notice"],
-            body.nxevtcd-admin-page div[class*="update"] {
-                display: none !important;
-            }
-            body.nxevtcd-admin-page .notice-error,
-            body.nxevtcd-admin-page .notice-warning,
-            body.nxevtcd-admin-page .update-nag {
-                display: block !important;
-            }
-            .wrap > h1:first-child { display: none !important; }
-        ';
-        wp_add_inline_style('nxevtcd-admin', $admin_inline_css);
-
-        // Admin page inline script (add body class)
-        wp_add_inline_script('nxevtcd-admin', 'document.body.classList.add("nxevtcd-admin-page");', 'before');
     }
     public function assets_not_found_notice() {
         echo '<div class="notice notice-error"><p>KindPixels Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
@@ -348,7 +334,7 @@ class NxEvtCd_Plugin {
         }
         
         echo '<div class="wrap nxevtcd-admin-page">';
-        echo '<div id="nxevtcd-root" style="margin-top: 0;"></div>';
+        echo '<div id="nxevtcd-root"></div>';
         echo '</div>';
     }
     
@@ -567,44 +553,18 @@ class NxEvtCd_Plugin {
         return $html;
     }
 
-    /**
-     * Demo shortcode – renders the admin UI in demo mode for potential customers.
-     * All changes are temporary (session-scoped), no data is sent to the server.
-     * Usage: [nxevtcd_demo]
-     */
+    /** Public interactive demo. No site data or administration credentials are passed. */
     public function display_demo_shortcode($atts) {
-        $index_url = plugins_url('dist/index.html', __FILE__);
-        $frame_token = function_exists('wp_generate_uuid4') ? wp_generate_uuid4() : uniqid('nxevtcd_', true);
-
+        $token = wp_generate_uuid4();
         $src = add_query_arg(array(
-            'demo'       => 'true',
-            'admin'      => 'true',
-            'frameToken' => $frame_token,
-        ), $index_url);
+            'demo' => 'true',
+            'admin' => 'true',
+            'frameToken' => $token,
+        ), plugins_url('dist/index.html', __FILE__));
+        wp_enqueue_style('nxevtcd-admin-page', plugins_url('dist/admin-page.css', __FILE__), array(), NXEVTCD_VERSION);
+        wp_enqueue_script('nxevtcd-demo-embed', plugins_url('dist/demo-embed.js', __FILE__), array(), NXEVTCD_VERSION, true);
 
-        $iframe_id = 'nxevtcd-demo-' . uniqid();
-        $html  = '<div class="nxevtcd-iframe-container" id="' . esc_attr($iframe_id) . '-container" style="position:relative;width:100%;overflow:hidden;">';
-        $html .= '<iframe id="' . esc_attr($iframe_id) . '" src="' . esc_url($src) . '" scrolling="no" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-downloads" style="height:1200px;min-height:800px;overflow:hidden;width:100%;border:0;display:block;"></iframe>';
-        $html .= '</div>';
-
-        // Auto-resize listener (token-scoped to this iframe instance)
-        wp_enqueue_script('nxevtcd-frontend');
-        $resize_js = '(function(){
-          var iframe = document.getElementById("' . esc_js($iframe_id) . '");
-          if(!iframe) return;
-          var token = "' . esc_js($frame_token) . '";
-          window.addEventListener("message", function(e){
-            if(!e.data || typeof e.data !== "object") return;
-            if(e.data.token && e.data.token !== token) return;
-            if(e.data.type === "nxevtcd:height" && typeof e.data.height === "number"){
-              var h = parseInt(e.data.height, 10);
-              if(h > 100) iframe.style.height = h + "px";
-            }
-          }, false);
-        })();';
-        wp_add_inline_script('nxevtcd-frontend', $resize_js);
-
-        return $html;
+        return '<div class="nxevtcd-demo-container"><iframe title="' . esc_attr__('Next Event Countdown demo', 'kindpixels-next-event-countdown') . '" src="' . esc_url($src) . '" data-nxevtcd-demo-token="' . esc_attr($token) . '" scrolling="no" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>';
     }
 
     /**
@@ -615,19 +575,6 @@ class NxEvtCd_Plugin {
         if (!empty($stored_version) && $stored_version === NXEVTCD_VERSION) {
             return;
         }
-
-        // Migrate legacy "gallery" option keys to "counter" keys
-        $old_galleries = get_option('nxevtcd_galleries');
-        if ($old_galleries !== false && get_option('nxevtcd_counters') === false) {
-            update_option('nxevtcd_counters', $old_galleries);
-            delete_option('nxevtcd_galleries');
-        }
-        $old_id = get_option('nxevtcd_current_gallery_id');
-        if ($old_id !== false && get_option('nxevtcd_current_counter_id') === false) {
-            update_option('nxevtcd_current_counter_id', $old_id);
-            delete_option('nxevtcd_current_gallery_id');
-        }
-
         update_option('nxevtcd_version', NXEVTCD_VERSION);
     }
     
@@ -635,14 +582,17 @@ class NxEvtCd_Plugin {
      * Plugin activation
      */
     public static function activate() {
+        if (!function_exists('wp_mkdir_p')) {
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+        }
         
         // IMPORTANT: Only store the version number. Do NOT delete or reset
         // nxevtcd_countdown_config_*, nxevtcd_settings, or nxevtcd_galleries
-        // options here – they must survive plugin updates.
+        // options here — they must survive plugin updates.
         update_option('nxevtcd_version', NXEVTCD_VERSION);
         
         // Set activation redirect (only on fresh install, not on update)
-        if (!get_option('nxevtcd_counters') && !get_option('nxevtcd_galleries')) {
+        if (!get_option('nxevtcd_galleries')) {
             set_transient('nxevtcd_activation_redirect', true, 30);
         }
     }
@@ -652,7 +602,7 @@ class NxEvtCd_Plugin {
      */
     public static function deactivate() {
         // Only remove transient metadata. Do NOT delete saved events,
-        // settings, or countdown configs – user may reactivate the plugin.
+        // settings, or countdown configs — user may reactivate the plugin.
         delete_option('nxevtcd_version');
     }
     
@@ -768,21 +718,6 @@ class NxEvtCd_Plugin {
                 break;
             case 'get_countdown_config':
                 $this->handle_get_countdown_config();
-                break;
-            case 'save_counters':
-            case 'save_galleries': // legacy compat
-                $this->handle_save_counters();
-                break;
-            case 'get_counters':
-            case 'get_galleries': // legacy compat
-                $this->handle_get_counters();
-                break;
-            case 'reset_counters':
-            case 'reset_galleries': // legacy compat
-                $this->handle_reset_counters();
-                break;
-            case 'fetch_ics_feed':
-                $this->handle_fetch_ics_feed();
                 break;
             default:
                 wp_send_json_error('Invalid action');
@@ -943,60 +878,6 @@ class NxEvtCd_Plugin {
         wp_send_json_success( array( 'message' => 'License deactivated successfully' ) );
     }
     
-    /**
-     * Handle ICS feed fetch (Pro feature).
-     * Fetches raw ICS content from an external URL server-side to avoid CORS.
-     */
-    private function handle_fetch_ics_feed() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-
-        $ics_url = isset($_POST['ics_url']) ? esc_url_raw(wp_unslash($_POST['ics_url'])) : '';
-
-        if (empty($ics_url)) {
-            wp_send_json_error(array('message' => 'ICS feed URL is required'));
-            return;
-        }
-
-        // Normalize webcal:// to https://
-        $ics_url = preg_replace('/^webcal:\/\//', 'https://', $ics_url);
-
-        // Validate URL
-        if (!filter_var($ics_url, FILTER_VALIDATE_URL)) {
-            wp_send_json_error(array('message' => 'Invalid URL format'));
-            return;
-        }
-
-        $response = wp_remote_get($ics_url, array(
-            'timeout' => 30,
-            'sslverify' => true,
-            'headers' => array(
-                'Accept' => 'text/calendar, application/calendar+json, text/plain',
-            ),
-        ));
-
-        if (is_wp_error($response)) {
-            wp_send_json_error(array('message' => 'Failed to fetch feed: ' . $response->get_error_message()));
-            return;
-        }
-
-        $code = wp_remote_retrieve_response_code($response);
-        if ($code !== 200) {
-            wp_send_json_error(array('message' => 'Feed returned HTTP ' . intval($code)));
-            return;
-        }
-
-        $body = wp_remote_retrieve_body($response);
-
-        if (empty($body) || strpos($body, 'BEGIN:VCALENDAR') === false) {
-            wp_send_json_error(array('message' => 'Response does not appear to be a valid ICS/iCalendar feed'));
-            return;
-        }
-
-        wp_send_json_success(array('ics_content' => $body));
-    }
-
     private function handle_save_settings() {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Insufficient permissions');
@@ -1005,12 +886,11 @@ class NxEvtCd_Plugin {
             wp_die('Security check failed');
         }
 
-        $settings_json = isset($_POST['settings']) ? wp_unslash($_POST['settings']) : '';
+        $settings_json = isset($_POST['settings']) ? sanitize_text_field(wp_unslash($_POST['settings'])) : '';
         $settings = json_decode($settings_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($settings)) {
-            $sanitized = $this->sanitize_countdown_config($settings);
-            update_option('nxevtcd_settings', $sanitized);
+            update_option('nxevtcd_settings', $settings);
             wp_send_json_success('Settings saved');
         } else {
             wp_send_json_error('Invalid settings data');
@@ -1032,14 +912,12 @@ class NxEvtCd_Plugin {
             wp_die('Security check failed');
         }
 
-        $config_json = isset($_POST['countdown_config']) ? wp_unslash($_POST['countdown_config']) : '';
-        $counter_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
-
+        $config_json = isset($_POST['countdown_config']) ? sanitize_text_field(wp_unslash($_POST['countdown_config'])) : '';
+        $gallery_id = isset($_POST['gallery_id']) ? sanitize_text_field(wp_unslash($_POST['gallery_id'])) : 'default';
         $config = json_decode($config_json, true);
 
         if (json_last_error() === JSON_ERROR_NONE && is_array($config)) {
-            $sanitized = $this->sanitize_countdown_config($config);
-            update_option('nxevtcd_countdown_config_' . $counter_id, $sanitized);
+            update_option('nxevtcd_countdown_config_' . $gallery_id, $config);
             wp_send_json_success('Countdown config saved');
         } else {
             wp_send_json_error('Invalid countdown config data');
@@ -1057,159 +935,6 @@ class NxEvtCd_Plugin {
             $config = get_option('nxevtcd_countdown_config_default', null);
         }
         wp_send_json_success(array('countdown_config' => $config));
-    }
-
-    /**
-     * Sanitize a single counter item (event entry).
-     */
-    private function sanitize_counter_item($item) {
-        if (!is_array($item)) return array();
-        $sanitized = array();
-        foreach ($item as $key => $value) {
-            $safe_key = sanitize_text_field($key);
-            if (is_array($value)) {
-                $sanitized[$safe_key] = $this->sanitize_counter_item($value);
-            } elseif (is_bool($value)) {
-                $sanitized[$safe_key] = (bool) $value;
-            } elseif (is_int($value)) {
-                $sanitized[$safe_key] = intval($value);
-            } elseif (is_float($value)) {
-                $sanitized[$safe_key] = floatval($value);
-            } elseif (in_array($safe_key, array('pdfUrl', 'thumbnail'), true)) {
-                $sanitized[$safe_key] = esc_url_raw($value);
-            } else {
-                $sanitized[$safe_key] = sanitize_text_field($value);
-            }
-        }
-        return $sanitized;
-    }
-
-    /**
-     * Handle saving counters list.
-     * No feature restrictions – unlimited counters for all users.
-     */
-    /**
-     * Check if this is a Pro build by looking for the .pro-build marker file.
-     * This is a build-artifact check, not a license check.
-     */
-    private function is_pro_build() {
-        return file_exists(plugin_dir_path(__FILE__) . 'dist/.pro-build');
-    }
-
-    private function handle_save_counters() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-
-        $counters_json = isset($_POST['galleries']) ? wp_unslash($_POST['galleries']) : '[]';
-        $counters = json_decode($counters_json, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($counters)) {
-            wp_send_json_error('Invalid counters data');
-        }
-
-
-        // Recursively sanitize each counter entry including nested items
-        $sanitized = array();
-        foreach ($counters as $counter) {
-            if (!is_array($counter)) continue;
-            $sanitized_items = array();
-            if (isset($counter['items']) && is_array($counter['items'])) {
-                foreach ($counter['items'] as $item) {
-                    $sanitized_items[] = $this->sanitize_counter_item($item);
-                }
-            }
-            $sanitized[] = array(
-                'id'        => isset($counter['id']) ? sanitize_text_field($counter['id']) : '',
-                'name'      => isset($counter['name']) ? sanitize_text_field($counter['name']) : '',
-                'items'     => $sanitized_items,
-                'createdAt' => isset($counter['createdAt']) ? sanitize_text_field($counter['createdAt']) : '',
-            );
-        }
-
-        $current_counter_id = isset($_POST['current_gallery_id']) ? sanitize_text_field(wp_unslash($_POST['current_gallery_id'])) : '';
-
-        update_option('nxevtcd_counters', $sanitized);
-        if ($current_counter_id) {
-            update_option('nxevtcd_current_counter_id', $current_counter_id);
-        }
-
-        wp_send_json_success('Counters saved');
-    }
-
-    /**
-     * Handle fetching counters list.
-     * Returns data using legacy field names for frontend compatibility.
-     */
-    private function handle_get_counters() {
-        // Try new key first, fall back to legacy key
-        $counters = get_option('nxevtcd_counters', null);
-        if ($counters === null) {
-            $counters = get_option('nxevtcd_galleries', array());
-        }
-        if (!is_array($counters)) {
-            $counters = array();
-        }
-        $current_counter_id = get_option('nxevtcd_current_counter_id', '');
-        if (empty($current_counter_id)) {
-            $current_counter_id = get_option('nxevtcd_current_gallery_id', '');
-        }
-        // Return with legacy field names for frontend compatibility
-        wp_send_json_success(array(
-            'galleries'          => $counters,
-            'current_gallery_id' => $current_counter_id,
-        ));
-    }
-
-    /**
-     * Handle resetting counters.
-     */
-    private function handle_reset_counters() {
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-        delete_option('nxevtcd_counters');
-        delete_option('nxevtcd_current_counter_id');
-        // Also clean up legacy keys
-        delete_option('nxevtcd_galleries');
-        delete_option('nxevtcd_current_gallery_id');
-        wp_send_json_success('Counters reset');
-    }
-
-    /**
-     * Recursively sanitize countdown config data per-field.
-     * Strings are sanitized, booleans/integers/floats are cast, arrays are recursed.
-     */
-    private function sanitize_countdown_config($data) {
-        if (!is_array($data)) {
-            if (is_bool($data)) {
-                return $data;
-            }
-            if (is_int($data)) {
-                return intval($data);
-            }
-            if (is_float($data)) {
-                return floatval($data);
-            }
-            return sanitize_text_field($data);
-        }
-
-        $sanitized = array();
-        foreach ($data as $key => $value) {
-            $safe_key = sanitize_text_field($key);
-            if (is_array($value)) {
-                $sanitized[$safe_key] = $this->sanitize_countdown_config($value);
-            } elseif (is_bool($value)) {
-                $sanitized[$safe_key] = (bool) $value;
-            } elseif (is_int($value)) {
-                $sanitized[$safe_key] = intval($value);
-            } elseif (is_float($value)) {
-                $sanitized[$safe_key] = floatval($value);
-            } else {
-                $sanitized[$safe_key] = sanitize_text_field($value);
-            }
-        }
-        return $sanitized;
     }
 }
 

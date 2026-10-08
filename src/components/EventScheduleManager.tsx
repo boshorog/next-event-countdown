@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import { Plus, Trash2, CalendarIcon, ChevronDown, ChevronRight, RefreshCw, Star, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -148,8 +147,6 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   const specialListRef = useRef<HTMLDivElement>(null);
   const use12h = config.use24h !== true;
 
-  const allSpecialEvents = config.specialEvents;
-
   const update = <K extends keyof CountdownConfig>(key: K, val: CountdownConfig[K]) =>
     onChange({ ...config, [key]: val });
 
@@ -169,7 +166,7 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
   // not here, so events aren't removed before the user saves.
 
   const addSchedule = () => {
-    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Event", timezone: defaultTz, duration: 60 }]);
+    update("schedules", [...config.schedules, { recurrenceType: "weekly" as RecurrenceType, day: 0, hour: 10, minute: 0, title: "New Service", timezone: defaultTz, duration: 60 }]);
     setOpenRecurring(config.schedules.length);
     setTimeout(() => {
       recurringListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -201,32 +198,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
     setOpenSpecial(idx + 1);
   };
 
-  const makeRecurring = (idx: number) => {
-    const ev = config.specialEvents[idx];
-    // Convert to a weekly recurring event on the same day of week
-    const [y, m, d] = ev.date.split("-").map(Number);
-    const dayOfWeek = new Date(y, m - 1, d).getDay();
-    const newSchedule: ServiceSchedule = {
-      recurrenceType: "weekly",
-      day: dayOfWeek,
-      hour: ev.hour,
-      minute: ev.minute,
-      title: ev.title,
-      timezone: ev.timezone || defaultTz,
-      duration: ev.duration || 60,
-    };
-    // Update both at once to avoid stale state
-    const updatedSpecials = config.specialEvents.filter((_, i) => i !== idx);
-    onChange({ ...config, schedules: [...config.schedules, newSchedule], specialEvents: updatedSpecials });
-    setOpenSpecial(null);
-    setOpenRecurring(config.schedules.length);
-  };
-
   const addSpecial = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const iso = tomorrow.toISOString().slice(0, 10);
-    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "New Event", timezone: defaultTz, duration: 60 }]);
+    update("specialEvents", [...config.specialEvents, { date: iso, hour: 10, minute: 0, title: "Special Service", timezone: defaultTz, duration: 60 }]);
     setOpenSpecial(config.specialEvents.length);
     setTimeout(() => {
       specialListRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -496,11 +472,11 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
             </Button>
           </div>
         </CardHeader>
-        <CardContent className={cn("space-y-1.5", allSpecialEvents.length === 0 && "flex items-center justify-center min-h-[180px]")} ref={specialListRef}>
-          {allSpecialEvents.length === 0 && (
+        <CardContent className={cn("space-y-1.5", config.specialEvents.length === 0 && "flex items-center justify-center min-h-[180px]")} ref={specialListRef}>
+          {config.specialEvents.length === 0 && (
             <p className="text-xs text-muted-foreground italic text-center">No special events added.</p>
           )}
-          {allSpecialEvents.map((ev, i) => {
+          {config.specialEvents.map((ev, i) => {
             const isOpen = openSpecial === i;
             return (
               <Collapsible key={i} open={isOpen} onOpenChange={(open) => setOpenSpecial(open ? i : null)}>
@@ -510,32 +486,19 @@ const EventScheduleManager = ({ config, onChange }: EventScheduleManagerProps) =
                       <div className="flex items-center gap-2.5 min-w-0">
                         {isOpen ? <ChevronDown className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />}
                         <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <p className="text-sm font-medium truncate">{ev.title}</p>
-                            {ev.imported && <Badge variant="secondary" className="text-[9px] px-1 py-0 flex-shrink-0">Imported</Badge>}
-                          </div>
+                          <p className="text-sm font-medium truncate">{ev.title}</p>
                           <p className="text-xs text-muted-foreground truncate">{specialSummary(ev)}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-0.5 flex-shrink-0">
                         <Button
                           variant="ghost" size="sm"
-                          onClick={(e) => { e.stopPropagation(); makeRecurring(i); }}
+                          onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
                           className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                          title="Make recurring event"
+                          title="Duplicate event"
                         >
-                          <RefreshCw className="w-3 h-3" />
+                          <Copy className="w-3 h-3" />
                         </Button>
-                        {!ev.imported && (
-                          <Button
-                            variant="ghost" size="sm"
-                            onClick={(e) => { e.stopPropagation(); duplicateSpecial(i); }}
-                            className="h-6 w-6 p-0 text-muted-foreground hover:text-primary flex-shrink-0"
-                            title="Duplicate event"
-                          >
-                            <Copy className="w-3 h-3" />
-                          </Button>
-                        )}
                         <Button
                           variant="ghost" size="sm"
                           onClick={(e) => { e.stopPropagation(); removeSpecial(i); }}

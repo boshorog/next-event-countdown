@@ -9,10 +9,7 @@
  * - Fetches latest version from WordPress.org API
  * - Compares with current version
  * - Dismissible per version
- * - Hidden in demo mode
- * - Iframe-aware: looks up wp.updates in current/parent/top windows
- * - Safety timeout falls back to update-core.php if AJAX hangs
- * - Pro users redirect to WP updates page (Freemius handles updates there)
+ * - Hidden for Pro users (Freemius handles updates)
  * 
  * REUSE NOTES:
  * - Update WP_API_URL to point to your plugin's WordPress.org JSON
@@ -26,8 +23,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { X, Loader2 } from 'lucide-react';
 import { useLicense } from '@/hooks/useLicense';
-import { STORAGE_KEYS, PLUGIN_SLUG, isDevPreview } from '@/config/pluginIdentity';
-import { isDemoMode } from '@/config/demoMode';
+import { STORAGE_KEYS, PLUGIN_SLUG } from '@/config/pluginIdentity';
 
 interface UpdateNoticeProps {
   currentVersion: string;
@@ -44,9 +40,6 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    // Never show in demo mode
-    if (isDemoMode()) return;
-
     // Check if this version was already dismissed
     try {
       const dismissedVersion = localStorage.getItem(STORAGE_KEYS.updateDismissed);
@@ -80,7 +73,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
   const compareVersions = (v1: string, v2: string): number => {
     const parts1 = v1.split('.').map(Number);
     const parts2 = v2.split('.').map(Number);
-
+    
     for (let i = 0; i < Math.max(parts1.length, parts2.length); i++) {
       const p1 = parts1[i] || 0;
       const p2 = parts2[i] || 0;
@@ -99,92 +92,52 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     } catch {}
   };
 
-  // Redirect to WordPress update page, scrolling to our plugin row
-  const redirectToUpdatePage = () => {
-    const targetWindow = window.top || window.parent || window;
-    // Use update-core.php — the dedicated WP updates page where the plugin update row lives
-    const updateUrl = window.location.origin + '/wp-admin/update-core.php#' + PLUGIN_SLUG;
-    try {
-      targetWindow.location.href = updateUrl;
-    } catch {
-      window.location.href = updateUrl;
-    }
-  };
-
   const handleUpdate = () => {
-    // In dev preview, show alert instead of attempting WordPress update
-    if (isDevPreview()) {
-      alert('Update is only available in WordPress. This is a dev preview.');
-      return;
-    }
-
     // Start updating animation
     setUpdating(true);
-
-    // Check if we have WordPress globals (check parent window too since we're in iframe)
+    
+    // Check if we have WordPress globals
     let wpGlobal: any = null;
     try { wpGlobal = (window as any).nxevtcdData || null; } catch {}
     if (!wpGlobal) {
       try { wpGlobal = (window.parent && (window.parent as any).nxevtcdData) || null; } catch {}
     }
-    if (!wpGlobal) {
-      try { wpGlobal = (window.top && (window.top as any).nxevtcdData) || null; } catch {}
-    }
-
-    // Pro users: go to WP updates page (Freemius handles updates there)
+    
+    // Pro users: go to plugins page (Freemius handles updates there)
     if (license.isPro) {
-      redirectToUpdatePage();
+      const pluginsUrl = window.location.origin + '/wp-admin/plugins.php#kindpixels-next-event-countdown';
+      window.location.href = pluginsUrl;
       return;
     }
-
-    // Try to find wp.updates — check current window, parent, and top (iframe context)
-    let wpUpdates: any = null;
-    try { wpUpdates = (window as any).wp?.updates; } catch {}
-    if (!wpUpdates) {
-      try { wpUpdates = (window.parent as any)?.wp?.updates; } catch {}
-    }
-    if (!wpUpdates) {
-      try { wpUpdates = (window.top as any)?.wp?.updates; } catch {}
-    }
-
+    
+    // Free users: Use WordPress AJAX update if available
+    const wpUpdates = (window as any).wp?.updates;
     if (wpUpdates && typeof wpUpdates.updatePlugin === 'function') {
-      // Safety timeout: if nothing happens in 12s, redirect to updates page
-      const fallbackTimeout = setTimeout(() => {
-        setUpdating(false);
-        redirectToUpdatePage();
-      }, 12000);
-
+      // Use WordPress's built-in AJAX update mechanism
       wpUpdates.updatePlugin({
         plugin: wpGlobal?.pluginBasename || 'kindpixels-next-event-countdown/kindpixels-next-event-countdown.php',
         slug: PLUGIN_SLUG,
         success: () => {
-          clearTimeout(fallbackTimeout);
           setUpdating(false);
           setDismissed(true);
-          setTimeout(() => {
-            // Reload the top-level page to reflect the update
-            try { (window.top || window.parent || window).location.reload(); } catch { window.location.reload(); }
-          }, 1000);
+          // Show success and reload after brief delay
+          setTimeout(() => window.location.reload(), 1000);
         },
         error: (response: any) => {
-          clearTimeout(fallbackTimeout);
           setUpdating(false);
           console.error('Update failed:', response);
-          redirectToUpdatePage();
+          // Fallback to plugins page
+          window.location.href = window.location.origin + '/wp-admin/plugins.php';
         }
       });
       return;
     }
-
-    // Fallback: redirect using configured updateUrl or update-core.php
+    
+    // Fallback: Use direct update URL if available, otherwise go to plugins page
     if (wpGlobal?.updateUrl) {
-      try {
-        (window.top || window.parent || window).location.href = wpGlobal.updateUrl;
-      } catch {
-        window.location.href = wpGlobal.updateUrl;
-      }
+      window.location.href = wpGlobal.updateUrl;
     } else {
-      redirectToUpdatePage();
+      window.location.href = window.location.origin + '/wp-admin/plugins.php';
     }
   };
 

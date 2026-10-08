@@ -33,6 +33,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { isDemoMode } from '@/config/demoMode';
 import { 
   STORAGE_KEYS, 
   AJAX_FREEMIUS_CHECK, 
@@ -58,6 +59,10 @@ export const useLicense = (): LicenseInfo => {
   });
 
   useEffect(() => {
+    if (isDemoMode()) {
+      setLicense({ isValid: true, isPro: false, status: 'free', checked: true });
+      return;
+    }
     let cancelled = false;
     let finished = false;
     let intervalId: number | null = null;

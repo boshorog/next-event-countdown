@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { format, addDays, isSameDay, isToday, startOfDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CountdownConfig, getScheduleCandidates } from './ServiceCountdownWidget';
@@ -13,8 +13,6 @@ interface CalendarEvent {
 
 interface UpcomingCalendarProps {
   countdownConfig: CountdownConfig;
-  onResetToToday?: () => void;
-  registerReset?: (fn: () => void) => void;
 }
 
 function getEventsForRange(config: CountdownConfig, startDate: Date, days: number): CalendarEvent[] {
@@ -51,36 +49,11 @@ function getEventsForRange(config: CountdownConfig, startDate: Date, days: numbe
   return events;
 }
 
-const UpcomingCalendar = ({ countdownConfig, registerReset }: UpcomingCalendarProps) => {
+const UpcomingCalendar = ({ countdownConfig }: UpcomingCalendarProps) => {
   const isMobile = useIsMobile();
   const [offset, setOffset] = useState(0);
   const [sliding, setSliding] = useState<'left' | 'right' | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  // Register reset-to-today function for parent to call
-  const resetToToday = useCallback(() => {
-    if (offset === 0) {
-      // Already at today, just scroll mobile view
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      }
-      return;
-    }
-    // Use the same slide animation as nav arrows
-    const direction = offset > 0 ? 'left' : 'right';
-    setSliding(direction);
-    setTimeout(() => {
-      setOffset(0);
-      setSliding(null);
-      if (scrollRef.current) {
-        scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-      }
-    }, 280);
-  }, [offset]);
-
-  useEffect(() => {
-    registerReset?.(resetToToday);
-  }, [registerReset, resetToToday]);
   const VISIBLE_DAYS = isMobile ? 6 : 11;
   const TOTAL_MOBILE_DAYS = 21; // preload for swipe
   const startDate = addDays(new Date(), isMobile ? 0 : offset);

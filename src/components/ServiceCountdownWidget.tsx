@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { CalendarDays, Church, Clock, Heart, BookOpen, Bell, Star, Music, Trophy } from "lucide-react";
 import { STYLE_RENDERERS } from "./counterStyles/renderers";
-import MobileFitWrapper from "./MobileFitWrapper";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 // ─── Recurrence Types ───
 export type RecurrenceType = "weekly" | "biweekly" | "monthly-dow" | "monthly-date" | "daily";
@@ -32,7 +30,6 @@ export interface SpecialEvent {
   title: string;
   timezone?: string;
   duration?: number; // duration in minutes
-  imported?: boolean; // true = from ICS feed
 }
 
 export const TIMEZONE_OPTIONS = [
@@ -98,7 +95,6 @@ export interface CountdownConfig {
   cardBgColor?: string;
   showBorder: boolean;
   headerScale: number;
-  headerDigitBalance?: number; // 0-100, 50=equal, <50=header bigger, >50=digits bigger
   counterStyle?: string;
   use24h?: boolean;
   showTitle?: boolean;
@@ -111,24 +107,6 @@ export interface CountdownConfig {
   monthNames?: string[];
   atWord?: string;
   showLiveDuration?: boolean;
-  // Granular sizing
-  headerFontSize?: number;   // px
-  digitFontSize?: number;    // px
-  labelFontSize?: number;    // px
-  separatorFontSize?: number; // px
-  counterWidth?: number;     // px
-  counterHeight?: number;    // px
-  lockAspectRatio?: boolean;
-  offsetX?: number;          // px
-  offsetY?: number;          // px
-  overallScale?: number;     // multiplier
-  showHeader?: boolean;
-  elementOffsets?: Record<string, { x: number; y: number }>;
-  // ICS Calendar Feed (Pro)
-  icsFeedUrl?: string;
-  icsRefreshMinutes?: number;  // auto-refresh interval
-  icsLastSync?: string;        // ISO timestamp
-  icsImportedEvents?: SpecialEvent[]; // cached imported events
 }
 
 export const defaultCountdownConfig: CountdownConfig = {
@@ -182,7 +160,6 @@ interface NextServiceInfo {
   fullDate: string;
   title: string;
   isLive: boolean;
-  totalSpanMs?: number; // total ms from previous event end to next event start
 }
 
 const DEFAULT_DURATION_MS = 60 * 60 * 1000; // 1 hour fallback
@@ -381,34 +358,36 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
     }
   }
 
-  // Collect all past event end times and future event start times
-  const allPastEnds: number[] = [];
-  const allFutureStarts: { ms: number; date: string; title: string }[] = [];
+  // Find next upcoming — special events take priority over recurring at same time
+  let nearest = Infinity;
+  let nearestDate = "";
+  let nearestTitle = "";
+  let nearestIsSpecial = false;
 
   for (const ev of specialEvents) {
     const tz = ev.timezone || DEFAULT_TIMEZONE;
     const [y, m, d] = ev.date.split("-").map(Number);
     const base = new Date(y, m - 1, d);
     const target = dateInTz(base, ev.hour, ev.minute, tz);
-    const startMs = target.getTime();
-    const durationMs = (ev.duration || 60) * 60 * 1000;
-    const endMs = startMs + durationMs;
-    if (startMs > nowMs) {
-      allFutureStarts.push({ ms: startMs - nowMs, date: formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts), title: ev.title });
-    }
-    if (endMs <= nowMs) {
-      allPastEnds.push(endMs);
+    const ms = target.getTime() - nowMs;
+    if (ms > 0 && ms < nearest) {
+      nearest = ms;
+      nearestDate = formatDateStr(target, ev.hour, ev.minute, dateFormat, use24h, fmtOpts);
+      nearestTitle = ev.title;
+      nearestIsSpecial = true;
     }
   }
 
   for (const s of schedules) {
     const candidates = getScheduleCandidates(s, now, 4);
-    const durationMs = (s.duration || 60) * 60 * 1000;
     for (const target of candidates) {
-      const startMs = target.getTime();
-      const endMs = startMs + durationMs;
-      if (startMs > nowMs) {
-        // Check overlap with special events
+      const ms = target.getTime() - nowMs;
+      // Only use recurring if it's strictly sooner (special wins ties)
+      if (ms > 0 && ms < nearest) {
+        // Check if a special event overlaps this time slot — if so, skip
+        const sStart = target.getTime();
+        const sDurationMs = (s.duration || 60) * 60 * 1000;
+        const sEnd = sStart + sDurationMs;
         let overlapsSpecial = false;
         for (const ev of specialEvents) {
           const tz = ev.timezone || DEFAULT_TIMEZONE;
@@ -418,34 +397,22 @@ function getNextService(schedules: ServiceSchedule[], specialEvents: SpecialEven
           const eDurationMs = (ev.duration || 60) * 60 * 1000;
           const eStart = eTarget.getTime();
           const eEnd = eStart + eDurationMs;
-          if (eStart < endMs && eEnd > startMs) {
+          if (eStart < sEnd && eEnd > sStart) {
             overlapsSpecial = true;
             break;
           }
         }
         if (!overlapsSpecial) {
-          allFutureStarts.push({ ms: startMs - nowMs, date: formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts), title: s.title });
+          nearest = ms;
+          nearestDate = formatDateStr(target, s.hour, s.minute, dateFormat, use24h, fmtOpts);
+          nearestTitle = s.title;
+          nearestIsSpecial = false;
         }
-      }
-      if (endMs <= nowMs) {
-        allPastEnds.push(endMs);
       }
     }
   }
 
-  // Find nearest future event
-  allFutureStarts.sort((a, b) => a.ms - b.ms);
-  const next = allFutureStarts[0];
-  if (!next) {
-    return { ms: Infinity, fullDate: "", title: "", isLive: false };
-  }
-
-  // Find most recent past event end
-  const prevEndMs = allPastEnds.length > 0 ? Math.max(...allPastEnds) : undefined;
-  const nextStartMs = nowMs + next.ms;
-  const totalSpanMs = prevEndMs !== undefined ? nextStartMs - prevEndMs : undefined;
-
-  return { ms: next.ms, fullDate: next.date, title: next.title, isLive: false, totalSpanMs };
+  return { ms: nearest, fullDate: nearestDate, title: nearestTitle, isLive: false };
 }
 
 function msToTime(ms: number) {
@@ -465,30 +432,21 @@ export function useCountdown(config: CountdownConfig) {
     atWordStr: config.atWord,
   };
   const showLiveDuration = config.showLiveDuration ?? false;
-
-  // Merge local special events with ICS imported events
-  const mergedSpecialEvents = [
-    ...config.specialEvents,
-    ...(config.icsImportedEvents || []),
-  ];
-
   const [state, setState] = useState(() => {
-    const n = getNextService(config.schedules, mergedSpecialEvents, config.dateFormat, config.use24h, fmtOpts);
+    const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
     const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-    const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
-    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent };
+    return { ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive };
   });
   useEffect(() => {
     const tick = () => {
-      const n = getNextService(config.schedules, mergedSpecialEvents, config.dateFormat, config.use24h, fmtOpts);
+      const n = getNextService(config.schedules, config.specialEvents, config.dateFormat, config.use24h, fmtOpts);
       const ms = n.isLive && !showLiveDuration ? 0 : n.ms;
-      const progressPercent = n.totalSpanMs && n.totalSpanMs > 0 ? Math.min(100, Math.max(0, ((n.totalSpanMs - n.ms) / n.totalSpanMs) * 100)) : undefined;
-      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive, progressPercent });
+      setState({ ...msToTime(ms), fullDate: n.fullDate, title: n.title, isLive: n.isLive });
     };
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [config.schedules, config.specialEvents, config.icsImportedEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
+  }, [config.schedules, config.specialEvents, config.dateFormat, config.use24h, config.dayNames, config.monthNames, config.atWord, showLiveDuration]);
   return state;
 }
 
@@ -500,7 +458,6 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   const Icon = getIconComponent(config.icon);
   const hs = config.headerScale ?? 1;
   const styleId = config.counterStyle || 'default';
-  const isMobile = useIsMobile();
 
   const units = [
     { v: t.days, l: config.labelDays || "Days" },
@@ -512,75 +469,30 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
   // Use Pro style renderer if available and not default
   const StyledRenderer = styleId !== 'default' ? STYLE_RENDERERS[styleId] : null;
 
-  // Sizing CSS variables
-  const sizingStyle: React.CSSProperties & Record<string, string> = {};
-  if (config.headerFontSize) sizingStyle['--header-font-size'] = `${config.headerFontSize}px`;
-  if (config.digitFontSize) sizingStyle['--digit-font-size'] = `${config.digitFontSize}px`;
-  if (config.labelFontSize) sizingStyle['--label-font-size'] = `${config.labelFontSize}px`;
-  if (config.separatorFontSize) sizingStyle['--separator-font-size'] = `${config.separatorFontSize}px`;
-  // On mobile: cap width to viewport (no fixed width). On desktop: respect counterWidth.
-  if (config.counterWidth && !isMobile) sizingStyle.width = `${config.counterWidth}px`;
-  if (config.counterHeight && !isMobile) {
-    sizingStyle.height = `${config.counterHeight}px`;
-    sizingStyle.display = 'flex';
-    sizingStyle.alignItems = 'center';
-    sizingStyle.justifyContent = 'center';
-  }
-  // Build combined transform from offset and scale.
-  // Position offsets (offsetX/offsetY and per-element offsets) only apply on desktop.
-  const transforms: string[] = [];
-  if (!isMobile && (config.offsetX || config.offsetY)) {
-    transforms.push(`translate(${config.offsetX || 0}px, ${config.offsetY || 0}px)`);
-  }
-  if (config.overallScale && config.overallScale !== 1) {
-    transforms.push(`scale(${config.overallScale})`);
-  }
-  if (transforms.length > 0) {
-    sizingStyle.transform = transforms.join(' ');
-    sizingStyle.transformOrigin = 'center center';
-  }
-  // Element offsets as CSS variables (desktop only)
-  if (!isMobile) {
-    const eo = config.elementOffsets || {};
-    for (const [key, val] of Object.entries(eo)) {
-      if (val?.x) sizingStyle[`--el-${key}-x`] = `${val.x}px`;
-      if (val?.y) sizingStyle[`--el-${key}-y`] = `${val.y}px`;
-    }
-  }
-
   if (StyledRenderer) {
     return (
-      <MobileFitWrapper>
-        <div style={sizingStyle}>
-          <StyledRenderer
-            days={t.days}
-            hours={t.hours}
-            minutes={t.minutes}
-            seconds={t.seconds}
-            headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
-            eventTitle={t.title}
-            eventDate={t.fullDate}
-            iconColor={config.iconColor}
-            icon={Icon}
-            labelDays={config.labelDays || "Days"}
-            labelHours={config.labelHours || "Hours"}
-            labelMinutes={config.labelMinutes || "Minutes"}
-            labelSeconds={config.labelSeconds || "Seconds"}
-            showHeader={config.showHeader !== false}
-            showTitle={config.showTitle !== false}
-            showDate={config.showDate !== false}
-            progressPercent={t.progressPercent}
-          />
-        </div>
-      </MobileFitWrapper>
+      <StyledRenderer
+        days={t.days}
+        hours={t.hours}
+        minutes={t.minutes}
+        seconds={t.seconds}
+        headerLabel={t.isLive ? (config.liveLabel || "Happening Now") : config.headerLabel}
+        eventTitle={t.title}
+        eventDate={t.fullDate}
+        iconColor={config.iconColor}
+        icon={Icon}
+        labelDays={config.labelDays || "Days"}
+        labelHours={config.labelHours || "Hours"}
+        labelMinutes={config.labelMinutes || "Minutes"}
+        labelSeconds={config.labelSeconds || "Seconds"}
+      />
     );
   }
 
   const radius = config.borderRadius ?? 16;
 
   return (
-    <MobileFitWrapper>
-      <div style={{ overflow: 'hidden', maxWidth: '100%', boxSizing: 'border-box' as const, ...sizingStyle, width: sizingStyle.width || '100%' }}>
+    <div style={{ overflow: 'hidden', width: '100%', maxWidth: '100%', boxSizing: 'border-box' as const }}>
       <div
         className={`${config.fullWidth !== false ? 'w-full' : 'inline-block'} text-center`}
         style={{
@@ -595,72 +507,56 @@ const ServiceCountdownWidget = ({ config = defaultCountdownConfig }: { config?: 
         }}
       >
         {/* Header */}
-        {(() => {
-          const bal = config.headerDigitBalance ?? 50;
-          const headerFactor = 1 + (50 - bal) * 0.012;
-          const digitFactor = 1 + (bal - 50) * 0.012;
-          const elOffLocal = (el: string): React.CSSProperties => {
-            const e = config.elementOffsets?.[el];
-            return e ? { transform: `translate(${e.x}px, ${e.y}px)` } : {};
-          };
-          return (
-            <>
-              {config.showHeader !== false && (
-                <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('header') }}>
-                  <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
-                  <span className="font-semibold" style={{ color: config.textColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
-                    {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
-                  </span>
-                  {config.showDate !== false && (
-                    <span style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px' }}>
-                      {t.fullDate}
-                    </span>
-                  )}
-                </div>
-              )}
+        <div className="flex items-center justify-center flex-wrap" style={{ gap: '10px', marginBottom: '6px' }}>
+          <Icon style={{ color: config.iconColor, width: '28px', height: '28px' }} />
+          <span className="font-semibold" style={{ color: config.textColor, fontSize: '18px' }}>
+            {t.isLive ? `${config.liveLabel || "Happening Now"}:` : `${config.headerLabel}:`}
+          </span>
+          {config.showDate !== false && (
+            <span style={{ color: config.labelColor, fontSize: '18px' }}>
+              {t.fullDate}
+            </span>
+          )}
+        </div>
 
-              {config.showTitle !== false && t.title && (
-                <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: config.headerFontSize ? `${config.headerFontSize}px` : '18px', transform: headerFactor !== 1 ? `scale(${headerFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('title') }}>
-                  {t.title}
-                </p>
-              )}
+        {/* Service title */}
+        {config.showTitle !== false && t.title && (
+          <p className="italic mt-1 mb-8" style={{ color: config.labelColor, fontSize: '18px' }}>
+            {t.title}
+          </p>
+        )}
 
-              {/* Countdown digits */}
-              <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%', transform: digitFactor !== 1 ? `scale(${digitFactor})` : undefined, transformOrigin: 'center center', ...elOffLocal('digits') }}>
-                {units.map((u, i) => (
-                  <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
-                    <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
-                      <span
-                        className="tabular-nums leading-none"
-                        style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: config.digitFontSize ? `${config.digitFontSize}px` : 'clamp(2.5rem, 10vw, 4.5rem)' }}
-                      >
-                        {pad(u.v)}
-                      </span>
-                      <span
-                        className="uppercase tracking-wider"
-                        style={{ color: config.labelColor, marginTop: '8px', fontSize: config.labelFontSize ? `${config.labelFontSize}px` : 'clamp(8px, 2vw, 12px)' }}
-                      >
-                        {u.l}
-                      </span>
-                    </div>
-                    {i < units.length - 1 && (
-                      <span
-                        className="font-light flex-shrink-0"
-                        style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: config.separatorFontSize ? `${config.separatorFontSize}px` : 'clamp(1.5rem, 6vw, 3rem)' }}
-                      >
-                        :
-                      </span>
-                    )}
-                  </div>
-                ))}
+        {/* Countdown digits */}
+        <div className="flex justify-center items-center" style={{ maxWidth: '100%', overflow: 'visible', width: '100%' }}>
+          {units.map((u, i) => (
+            <div key={u.l} className="flex items-center" style={{ minWidth: 0 }}>
+              <div className="flex flex-col items-center" style={{ width: "clamp(48px, 16vw, 120px)", minWidth: 0 }}>
+                <span
+                  className="tabular-nums leading-none"
+                  style={{ color: config.digitColor, fontVariantNumeric: "tabular-nums", fontWeight: 900, fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', fontSize: 'clamp(2.5rem, 10vw, 4.5rem)' }}
+                >
+                  {pad(u.v)}
+                </span>
+                <span
+                  className="uppercase tracking-wider"
+                  style={{ color: config.labelColor, marginTop: '8px', fontSize: 'clamp(8px, 2vw, 12px)' }}
+                >
+                  {u.l}
+                </span>
               </div>
-            </>
-          );
-        })()}
-
+              {i < units.length - 1 && (
+                <span
+                  className="font-light flex-shrink-0"
+                  style={{ color: config.separatorColor, width: "clamp(10px, 3vw, 16px)", textAlign: "center", marginTop: '-16px', fontSize: 'clamp(1.5rem, 6vw, 3rem)' }}
+                >
+                  :
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-    </MobileFitWrapper>
   );
 };
 
