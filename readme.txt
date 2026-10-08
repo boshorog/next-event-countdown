@@ -100,25 +100,25 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 = 1.2.4 =
 * Compatibility: Tested with WordPress 7.0
-* Fixed: Pro updates now appear on the Plugins screen
-* Improved: One-click update from inside the plugin forces a fresh update check and runs the upgrade directly
+* Fixed: Smoother updating process.
+* Bug fixes
 
 = 1.2.3 =
-* New: Demo mode with a dedicated demo shortcode
 * Improved: Outside admin notices are hidden on the plugin screen
 * Improved: Counters automatically shrink to fit on mobile
 * Fixed: Pro counter styles occasionally loading as the default style
 
 = 1.2.2 =
 * Improved: Comparison tables, support links and typography
+* Bug fixes
 
 = 1.2.1 =
-* New: Calendar Import (Pro) – import and sync events from ICS feeds (Google Calendar, Outlook, Apple Calendar, Microsoft 365)
+* New: Loading Bar counter style (Pro)
 
 = 1.2.0 =
-* New: Loading Bar counter style (Pro)
+* New: Calendar Import (Pro) – import and sync events from ICS feeds (Google Calendar, Outlook, Apple Calendar, Microsoft 365)
 * New: "Make recurring" action for special events
-* Improved: Style refinements for Elegant Serif, Radial Progress and Bold Stack
+* Improved: Style refinements for Elegant Serif, Radial Progress and Bold Stack (Pro)
 
 = 1.1.5 =
 * Fixed Freemius wp.org compliance (is_premium set to false for free version)
