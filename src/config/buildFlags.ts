@@ -24,11 +24,12 @@
  */
 
 import { STORAGE_KEYS, isDevPreview } from './pluginIdentity';
+import { isDemoMode } from './demoMode';
 
 export type BuildVariant = 'free' | 'pro';
 
 const getDevModePro = (): boolean => {
-  if (!isDevPreview()) return false;
+  if (!isDevPreview() || isDemoMode()) return false;
   try {
     return localStorage.getItem(STORAGE_KEYS.devLicenseMode) === 'pro';
   } catch {

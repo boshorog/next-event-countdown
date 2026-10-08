@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Palette, Settings2, ChevronDown, Check, Type, Settings, Frame, Crown, Church, Maximize2, CalendarDays, LayoutGrid, Rows3, Globe, Languages, Timer } from 'lucide-react';
 import { BUILD_FLAGS } from '@/config/buildFlags';
+import { isDemoMode } from '@/config/demoMode';
 import { COUNTER_STYLE_OPTIONS } from '@/components/counterStyles/types';
 import { LANGUAGES, getLanguage } from '@/config/languageTranslations';
 import { STYLE_RENDERERS } from '@/components/counterStyles/renderers';
@@ -144,7 +145,7 @@ const SettingsProposal2 = ({ settings, onSettingsChange, currentGalleryId, count
       const ajaxUrl = wp?.ajaxUrl || urlParams.get('ajax');
       const nonce = wp?.nonce || urlParams.get('nonce') || '';
 
-      if (ajaxUrl && nonce) {
+      if (!isDemoMode() && ajaxUrl && nonce) {
         const form = new FormData();
         form.append('action', 'nxevtcd_action');
         form.append('action_type', 'save_settings');

@@ -123,6 +123,7 @@ class NxEvtCd_Plugin {
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_shortcode('nxevtcd_countdown', array($this, 'display_countdown_shortcode'));
+        add_shortcode('nxevtcd_demo', array($this, 'display_demo_shortcode'));
         
         // AJAX handlers
         add_action('wp_ajax_nxevtcd_action', array($this, 'handle_nxevtcd_ajax'));
@@ -150,7 +151,7 @@ class NxEvtCd_Plugin {
         $icon_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2731.33 2040.46"><path fill="black" d="M870.34 1020.23c0,-647.46 -364.37,-1020.23 -863.27,-1020.23 -2.37,0 -4.71,0.07 -7.07,0.08l0 454.07c2.35,-0.06 4.7,-0.1 7.07,-0.1 176.58,0 305.51,154.16 305.51,566.17 0,412.02 -128.93,566.17 -305.51,566.17 -2.37,0 -4.72,-0.04 -7.07,-0.1l0 454.07c2.36,0.02 4.7,0.08 7.07,0.08 498.9,0 863.27,-372.78 863.27,-1020.23zm990.65 0c0,647.46 364.37,1020.23 866.08,1020.23 1.43,0 2.84,-0.05 4.26,-0.05l0 -454.07c-1.42,0.02 -2.83,0.06 -4.26,0.06 -179.38,0 -308.31,-154.16 -308.31,-566.17 0,-412.02 128.93,-566.17 308.31,-566.17 1.43,0 2.84,0.04 4.26,0.06l0 -454.07c-1.43,-0 -2.83,-0.05 -4.26,-0.05 -501.71,0 -866.08,372.78 -866.08,1020.23zm-495.32 231.24c-76.61,0 -141.08,24.76 -193.4,74.28 -52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.28 -193.39,-74.28zm-193.4 -931.94c-52.32,49.52 -78.48,114.45 -78.48,194.8 0,78.48 26.16,143.88 78.48,196.2 52.32,52.32 116.78,78.48 193.4,78.48 76.61,0 141.07,-26.16 193.39,-78.48 52.32,-52.32 78.48,-117.72 78.48,-196.2 0,-80.35 -26.16,-145.28 -78.48,-194.8 -52.32,-49.52 -116.78,-74.27 -193.39,-74.27 -76.61,0 -141.08,24.76 -193.4,74.27z"/></svg>';
         $icon_base64 = 'data:image/svg+xml;base64,' . base64_encode($icon_svg);
         
-        add_menu_page(
+        $page_hook = add_menu_page(
             '',
             'Countdown',
             'manage_options',
@@ -159,7 +160,17 @@ class NxEvtCd_Plugin {
             $icon_base64,
             100
         );
+        add_action('load-' . $page_hook, array($this, 'prepare_clean_admin_page'));
+    }
 
+    public function prepare_clean_admin_page() {
+        remove_all_actions('admin_notices');
+        remove_all_actions('all_admin_notices');
+        add_filter('admin_body_class', array($this, 'admin_body_class'));
+    }
+
+    public function admin_body_class($classes) {
+        return $classes . ' nxevtcd-admin-page';
     }
     
     /**
@@ -205,6 +216,7 @@ class NxEvtCd_Plugin {
         if ($hook_suffix !== 'toplevel_page_kindpixels-next-event-countdown') {
             return;
         }
+        wp_enqueue_style('nxevtcd-admin-page', plugins_url('dist/admin-page.css', __FILE__), array(), NXEVTCD_VERSION);
         
         $js_file = $this->get_asset_url('js');
         $css_file = $this->get_asset_url('css');
@@ -308,31 +320,6 @@ class NxEvtCd_Plugin {
             'pluginBasename' => plugin_basename( __FILE__ ),
         ));
 
-        // Admin page inline styles (notice hiding + page chrome)
-        $admin_inline_css = '
-            body.nxevtcd-admin-page #wpbody-content > .notice,
-            body.nxevtcd-admin-page #wpbody-content > .updated,
-            body.nxevtcd-admin-page #wpbody-content > div.notice,
-            body.nxevtcd-admin-page #wpbody-content > div.updated,
-            body.nxevtcd-admin-page .wrap > .notice,
-            body.nxevtcd-admin-page .wrap > .updated,
-            body.nxevtcd-admin-page .notice,
-            body.nxevtcd-admin-page .updated,
-            body.nxevtcd-admin-page div[class*="notice"],
-            body.nxevtcd-admin-page div[class*="update"] {
-                display: none !important;
-            }
-            body.nxevtcd-admin-page .notice-error,
-            body.nxevtcd-admin-page .notice-warning,
-            body.nxevtcd-admin-page .update-nag {
-                display: block !important;
-            }
-            .wrap > h1:first-child { display: none !important; }
-        ';
-        wp_add_inline_style('nxevtcd-admin', $admin_inline_css);
-
-        // Admin page inline script (add body class)
-        wp_add_inline_script('nxevtcd-admin', 'document.body.classList.add("nxevtcd-admin-page");', 'before');
     }
     public function assets_not_found_notice() {
         echo '<div class="notice notice-error"><p>KindPixels Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
@@ -347,7 +334,7 @@ class NxEvtCd_Plugin {
         }
         
         echo '<div class="wrap nxevtcd-admin-page">';
-        echo '<div id="nxevtcd-root" style="margin-top: 0;"></div>';
+        echo '<div id="nxevtcd-root"></div>';
         echo '</div>';
     }
     
@@ -564,6 +551,20 @@ class NxEvtCd_Plugin {
         $html .= '</div>';
 
         return $html;
+    }
+
+    /** Public interactive demo. No site data or administration credentials are passed. */
+    public function display_demo_shortcode($atts) {
+        $token = wp_generate_uuid4();
+        $src = add_query_arg(array(
+            'demo' => 'true',
+            'admin' => 'true',
+            'frameToken' => $token,
+        ), plugins_url('dist/index.html', __FILE__));
+        wp_enqueue_style('nxevtcd-admin-page', plugins_url('dist/admin-page.css', __FILE__), array(), NXEVTCD_VERSION);
+        wp_enqueue_script('nxevtcd-demo-embed', plugins_url('dist/demo-embed.js', __FILE__), array(), NXEVTCD_VERSION, true);
+
+        return '<div class="nxevtcd-demo-container"><iframe title="' . esc_attr__('Next Event Countdown demo', 'kindpixels-next-event-countdown') . '" src="' . esc_url($src) . '" data-nxevtcd-demo-token="' . esc_attr($token) . '" scrolling="no" loading="eager" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe></div>';
     }
 
     /**

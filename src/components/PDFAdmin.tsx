@@ -16,6 +16,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { useLicense } from '@/hooks/useLicense';
 import { BUILD_FLAGS } from '@/config/buildFlags';
+import { isDemoMode } from '@/config/demoMode';
 import {
   DndContext,
   closestCenter,
@@ -725,6 +726,7 @@ const PDFAdmin = ({ galleries, currentGalleryId, onGalleriesChange, onCurrentGal
   );
 
   const saveGalleriesToWP = async (updatedGalleries: Gallery[]) => {
+    if (isDemoMode()) return true;
     // Safety guard: never persist an empty galleries array
     if (!Array.isArray(updatedGalleries) || updatedGalleries.length === 0) {
       console.warn('Aborting save: empty galleries payload');

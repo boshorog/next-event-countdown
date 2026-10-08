@@ -1,0 +1,16 @@
+/* Scoped to the Countdown page, including notices printed outside notice hooks. */
+body.nxevtcd-admin-page #wpbody-content > .notice,
+body.nxevtcd-admin-page #wpbody-content > .updated,
+body.nxevtcd-admin-page #wpbody-content > .error,
+body.nxevtcd-admin-page #wpbody-content > .update-nag,
+body.nxevtcd-admin-page .wrap > .notice,
+body.nxevtcd-admin-page .wrap > .updated,
+body.nxevtcd-admin-page .wrap > .error {
+  display: none !important;
+}
+body.nxevtcd-admin-page .wrap > h1:first-child { display: none !important; }
+body.nxevtcd-admin-page #nxevtcd-root { margin-top: 0; }
+.nxevtcd-demo-container { position: relative; width: 100%; overflow: hidden; }
+.nxevtcd-demo-container iframe {
+  display: block; width: 100%; height: 800px; min-height: 600px; border: 0;
+}

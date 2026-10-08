@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { isDevPreview } from '@/config/pluginIdentity';
+import { isDemoMode, loadDemoConfig, saveDemoConfig } from '@/config/demoMode';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,7 @@ const KindPixelsLogo = ({ className, style }: { className?: string; style?: Reac
 const initialPDFs: GalleryItem[] = [];
 
 const Index = () => {
+  const isDemo = isDemoMode();
   // IMPORTANT: useLicense must be called unconditionally at the top
   const license = useLicense();
   
@@ -79,6 +81,7 @@ const Index = () => {
   const [shortcodeCopied, setShortcodeCopied] = useState(false);
   const [galleryNotFound, setGalleryNotFound] = useState(false);
   const [countdownConfig, setCountdownConfig] = useState<CountdownConfig>(() => {
+    if (isDemo) return loadDemoConfig(defaultCountdownConfig);
     try {
       const saved = localStorage.getItem('nxevtcd_countdown_config');
       if (saved) return { ...defaultCountdownConfig, ...JSON.parse(saved) };
@@ -88,6 +91,13 @@ const Index = () => {
   const [countdownConfigLoaded, setCountdownConfigLoaded] = useState(false);
 
   useEffect(() => {
+    if (isDemo) {
+      setGalleryState({
+        galleries: [{ id: 'demo', name: 'Demo Counter', items: [], createdAt: new Date().toISOString() }],
+        currentGalleryId: 'demo',
+      });
+      return;
+    }
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
     
@@ -323,6 +333,7 @@ const Index = () => {
 
   // Fetch settings for the currently selected gallery (so "Current Gallery" scope persists)
   useEffect(() => {
+    if (isDemo) return;
     const wp = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const urlParams = new URLSearchParams(window.location.search);
     const ajaxUrl = wp?.ajaxUrl || urlParams.get('ajax');
@@ -352,6 +363,10 @@ const Index = () => {
 
   // Load countdown config from WP database (works for both admin and frontend shortcode)
   useEffect(() => {
+    if (isDemo) {
+      setCountdownConfigLoaded(true);
+      return;
+    }
     const wpData = (typeof window !== 'undefined' && ((window as any).nxevtcdData)) ? ((window as any).nxevtcdData) : null;
     const uParams = new URLSearchParams(window.location.search);
     const ajUrl = wpData?.ajaxUrl || uParams.get('ajax');
@@ -429,6 +444,10 @@ const Index = () => {
   const galleryLightboxEnabled = toBoolean((settings as any)?.lightboxEnabled, true);
   // Persist countdownConfig to localStorage and WP database whenever it changes
   useEffect(() => {
+    if (isDemo) {
+      saveDemoConfig(countdownConfig);
+      return;
+    }
     try { localStorage.setItem('nxevtcd_countdown_config', JSON.stringify(countdownConfig)); } catch {}
     
     // Only save to WP after initial load from server is complete
@@ -460,7 +479,7 @@ const Index = () => {
   const isDevPreview = hostname.includes('lovable.app') || hostname.includes('lovableproject.com') || hostname === 'localhost';
 
   // Show admin interface only in WordPress admin area or dev preview
-  const showAdmin = isDevPreview || isWordPressAdmin;
+  const showAdmin = isDemo || isDevPreview || isWordPressAdmin;
 
   // DEV: Show showcase for gallery not found designs
   const showGalleryNotFoundShowcase = urlParams.get('showcase') === 'gallery-not-found';
@@ -526,17 +545,18 @@ const Index = () => {
             <div className="flex items-baseline gap-2">
               <h1 className="text-2xl text-slate-800"><span className="font-bold">{license.isPro ? 'Next Event Countdown Pro' : 'Next Event Countdown'}</span></h1>
               <span className="text-xs text-slate-400">v{PLUGIN_VERSION}</span>
+              {isDemo && <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">Demo</span>}
             </div>
           </div>
         </div>
 
         {/* Update Notice - shows when new version available */}
-        <div className="px-6">
+        {!isDemo && <div className="px-6">
           <UpdateNotice currentVersion={PLUGIN_VERSION} />
-        </div>
+        </div>}
 
         {/* Pro Welcome Message - shows after license activation */}
-        {license.isPro && <ProWelcome className="mx-6 mb-6" />}
+        {!isDemo && license.isPro && <ProWelcome className="mx-6 mb-6" />}
         
         <Tabs defaultValue={new URLSearchParams(window.location.search).get('tab') || "gallery"} className="w-full">
           {/* Tab Navigation with Underline Style */}
@@ -672,7 +692,7 @@ const Index = () => {
         </Tabs>
 
         {/* Footer */}
-        <div className="px-6 mt-8">
+        {!isDemo && <div className="px-6 mt-8">
           <div className="border-t border-slate-200 pt-4 pb-6">
             <div className="flex items-center justify-between">
               {/* Left: Support Links */}
@@ -717,11 +737,11 @@ const Index = () => {
               </a>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
 
       {/* Dev Mode Selector - only in dev preview, excluded from production builds */}
-      {IS_DEV_PREVIEW && DevLicenseSelector && (
+      {!isDemo && IS_DEV_PREVIEW && DevLicenseSelector && (
         <Suspense fallback={null}>
           <DevLicenseSelector />
         </Suspense>
