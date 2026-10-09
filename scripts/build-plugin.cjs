@@ -179,6 +179,12 @@ async function main() {
   }
   
   const version = getPluginVersion();
+  // Without the SDK the fallback is stdClass: licensing may appear to work
+  // from saved UI state, but no Freemius updater can ever be registered.
+  if (!fs.existsSync(path.join(ROOT_DIR, 'freemius/start.php')) &&
+      !fs.existsSync(path.join(ROOT_DIR, 'vendor/freemius/start.php'))) {
+    throw new Error('Freemius SDK missing. Add the official SDK at freemius/start.php or vendor/freemius/start.php before packaging.');
+  }
   console.log(`\n🚀 KindPixels Next Event Countdown Plugin Builder`);
   console.log(`   Version: ${version}`);
   console.log(`   Output:  ${OUTPUT_DIR}`);

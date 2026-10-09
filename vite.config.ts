@@ -10,6 +10,11 @@ import fs from "fs";
 const proBuildMarker = () => ({
   name: 'pro-build-marker',
   closeBundle() {
+    // Public-dir copying is disabled to avoid overwriting Vite's generated index.html.
+    // Ship the external WordPress CSS and iframe listener explicitly for both variants.
+    for (const asset of ['admin-page.css', 'demo-embed.js']) {
+      fs.copyFileSync(path.resolve(__dirname, 'public', asset), path.resolve(__dirname, 'dist', asset));
+    }
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
     const phpPath = path.resolve(__dirname, 'kindpixels-next-event-countdown.php');
@@ -26,13 +31,8 @@ const proBuildMarker = () => ({
           /Plugin Name:\s*KindPixels Next Event Countdown\s*$/m,
           'Plugin Name: KindPixels Next Event Countdown Pro'
         );
-        // Set is_premium to true for Pro builds
-        phpContent = phpContent.replace(
-          "'is_premium'          => false,",
-          "'is_premium'          => true,"
-        );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
-        console.log('✓ Updated plugin header and is_premium for Pro version');
+        console.log('✓ Updated plugin header for Pro version');
       }
     } else {
       // Ensure no marker exists for Free build
@@ -46,11 +46,6 @@ const proBuildMarker = () => ({
         phpContent = phpContent.replace(
           /Plugin Name:\s*KindPixels Next Event Countdown Pro\s*$/m,
           'Plugin Name: KindPixels Next Event Countdown'
-        );
-        // Ensure is_premium is false for Free builds
-        phpContent = phpContent.replace(
-          "'is_premium'          => true,",
-          "'is_premium'          => false,"
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }

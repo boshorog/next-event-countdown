@@ -40,80 +40,49 @@ const App = () => {
 
     const token = new URLSearchParams(window.location.search).get('frameToken') || undefined;
     
+    // Measure the actual mount, never the iframe viewport (which feeds back
+    // into document/body scrollHeight after the parent changes the frame).
+    const rootEl = document.getElementById('nxevtcd-root') || document.getElementById('root');
+    if (!rootEl) return;
     let lastHeight = 0;
-    let isUpdating = false;
-    let lastSentAt = 0;
-
-    const measure = () => {
-      const rootEl = document.getElementById('root');
-      const doc = document.documentElement;
-      const body = document.body;
-
-      // IMPORTANT: avoid using *clientHeight* here.
-      // In an iframe, clientHeight tracks the iframe viewport height, which can create
-      // a feedback loop (parent sets iframe height -> iframe clientHeight grows -> we post bigger height).
-      const heights = [
-        rootEl?.scrollHeight,
-        rootEl?.offsetHeight,
-        doc?.scrollHeight,
-        doc?.offsetHeight,
-        body?.scrollHeight,
-        body?.offsetHeight,
-      ].filter((v): v is number => typeof v === 'number');
-
-      const raw = Math.max(...heights, 0) + 2; // minimal padding
-      const contentHeight = Math.ceil(raw / 4) * 4;
-      return contentHeight;
-    };
-    
+    let timeout = 0;
+    let rafId = 0;
     const postHeight = () => {
-      if (isUpdating) return;
-      const now = Date.now();
-      const contentHeight = measure();
-
-      if (Math.abs(contentHeight - lastHeight) > 12 && (now - lastSentAt) > 700) {
-        isUpdating = true;
+      const contentHeight = Math.ceil((Math.max(rootEl.scrollHeight, rootEl.getBoundingClientRect().height) + 24) / 8) * 8;
+      if (contentHeight > 0 && Math.abs(contentHeight - lastHeight) > 4) {
         lastHeight = contentHeight;
-        lastSentAt = now;
-        window.parent?.postMessage({ type: POST_MESSAGE_HEIGHT, height: contentHeight, token }, '*');
-        setTimeout(() => {
-          isUpdating = false;
-        }, 250);
+        window.parent.postMessage({ type: POST_MESSAGE_HEIGHT, height: contentHeight, token }, '*');
       }
     };
-
-    let rafId = 0;
+    // Debounce without a throttle: late tab/data changes must never be dropped.
     const schedule = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => postHeight());
-    };
-
-    // Debounced height update
-    let timeout: number;
-    const debouncedSchedule = () => {
       clearTimeout(timeout);
-      timeout = window.setTimeout(schedule, 300);
+      cancelAnimationFrame(rafId);
+      timeout = window.setTimeout(() => { rafId = requestAnimationFrame(postHeight); }, 150);
     };
-
-    // Initial and follow-up height calculations to catch async image/lazy loads
-    setTimeout(postHeight, 500);
-    setTimeout(postHeight, 1500);
-    setTimeout(postHeight, 3000);
-    
-    const ro = new ResizeObserver(debouncedSchedule);
-    ro.observe(document.documentElement);
-    if (document.body) ro.observe(document.body);
-
-    // Fallback listeners
-    window.addEventListener('load', postHeight);
-    window.addEventListener('resize', debouncedSchedule);
-
+    const onHeightCheck = (event: MessageEvent) => {
+      if (event.source !== window.parent || event.data?.type !== `${POST_MESSAGE_HEIGHT}-check` || event.data?.token !== token) return;
+      lastHeight = 0;
+      schedule();
+    };
+    const timers = [300, 1000, 2000, 4000, 8000].map(ms => window.setTimeout(postHeight, ms));
+    const ro = new ResizeObserver(schedule);
+    ro.observe(rootEl);
+    const mo = new MutationObserver(schedule);
+    mo.observe(rootEl, { childList: true, subtree: true, attributes: true });
+    window.addEventListener('load', schedule);
+    window.addEventListener('resize', schedule);
+    window.addEventListener('message', onHeightCheck);
+    document.fonts?.ready.then(schedule);
     return () => {
       clearTimeout(timeout);
+      timers.forEach(clearTimeout);
       cancelAnimationFrame(rafId);
       ro.disconnect();
-      window.removeEventListener('load', postHeight);
-      window.removeEventListener('resize', debouncedSchedule);
+      mo.disconnect();
+      window.removeEventListener('load', schedule);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('message', onHeightCheck);
     };
   }, []);
 

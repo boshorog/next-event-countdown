@@ -5,7 +5,7 @@ Donate link: https://kindpixels.com/donate
 Tags: countdown, timer, event, recurring, schedule
 Requires at least: 5.8
 Tested up to: 7.0
-Stable tag: 1.2.4
+Stable tag: 1.2.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -98,6 +98,12 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 
 == Changelog ==
 
+= 1.2.5 =
+* Fixed: Public demos display the entire plugin without its footer in Elementor and other page builders.
+* Fixed: Demo height updates after tab changes, expanded events and late-loading content.
+* Fixed: Required demo scripts and styles are included in both release packages.
+* Fixed: Pro release identity and Freemius update refresh on the Plugins screen.
+
 = 1.2.4 =
 * Compatibility: Tested with WordPress 7.0
 * Fixed: Smoother updating process.
@@ -173,6 +179,9 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.2.5 =
+Fixes clipped page-builder demos and improves Pro update detection. Install this release manually if an older Pro installation does not offer updates.
 
 = 1.2.4 =
 WordPress 7.0 compatibility and reliable Pro updates from the Plugins screen.
