@@ -89,8 +89,15 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
                     'is_org_compliant'    => ! $is_premium_build,
                     'has_addons'          => false,
                     'has_paid_plans'      => true,
+                    'anonymous_mode'      => ! $is_premium_build,
+                    'opt_in_moderation'   => array(
+                        'new'       => 0,
+                        'updates'   => 0,
+                        'localhost' => false,
+                    ),
                     'menu'                => array(
-                        'slug'    => 'kindpixels-next-event-countdown-manager',
+                        'slug'    => 'kindpixels-next-event-countdown',
+                        'first-path' => 'admin.php?page=kindpixels-next-event-countdown',
                         'account' => $is_premium_build,
                         'support' => false,
                     ),
@@ -166,6 +173,7 @@ class NxEvtCd_Plugin {
         
         // Activation redirect for onboarding
         add_action('admin_init', array($this, 'activation_redirect'));
+        add_action('load-plugins.php', array($this, 'refresh_pro_updates'));
     }
     
     /**
@@ -761,6 +769,7 @@ class NxEvtCd_Plugin {
             wp_send_json_error( array( 'message' => 'insufficient_permissions' ) );
         }
 
+        $this->refresh_pro_updates( true );
         $plugin_file = plugin_basename( __FILE__ );
 
         if ( ! function_exists( 'wp_update_plugins' ) ) {
@@ -795,6 +804,26 @@ class NxEvtCd_Plugin {
             'knownVersion' => $known_version,
             'updatesPage'  => esc_url_raw( self_admin_url( 'update-core.php' ) ),
         ) );
+    }
+
+    /** Refresh Freemius's own cache, not just WordPress.org's update cache. */
+    public function refresh_pro_updates( $force = false ) {
+        if ( ! current_user_can( 'update_plugins' ) || ! function_exists( 'nxevtcd_fs' ) ) {
+            return;
+        }
+        $fs = nxevtcd_fs();
+        if ( ! is_object( $fs ) || ! is_callable( array( $fs, 'is_premium' ) ) || ! $fs->is_premium() || ! is_callable( array( $fs, 'get_update' ) ) ) {
+            return;
+        }
+        // Avoid provider requests on every Plugins-page visit; Sync now bypasses this cache.
+        if ( ! $force && get_transient( 'nxevtcd_pro_update_checked' ) ) {
+            return;
+        }
+        $fs->get_update( false, true );
+        set_transient( 'nxevtcd_pro_update_checked', time(), HOUR_IN_SECONDS );
+        // Let Freemius's registered updater populate WordPress's update response.
+        delete_site_transient( 'update_plugins' );
+        wp_update_plugins();
     }
 
     /**
