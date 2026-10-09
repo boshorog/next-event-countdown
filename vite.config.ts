@@ -31,13 +31,8 @@ const proBuildMarker = () => ({
           /Plugin Name:\s*KindPixels Next Event Countdown\s*$/m,
           'Plugin Name: KindPixels Next Event Countdown Pro'
         );
-        // Set is_premium to true for Pro builds
-        phpContent = phpContent.replace(
-          "'is_premium'          => false,",
-          "'is_premium'          => true,"
-        );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
-        console.log('✓ Updated plugin header and is_premium for Pro version');
+        console.log('✓ Updated plugin header for Pro version');
       }
     } else {
       // Ensure no marker exists for Free build
@@ -51,11 +46,6 @@ const proBuildMarker = () => ({
         phpContent = phpContent.replace(
           /Plugin Name:\s*KindPixels Next Event Countdown Pro\s*$/m,
           'Plugin Name: KindPixels Next Event Countdown'
-        );
-        // Ensure is_premium is false for Free builds
-        phpContent = phpContent.replace(
-          "'is_premium'          => true,",
-          "'is_premium'          => false,"
         );
         fs.writeFileSync(phpPath, phpContent, 'utf8');
       }

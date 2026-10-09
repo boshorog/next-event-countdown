@@ -9,7 +9,7 @@
  * - Fetches latest version from WordPress.org API
  * - Compares with current version
  * - Dismissible per version
- * - Hidden for Pro users (Freemius handles updates)
+ * - Pro releases are checked through Freemius, Free through WordPress.org
  * 
  * REUSE NOTES:
  * - Update WP_API_URL to point to your plugin's WordPress.org JSON
@@ -42,6 +42,27 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
   useEffect(() => {
     // Never show in demo mode
     if (isDemoMode()) return;
+    const wp = getWPGlobal();
+    if (wp?.fsIsPremiumBuild && wp?.ajaxUrl && wp?.nonce) {
+      // The WordPress.org version is not evidence of a published Pro release.
+      const form = new FormData();
+      form.append('action', AJAX_ACTION);
+      form.append('action_type', 'prepare_update');
+      form.append('nonce', wp.nonce);
+      let cancelled = false;
+      fetch(wp.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: form })
+        .then(res => res.json())
+        .then(json => {
+          const version = json?.success ? json.data?.knownVersion : null;
+          if (cancelled || !version) return;
+          setLatestVersion(version);
+          try { setDismissed(localStorage.getItem(STORAGE_KEYS.updateDismissed) === version); }
+          catch { setDismissed(false); }
+        })
+        .catch(() => {})
+        .finally(() => { if (!cancelled) setLoading(false); });
+      return () => { cancelled = true; };
+    }
     // Check if this version was already dismissed
     try {
       const dismissedVersion = localStorage.getItem(STORAGE_KEYS.updateDismissed);
@@ -70,7 +91,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
         // Silently fail - no update notice if API unavailable
       })
       .finally(() => setLoading(false));
-  }, [latestVersion]);
+  }, []);
 
   const compareVersions = (v1: string, v2: string): number => {
     const parts1 = v1.split('.').map(Number);
@@ -121,7 +142,7 @@ export const UpdateNotice = ({ currentVersion }: UpdateNoticeProps) => {
     }
 
     const wp = getWPGlobal();
-    const isProBuild = wp?.fsIsPro === true || wp?.fsIsPro === 'true' || wp?.fsIsPro === '1' || wp?.fsIsPro === 1;
+    const isProBuild = wp?.fsIsPremiumBuild === true || wp?.fsIsPremiumBuild === 'true' || wp?.fsIsPremiumBuild === '1' || wp?.fsIsPremiumBuild === 1;
 
     // 1) WordPress already knows about the update: run the upgrade immediately.
     if (wp?.updateUrl) {

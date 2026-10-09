@@ -7,3 +7,4 @@
 - Copy the demo listener and admin-page stylesheet explicitly into both release builds because public directory copying is disabled to preserve Vite's generated entry page.
 - Refresh Pro updates with the public Freemius get_update(false, true) method before WordPress refresh; throttle Plugins-screen checks and leave updater injection to the SDK.
 - Refuse release packaging without the official Freemius SDK because silent fallback instances cannot provide licensing or Pro updates.
+- Use actual premium-build status, not paid-license status, to select the update provider; Pro notices must use Freemius release data rather than WordPress.org versions.

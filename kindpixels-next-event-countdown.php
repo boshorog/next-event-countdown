@@ -346,6 +346,7 @@ class NxEvtCd_Plugin {
             'fsAccountUrl' => $fs_account_url,
             'fsPricingUrl' => $fs_pricing_url,
             'fsIsPro' => $fs_is_pro,
+            'fsIsPremiumBuild' => is_object($fs) && is_callable(array($fs, 'is_premium')) && $fs->is_premium(),
             'fsStatus' => $fs_status,
             'fsAvailable' => $fs_available,
             'licensedTo' => $fs_licensed_to,
