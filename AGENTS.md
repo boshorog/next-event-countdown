@@ -7,4 +7,5 @@
 - Copy the demo listener and admin-page stylesheet explicitly into both release builds because public directory copying is disabled to preserve Vite's generated entry page.
 - Refresh Pro updates with the public Freemius get_update(false, true) method before WordPress refresh; throttle Plugins-screen checks and leave updater injection to the SDK.
 - Refuse release packaging without the official Freemius SDK because silent fallback instances cannot provide licensing or Pro updates.
-- Use actual premium-build status, not paid-license status, to select the update provider; Pro notices must use Freemius release data rather than WordPress.org versions.
+- Use actual premium-build status, not paid-license status, to select the update provider; Pro notices must use Freemius release data rather than WordPress.org versions.- Mark Pro packages with both `dist/.pro-build` and visible `dist/pro-build.txt` plus a "Pro" header name; packaging fails without them because deployment tools may drop dot-files and silently ship Pro as Free.
+- Build production assets with a relative Vite base and cache-bust the admin bundle by file time, because Pro may live in a different plugin folder and shares version numbers with Free.

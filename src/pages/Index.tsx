@@ -1,4 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
+import LicenseDebugPanel from '@/components/LicenseDebugPanel';
 import { isDevPreview } from '@/config/pluginIdentity';
 import { isDemoMode, loadDemoConfig, saveDemoConfig } from '@/config/demoMode';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -554,6 +555,8 @@ const Index = () => {
         {!isDemo && <div className="px-6">
           <UpdateNotice currentVersion={PLUGIN_VERSION} />
         </div>}
+
+        {!isDemo && <LicenseDebugPanel />}
 
         {/* Pro Welcome Message - shows after license activation */}
         {!isDemo && license.isPro && <ProWelcome className="mx-6 mb-6" />}

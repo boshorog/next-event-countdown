@@ -17,11 +17,14 @@ const proBuildMarker = () => ({
     }
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
+    // Visible twin: some ZIP/deployment tools drop hidden dot-files.
+    const visibleMarkerPath = path.resolve(__dirname, 'dist/pro-build.txt');
     const phpPath = path.resolve(__dirname, 'kindpixels-next-event-countdown.php');
     
     if (isPro) {
       // Create marker file for Pro build
       fs.writeFileSync(markerPath, 'pro');
+      fs.writeFileSync(visibleMarkerPath, 'pro');
       console.log('✓ Created .pro-build marker for Pro version');
       
       if (fs.existsSync(phpPath)) {
@@ -36,8 +39,8 @@ const proBuildMarker = () => ({
       }
     } else {
       // Ensure no marker exists for Free build
-      if (fs.existsSync(markerPath)) {
-        fs.unlinkSync(markerPath);
+      for (const marker of [markerPath, visibleMarkerPath]) {
+        if (fs.existsSync(marker)) fs.unlinkSync(marker);
       }
       
       if (fs.existsSync(phpPath)) {
@@ -56,7 +59,9 @@ const proBuildMarker = () => ({
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: mode === 'production' ? '/wp-content/plugins/kindpixels-next-event-countdown/dist/' : '/',
+  // Relative base: Pro may be installed in a different folder (e.g. "-pro"), so lazy
+  // chunks and assets must resolve next to the loaded bundle, never a hardcoded folder.
+  base: mode === 'production' ? './' : '/',
   server: {
     host: "::",
     port: 8080,

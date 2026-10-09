@@ -37,7 +37,7 @@ const INCLUDE_FILES = [
 
 // Files/folders to exclude
 const EXCLUDE_PATTERNS = [
-  '.pro-build',
+  'pro-build',
   '.DS_Store',
   'Thumbs.db',
   '*.map',
@@ -134,9 +134,16 @@ async function createZip(variant, version) {
     });
     
     if (variant === 'pro') {
-      const proMarker = path.join(DIST_DIR, '.pro-build');
-      if (fs.existsSync(proMarker)) {
-        archive.file(proMarker, { name: `${PLUGIN_SLUG}/dist/.pro-build` });
+      const markers = ['.pro-build', 'pro-build.txt'].filter(m => fs.existsSync(path.join(DIST_DIR, m)));
+      if (markers.length === 0) {
+        reject(new Error('Pro build marker missing from dist/ – the Pro ZIP would run as Free.'));
+        return;
+      }
+      markers.forEach(m => archive.file(path.join(DIST_DIR, m), { name: `${PLUGIN_SLUG}/dist/${m}` }));
+      const php = fs.readFileSync(path.join(ROOT_DIR, 'kindpixels-next-event-countdown.php'), 'utf8');
+      if (!/Plugin Name:[^\n]*Pro/i.test(php)) {
+        reject(new Error('Plugin header is missing "Pro" – the Pro ZIP would run as Free.'));
+        return;
       }
     }
     

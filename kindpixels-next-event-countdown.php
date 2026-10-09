@@ -27,6 +27,50 @@ define( 'NXEVTCD_PLUGIN_LOADED', true );
 define( 'NXEVTCD_VERSION', '1.2.5' );
 
 // Freemius SDK Initialization
+if ( ! function_exists( 'nxevtcd_has_pro_marker' ) ) {
+    /**
+     * Pro packages ship a build marker. A visible copy is included too because some
+     * packaging/deployment tools drop hidden dot-files from ZIP archives.
+     */
+    function nxevtcd_has_pro_marker() {
+        $dir = dirname( __FILE__ ) . '/dist/';
+        return file_exists( $dir . '.pro-build' ) || file_exists( $dir . 'pro-build.txt' );
+    }
+}
+
+if ( ! function_exists( 'nxevtcd_is_premium_build' ) ) {
+    /**
+     * Pro builds need the marker AND a plugin header name containing "Pro",
+     * so a leaked marker can never unlock Pro in a WP.org package.
+     */
+    function nxevtcd_is_premium_build() {
+        static $result = null;
+        if ( null !== $result ) {
+            return $result;
+        }
+        $result = false;
+        if ( ! nxevtcd_has_pro_marker() ) {
+            return $result;
+        }
+        try {
+            if ( ! function_exists( 'get_file_data' ) ) {
+                $plugin_php = ABSPATH . 'wp-admin/includes/plugin.php';
+                if ( file_exists( $plugin_php ) ) {
+                    require_once $plugin_php;
+                }
+            }
+            if ( function_exists( 'get_file_data' ) ) {
+                $header      = get_file_data( __FILE__, array( 'Name' => 'Plugin Name' ), 'plugin' );
+                $plugin_name = isset( $header['Name'] ) ? (string) $header['Name'] : '';
+                $result      = ( stripos( $plugin_name, 'pro' ) !== false );
+            }
+        } catch ( Throwable $e ) {
+            $result = false;
+        }
+        return $result;
+    }
+}
+
 if ( ! function_exists( 'nxevtcd_fs' ) ) {
     /**
      * Get Freemius SDK instance.
@@ -55,26 +99,7 @@ if ( ! function_exists( 'nxevtcd_fs' ) ) {
                 // Pro builds ship a dist/.pro-build marker AND a plugin header name containing "Pro".
                 // Both are required so a leaked marker can never unlock Pro in a WP.org package.
                 // Marking the build as premium lets Freemius deliver Pro updates on the Plugins screen.
-                $is_premium_build = file_exists( dirname( __FILE__ ) . '/dist/.pro-build' );
-                if ( $is_premium_build ) {
-                    try {
-                        if ( ! function_exists( 'get_file_data' ) ) {
-                            $plugin_php = ABSPATH . 'wp-admin/includes/plugin.php';
-                            if ( file_exists( $plugin_php ) ) {
-                                require_once $plugin_php;
-                            }
-                        }
-                        if ( function_exists( 'get_file_data' ) ) {
-                            $header      = get_file_data( __FILE__, array( 'Name' => 'Plugin Name' ), 'plugin' );
-                            $plugin_name = isset( $header['Name'] ) ? (string) $header['Name'] : '';
-                            if ( stripos( $plugin_name, 'pro' ) === false ) {
-                                $is_premium_build = false;
-                            }
-                        }
-                    } catch ( Throwable $e ) {
-                        $is_premium_build = false;
-                    }
-                }
+                $is_premium_build = nxevtcd_is_premium_build();
 
                 $nxevtcd_fs = fs_dynamic_init( array(
                     'id'                  => '25492',
@@ -134,7 +159,7 @@ function nxevtcd_after_license_change( $plan_change ) {
     set_transient( 'nxevtcd_license_changed', time(), 300 );
     
     $redirect_url = add_query_arg( array(
-        'page'          => 'kindpixels-next-event-countdown-manager',
+        'page'          => 'kindpixels-next-event-countdown',
         'license_updated' => time(),
     ), admin_url( 'admin.php' ) );
     
@@ -259,10 +284,13 @@ class NxEvtCd_Plugin {
             return;
         }
         
-        $cache_bust = NXEVTCD_VERSION;
+        // Free and Pro share a version number; include the bundle's file time so a
+        // browser never keeps running a cached Free bundle after switching to Pro.
+        $js_path    = plugin_dir_path( __FILE__ ) . 'dist/assets/index.js';
+        $cache_bust = NXEVTCD_VERSION . ( file_exists( $js_path ) ? '.' . filemtime( $js_path ) : '' );
         $license_changed_ts = get_transient( 'nxevtcd_license_changed' );
         if ( $license_changed_ts ) {
-            $cache_bust = NXEVTCD_VERSION . '.' . intval( $license_changed_ts );
+            $cache_bust .= '.' . intval( $license_changed_ts );
         }
         
         wp_enqueue_script(
@@ -352,9 +380,54 @@ class NxEvtCd_Plugin {
             'licensedTo' => $fs_licensed_to,
             'updateUrl' => $update_url,
             'pluginBasename' => plugin_basename( __FILE__ ),
+            'fsDebug' => current_user_can( 'manage_options' ) ? $this->get_license_debug() : null,
         ));
 
     }
+    /**
+     * Read-only licensing snapshot shown with ?nxevtcd_debug=1 to diagnose Pro activation.
+     * Contains no license keys or personal data.
+     */
+    private function get_license_debug() {
+        $fs   = function_exists( 'nxevtcd_fs' ) ? nxevtcd_fs() : null;
+        $call = function ( $method ) use ( $fs ) {
+            if ( ! is_object( $fs ) || ! is_callable( array( $fs, $method ) ) ) {
+                return null;
+            }
+            try {
+                return (bool) $fs->$method();
+            } catch ( Throwable $e ) {
+                return null;
+            }
+        };
+        $plan = null;
+        if ( is_object( $fs ) && is_callable( array( $fs, 'get_plan' ) ) ) {
+            try {
+                $p    = $fs->get_plan();
+                $plan = is_object( $p ) && isset( $p->name ) ? (string) $p->name : null;
+            } catch ( Throwable $e ) {
+                $plan = null;
+            }
+        }
+        $header = function_exists( 'get_file_data' ) ? get_file_data( __FILE__, array( 'Name' => 'Plugin Name' ), 'plugin' ) : array();
+        return array(
+            'sdkLoaded'          => is_object( $fs ) && is_callable( array( $fs, 'is_premium' ) ),
+            'sdkVersion'         => defined( 'WP_FS__SDK_VERSION' ) ? WP_FS__SDK_VERSION : null,
+            'pluginFolder'       => basename( dirname( __FILE__ ) ),
+            'headerName'         => isset( $header['Name'] ) ? (string) $header['Name'] : '',
+            'proMarker'          => nxevtcd_has_pro_marker(),
+            'premiumBuild'       => nxevtcd_is_premium_build(),
+            'sdkIsPremium'       => $call( 'is_premium' ),
+            'registered'         => $call( 'is_registered' ),
+            'anonymous'          => $call( 'is_anonymous' ),
+            'hasLicense'         => $call( 'has_features_enabled_license' ),
+            'canUsePremiumCode'  => $call( 'can_use_premium_code' ),
+            'paying'             => $call( 'is_paying' ),
+            'trial'              => $call( 'is_trial' ),
+            'plan'               => $plan,
+        );
+    }
+
     public function assets_not_found_notice() {
         echo '<div class="notice notice-error"><p>KindPixels Next Event Countdown: Plugin assets not found. Please rebuild the plugin.</p></div>';
     }
