@@ -99,10 +99,7 @@ Check the Documentation tab inside the plugin, or visit [kindpixels.com/support]
 == Changelog ==
 
 = 1.2.5 =
-* Fixed: Public demos display the entire plugin without its footer in Elementor and other page builders.
-* Fixed: Demo height updates after tab changes, expanded events and late-loading content.
-* Fixed: Required demo scripts and styles are included in both release packages.
-* Fixed: Pro release identity and Freemius update refresh on the Plugins screen.
+* Bug fixes
 
 = 1.2.4 =
 * Compatibility: Tested with WordPress 7.0
