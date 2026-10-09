@@ -10,6 +10,11 @@ import fs from "fs";
 const proBuildMarker = () => ({
   name: 'pro-build-marker',
   closeBundle() {
+    // Public-dir copying is disabled to avoid overwriting Vite's generated index.html.
+    // Ship the external WordPress CSS and iframe listener explicitly for both variants.
+    for (const asset of ['admin-page.css', 'demo-embed.js']) {
+      fs.copyFileSync(path.resolve(__dirname, 'public', asset), path.resolve(__dirname, 'dist', asset));
+    }
     const isPro = process.env.VITE_BUILD_VARIANT === 'pro';
     const markerPath = path.resolve(__dirname, 'dist/.pro-build');
     const phpPath = path.resolve(__dirname, 'kindpixels-next-event-countdown.php');
